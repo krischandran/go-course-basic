@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оператор switch — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root { --bg-primary: #070709; --bg-secondary: #0d0d0f; --bg-tertiary: #111113; --text-primary: #ffffff; --text-secondary: #dddddd; --text-muted: #a7a7a7; --border-color: #1a1a1c; --border-light: #363636; --accent-green: #2af16b; --accent-orange: #f1a12a; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; line-height: 1.65; color: var(--text-primary); background-color: var(--bg-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 100; }
+        .logo { font-size: 18px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo span { color: var(--accent-green); }
+        .nav-menu { display: flex; gap: 32px; }
+        .nav-menu a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-menu a:hover, .nav-menu a.current { color: var(--text-primary); }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .progress-pill { display: flex; align-items: center; gap: 12px; padding: 6px 14px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px; }
+        .progress-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .progress-track { width: 80px; height: 4px; background: var(--border-color); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0; background: var(--accent-green); border-radius: 2px; transition: width 0.3s; }
+        .layout { display: flex; padding-top: 56px; min-height: 100vh; }
+        .sidebar { width: 280px; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; background: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 32px 24px; flex-shrink: 0; }
+        .course-info { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color); }
+        .course-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); margin-bottom: 8px; }
+        .course-name { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .course-progress { font-size: 13px; color: var(--text-muted); }
+        .toc-section { margin-bottom: 24px; }
+        .toc-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 4px; }
+        .toc-list a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--text-secondary); text-decoration: none; font-size: 14px; border-radius: 6px; transition: all 0.2s; }
+        .toc-list a:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active { color: var(--accent-green); background: rgba(42, 241, 107, 0.06); }
+        .toc-num { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 40px 80px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+        .lead { font-size: 19px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 48px; }
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 56px 0 24px; scroll-margin-top: 80px; }
+        h2::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 2px; }
+        h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin: 32px 0 16px; scroll-margin-top: 80px; }
+        p { font-size: 17px; line-height: 1.75; color: var(--text-secondary); margin-bottom: 20px; }
+        ul, ol { margin: 0 0 20px 24px; color: var(--text-secondary); }
+        li { margin-bottom: 8px; line-height: 1.7; }
+        .code-block { margin: 24px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
+        .alert { margin: 28px 0; padding: 20px 24px 20px 48px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
+        .alert-icon { position: absolute; left: 16px; top: 20px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: 700; }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert p { margin: 0; font-size: 15px; }
+        .card { margin: 20px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 20px; }
+        .card-body p { margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+        details { margin-top: 16px; }
+        details summary { cursor: pointer; color: var(--accent-green); font-size: 14px; font-weight: 500; padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        details summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+        /* Used by HTML — details open state */
+        details[open] summary::before { transform: rotate(90deg); }
+        details summary::-webkit-details-marker { display: none; }
+        .answer { margin-top: 12px; padding: 16px; background: rgba(42, 241, 107, 0.03); border-radius: 6px; border-left: 2px solid var(--accent-green); }
+        .answer p { font-size: 15px; color: var(--text-secondary); }
+        .summary-box { margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 12px; }
+        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .summary-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; background: var(--accent-green); color: var(--bg-primary); border-radius: 4px; }
+        .summary-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 20px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 8px; }
+        blockquote { margin: 24px 0; padding: 20px 24px; background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%); border-left: 2px solid var(--accent-green); border-radius: 0 6px 6px 0; }
+        blockquote p { font-size: 16px; font-weight: 500; color: var(--text-primary); margin: 0; }
+        .nav-footer { display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border-color); gap: 20px; }
+        .nav-link { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: all 0.2s; flex: 1; max-width: 48%; }
+        .nav-link:hover { border-color: var(--border-light); background: var(--bg-tertiary); }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 20px; color: var(--accent-green); }
+        .nav-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .nav-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        @media (max-width: 1100px) { .sidebar { display: none; } main { max-width: 100%; padding: 40px 32px; } }
+        @media (max-width: 768px) { .nav-menu { display: none; } h1 { font-size: 28px; } main { padding: 32px 20px; } .nav-footer { flex-direction: column; } .nav-link { max-width: 100%; } }
+        @media print { .sidebar, .header { display: none; } body { background: white; color: black; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 3</div>
+            <div class="course-name">Условия</div>
+            <div class="course-progress">Урок 4 из 7</div>
+        </div>
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#intro"><span class="toc-num">01</span>Введение</a></li>
+                <li><a href="#syntax"><span class="toc-num">02</span>Синтаксис</a></li>
+                <li><a href="#default"><span class="toc-num">03</span>Блок default</a></li>
+                <li><a href="#combine"><span class="toc-num">04</span>Объединение case</a></li>
+                <li><a href="#numbers"><span class="toc-num">05</span>switch с числами</a></li>
+                <li><a href="#check"><span class="toc-num">06</span>Проверь себя</a></li>
+                <li><a href="#summary"><span class="toc-num">07</span>Резюме</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">switch-case</span>
+        </nav>
+
+        <h1>Оператор switch</h1>
+        <p class="lead">Элегантный способ сравнить переменную с множеством конкретных значений.</p>
+
+        <h2 id="intro">SWITCH НА САМОМ ДЕЛЕ</h2>
+
+        <p>Когда нужно сравнить переменную с множеством <strong>конкретных значений</strong>, цепочка <code>if-else if</code> становится громоздкой:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// Громоздко при большом количестве вариантов
+if action == "Прыгать" {
+    fmt.Println("Мне нравится прыгать")
+} else if action == "Плавать" {
+    fmt.Println("Я люблю плавать")
+} else if action == "Летать" {
+    fmt.Println("Хотел бы научиться летать")
+}</code></pre>
+        </div>
+
+        <p>Для таких случаев в Go есть оператор <code>switch</code> — он делает код <strong>компактнее и читабельнее</strong>.</p>
+
+        <h2 id="syntax">БАЗОВЫЙ СИНТАКСИС SWITCH</h2>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var action string
+    fmt.Scan(&action)
+
+    switch action {
+    case "Прыгать":
+        fmt.Println("Мне нравится прыгать")
+    case "Плавать":
+        fmt.Println("Я люблю плавать")
+    case "Летать":
+        fmt.Println("Хотел бы научиться летать")
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Как это работает:</strong></p>
+        <ol>
+            <li>Значение <code>action</code> сравнивается с каждым <code>case</code> по порядку</li>
+            <li>Как только найдено совпадение — выполняется соответствующий блок</li>
+            <li>После выполнения блока <code>switch</code> завершается (без проваливания в следующие <code>case</code>)</li>
+            <li>Если ни один <code>case</code> не совпал — ничего не происходит</li>
+        </ol>
+
+        <h2 id="default">БЛОК DEFAULT</h2>
+
+        <p>Чтобы обработать случай, когда значение не совпало ни с одним <code>case</code>, используется <code>default</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var action string
+    fmt.Scan(&action)
+
+    switch action {
+    case "Прыгать":
+        fmt.Println("Мне нравится прыгать")
+    case "Плавать":
+        fmt.Println("Я люблю плавать")
+    case "Летать":
+        fmt.Println("Хотел бы научиться летать")
+    default:
+        fmt.Println("Могу только ходить")
+    }
+}</code></pre>
+        </div>
+
+        <p>При вводе <code>"Бегать"</code> ни один <code>case</code> не совпадёт, выполнится <code>default</code>.</p>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <p><code>default</code> — аналог финального <code>else</code> в цепочке <code>if-else if-else</code>.</p>
+        </div>
+
+        <h2 id="combine">ОБЪЕДИНЕНИЕ НЕСКОЛЬКИХ CASE</h2>
+
+        <p>Если несколько значений должны обрабатываться одинаково, их можно объединить через запятую:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var day string
+    fmt.Scan(&day)
+
+    switch day {
+    case "Понедельник", "Вторник", "Среда", "Четверг", "Пятница":
+        fmt.Println("Будний день")
+    case "Суббота", "Воскресенье":
+        fmt.Println("Выходной день")
+    default:
+        fmt.Println("Некорректный день недели")
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Работает так:</strong> если <code>day</code> равен любому из значений в <code>case</code>, выполняется этот блок.</p>
+
+        <h2 id="numbers">SWITCH С ЧИСЛАМИ</h2>
+
+        <p><code>switch</code> работает не только со строками:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var month int
+    fmt.Scan(&month)
+
+    switch month {
+    case 1, 2, 12:
+        fmt.Println("Зима")
+    case 3, 4, 5:
+        fmt.Println("Весна")
+    case 6, 7, 8:
+        fmt.Println("Лето")
+    case 9, 10, 11:
+        fmt.Println("Осень")
+    default:
+        fmt.Println("Некорректный месяц")
+    }
+}</code></pre>
+        </div>
+
+        <p>При вводе <code>4</code>:</p>
+        <ul>
+            <li>Проверяем <code>4</code> в <code>1, 2, 12</code>? Нет</li>
+            <li>Проверяем <code>4</code> в <code>3, 4, 5</code>? <strong>Да</strong> → выводим "Весна"</li>
+        </ul>
+
+        <h3>Когда использовать switch?</h3>
+
+        <p><strong>switch хорош когда:</strong></p>
+        <ul>
+            <li>Сравниваешь переменную с <strong>фиксированным набором значений</strong></li>
+            <li>Много вариантов (3+)</li>
+            <li>Значения — константы (числа, строки)</li>
+        </ul>
+
+        <p><strong>if-else лучше когда:</strong></p>
+        <ul>
+            <li>Проверяешь <strong>диапазоны</strong> (<code>x > 10 && x < 20</code>)</li>
+            <li>Сложные логические выражения</li>
+            <li>Условия зависят от разных переменных</li>
+        </ul>
+
+        <h3>Ловушка: switch не работает с диапазонами напрямую</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ❌ ОШИБКА: нельзя использовать выражения в case
+var score int
+fmt.Scan(&score)
+
+switch score {
+case score >= 90:  // Не скомпилируется!
+    fmt.Println("Отлично")
+}</code></pre>
+        </div>
+
+        <p>В обычном <code>switch</code> после <code>case</code> должны быть <strong>конкретные значения</strong>, а не логические выражения.</p>
+
+        <p><strong>Решение:</strong> используй <code>if-else</code> для диапазонов или <code>switch</code> без выражения (следующий урок).</p>
+
+        <h2 id="check">ПРОВЕРЬ СЕБЯ</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что произойдёт, если ни один case не совпал и нет default?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Ничего не произойдёт. <code>switch</code> просто завершится без выполнения какого-либо кода.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Можно ли объединить несколько значений в одном case?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Да, значения перечисляются через запятую:</p>
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">case "a", "b", "c":
+    // код</code></pre></div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Для чего нужен блок default?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>default</code> выполняется, когда значение не совпало ни с одним <code>case</code>. Это аналог финального <code>else</code> — обрабатывает все оставшиеся случаи.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Можно ли в case использовать условие вида x > 10?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>В обычном <code>switch</code> — нет, только конкретные значения. Для проверки диапазонов используй <code>if-else</code> или <code>switch</code> без выражения (будет в следующем уроке).</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Количество дней в месяце</span></div>
+            <div class="card-body">
+                <p>По номеру месяца (1-12) выведи количество дней. Считай, что февраль имеет 28 дней.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var month int
+    fmt.Scan(&month)
+
+    switch month {
+    case 1, 3, 5, 7, 8, 10, 12:
+        fmt.Println(31)
+    case 4, 6, 9, 11:
+        fmt.Println(30)
+    case 2:
+        fmt.Println(28)
+    default:
+        fmt.Println("Некорректный месяц")
+    }
+}</code></pre></div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Время года</span></div>
+            <div class="card-body">
+                <p>По номеру месяца выведи время года: "Зима", "Весна", "Лето" или "Осень".</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var month int
+    fmt.Scan(&month)
+
+    switch month {
+    case 12, 1, 2:
+        fmt.Println("Зима")
+    case 3, 4, 5:
+        fmt.Println("Весна")
+    case 6, 7, 8:
+        fmt.Println("Лето")
+    case 9, 10, 11:
+        fmt.Println("Осень")
+    default:
+        fmt.Println("Некорректный месяц")
+    }
+}</code></pre></div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block"><div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    day := "Среда"
+
+    switch day {
+    case "Понедельник":
+        fmt.Print("1")
+    case "Вторник", "Среда":
+        fmt.Print("2")
+    case "Четверг":
+        fmt.Print("3")
+    default:
+        fmt.Print("4")
+    }
+
+    fmt.Print("!")
+}</code></pre></div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>2!</code></p>
+                        <p><strong>Почему:</strong></p>
+                        <ol>
+                            <li><code>day = "Среда"</code></li>
+                            <li>Проверяем <code>"Понедельник"</code>? Нет</li>
+                            <li>Проверяем <code>"Вторник", "Среда"</code>? <strong>Да</strong> (Среда в списке) → выводим <code>2</code></li>
+                            <li><code>switch</code> завершается</li>
+                            <li>Выводим <code>!</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2 id="summary">РЕЗЮМЕ</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li><code>switch</code> сравнивает значение с набором <code>case</code></li>
+                <li>Как только <code>case</code> совпал — выполняется блок и <code>switch</code> завершается</li>
+                <li><code>default</code> обрабатывает все несовпавшие случаи</li>
+                <li>Несколько значений в <code>case</code> перечисляются через запятую</li>
+            </ul>
+        </div>
+
+        <p><strong>Главное ограничение:</strong> в обычном <code>switch</code> нельзя использовать диапазоны и сложные условия</p>
+
+        <blockquote><p><strong>Правило:</strong> <code>switch</code> для фиксированных значений, <code>if-else</code> для диапазонов и сложных условий</p></blockquote>
+
+        <nav class="nav-footer">
+            <a href="03-else-if.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">else if</div></div>
+            </a>
+            <a href="05-switch-true.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">switch без выражения</div></div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (scrollY >= s.offsetTop - 100) current = s.id; });
+        links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + current) l.classList.add('active'); });
+    });
+</script>
+
+</body>
+</html>

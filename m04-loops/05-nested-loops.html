@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вложенные циклы — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root { --bg-primary: #070709; --bg-secondary: #0d0d0f; --bg-tertiary: #111113; --text-primary: #ffffff; --text-secondary: #dddddd; --text-muted: #a7a7a7; --border-color: #1a1a1c; --border-light: #363636; --accent-green: #2af16b; --accent-orange: #f1a12a; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; line-height: 1.65; color: var(--text-primary); background-color: var(--bg-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 100; }
+        .logo { font-size: 18px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo span { color: var(--accent-green); }
+        .nav-menu { display: flex; gap: 32px; }
+        .nav-menu a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-menu a:hover { color: var(--text-primary); }
+        /* Used by HTML — current navigation item */
+        .nav-menu a.current { color: var(--text-primary); }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .progress-pill { display: flex; align-items: center; gap: 12px; background: var(--bg-tertiary); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-color); }
+        .progress-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .progress-track { width: 80px; height: 4px; background: var(--bg-primary); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent-green); width: 0%; transition: width 0.3s; }
+        .progress-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; }
+
+        .layout { display: flex; padding-top: 56px; }
+        .sidebar { position: fixed; top: 56px; left: 0; width: 280px; height: calc(100vh - 56px); background: var(--bg-secondary); border-right: 1px solid var(--border-color); overflow-y: auto; padding: 24px 0; }
+        .course-info { padding: 0 20px 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+        .course-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); margin-bottom: 8px; }
+        .course-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .course-progress { font-size: 13px; color: var(--text-muted); }
+        .toc-section { padding: 0 12px; margin-bottom: 20px; }
+        .toc-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0 8px; margin-bottom: 8px; }
+        .toc-list { list-style: none; }
+        .toc-list a { display: flex; align-items: center; gap: 10px; padding: 8px; color: var(--text-secondary); text-decoration: none; font-size: 14px; border-radius: 6px; transition: all 0.2s; }
+        .toc-list a:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active { color: var(--accent-green); background: rgba(42, 241, 107, 0.06); }
+        .toc-num { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+
+        main { margin-left: 280px; flex: 1; max-width: 760px; padding: 48px 64px 80px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 13px; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+        .lead { font-size: 19px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 48px; }
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 56px 0 24px; }
+        h2::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 2px; }
+        h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; margin: 32px 0 16px; color: var(--text-primary); }
+        p { font-size: 17px; line-height: 1.75; color: var(--text-secondary); margin-bottom: 20px; }
+        strong { color: var(--text-primary); font-weight: 600; }
+        a { color: var(--accent-green); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .code-block { margin: 24px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 16px; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
+        code:not(.hljs) { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; color: var(--accent-green); }
+
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+        th { text-align: left; padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        td { padding: 12px 16px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+        td code { color: var(--accent-green); }
+
+        .alert { margin: 28px 0; padding: 20px 24px 20px 48px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
+        .alert-icon { position: absolute; left: 16px; top: 20px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: 700; }
+        .alert-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .alert p { margin-bottom: 0; font-size: 15px; }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+
+        .card { margin: 24px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 20px; }
+
+        details { cursor: pointer; }
+        details summary { font-size: 14px; font-weight: 500; color: var(--accent-green); padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        details summary::-webkit-details-marker { display: none; }
+        details summary::before { content: ''; width: 16px; height: 16px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232af16b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 5l7 7-7 7'/%3E%3C/svg%3E") center/contain no-repeat; transition: transform 0.2s; }
+        /* Used by HTML — details open state */
+        details[open] summary::before { transform: rotate(90deg); }
+        .answer { padding: 16px 0 8px; border-top: 1px solid var(--border-color); margin-top: 8px; }
+        .answer p { font-size: 15px; }
+
+        .summary-box { margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, transparent 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 8px; }
+        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .summary-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); background: rgba(42, 241, 107, 0.15); padding: 4px 8px; border-radius: 4px; }
+        .summary-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { list-style: none; margin: 0; }
+        .summary-list li { padding: 8px 0; padding-left: 20px; position: relative; color: var(--text-secondary); font-size: 15px; }
+        .summary-list li::before { content: ''; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; }
+
+        blockquote { margin: 24px 0; padding: 20px 24px; background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%); border-left: 2px solid var(--accent-green); border-radius: 0 6px 6px 0; }
+        blockquote p { font-size: 16px; font-weight: 500; font-style: italic; color: var(--text-primary); margin: 0; }
+
+        .nav-footer { display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border-color); }
+        .nav-link { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: all 0.2s; max-width: 45%; }
+        .nav-link:hover { border-color: var(--border-light); background: var(--bg-tertiary); text-decoration: none; }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 20px; color: var(--accent-green); }
+        .nav-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
+        .nav-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+
+        ul, ol { margin: 16px 0; padding-left: 24px; color: var(--text-secondary); }
+        li { margin: 8px 0; font-size: 16px; line-height: 1.6; }
+
+        .info-box { margin: 24px 0; padding: 20px 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; border-left: 3px solid var(--accent-green); font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8; color: var(--text-secondary); }
+
+        @media (max-width: 1100px) { .sidebar { display: none; } main { margin-left: 0; max-width: 100%; padding: 40px 32px; } }
+        @media (max-width: 768px) { .nav-menu { display: none; } h1 { font-size: 28px; } main { padding: 32px 20px; } .nav-footer { flex-direction: column; gap: 12px; } .nav-link { max-width: 100%; } }
+        @media print { .sidebar, .header { display: none; } main { margin-left: 0; } body { background: white; color: black; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+            <div class="progress-dot"></div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 4</div>
+            <div class="course-name">Циклы</div>
+            <div class="course-progress">Урок 5 из 7</div>
+        </div>
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#basics"><span class="toc-num">01</span>Базовый пример</a></li>
+                <li><a href="#count"><span class="toc-num">02</span>Подсчёт итераций</a></li>
+                <li><a href="#rule"><span class="toc-num">03</span>Важное правило</a></li>
+                <li><a href="#break"><span class="toc-num">04</span>break во вложенных</a></li>
+                <li><a href="#practice"><span class="toc-num">05</span>Проверь себя</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">Вложенные циклы</span>
+        </nav>
+
+        <h1>Вложенные циклы</h1>
+        <p class="lead">Цикл может содержать внутри себя другой цикл. Такая конструкция называется <strong>вложенным циклом</strong>.</p>
+
+        <p>Представь обычные часы: часовая стрелка делает 12 шагов за полдня, минутная — 60 шагов за час, секундная — 60 шагов за минуту. Каждый раз, когда секундная стрелка делает полный оборот, минутная сдвигается на 1. Это и есть вложенные циклы: внутренний цикл полностью выполняется на каждой итерации внешнего.</p>
+
+        <h2 id="basics">Базовый пример</h2>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 3; i++ {
+        for j := 1; j <= 4; j++ {
+            fmt.Print("*")
+        }
+        fmt.Println()  // переход на новую строку
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>****
+****
+****</code></pre>
+        </div>
+
+        <p><strong>Как это работает:</strong></p>
+        <ol>
+            <li>Внешний цикл (i): 3 итерации</li>
+            <li>На каждой итерации внешнего — внутренний цикл (j): 4 итерации</li>
+            <li>Всего выводов <code>*</code>: 3 * 4 = 12</li>
+        </ol>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <div class="alert-label">Important</div>
+            <p>Внутренний цикл <strong>полностью</strong> выполняется на каждой итерации внешнего.</p>
+        </div>
+
+        <h2 id="count">Подсчёт итераций</h2>
+
+        <p>Общее количество итераций внутреннего цикла:</p>
+
+        <div class="info-box">
+            <strong>Всего = итерации_внешнего * итерации_внутреннего</strong>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">for i := 0; i < 12; i++ {      // 12 итераций
+    for j := 0; j < 60; j++ {  // 60 итераций
+        // ...
+    }
+}
+// Всего: 12 * 60 = 720 выполнений внутреннего кода</code></pre>
+        </div>
+
+        <h3>Таблица умножения</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 5; i++ {
+        for j := 1; j <= 5; j++ {
+            fmt.Printf("%4d", i*j)  // ширина 4 символа
+        }
+        fmt.Println()
+    }
+}</code></pre>
+        </div>
+
+        <h2 id="rule">Важное правило</h2>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <div class="alert-label">Important</div>
+            <p>Переменные вложенных циклов должны иметь <strong>разные имена</strong>.</p>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Правильно — разные имена
+for i := 0; i < 3; i++ {
+    for j := 0; j < 3; j++ {
+        fmt.Print(i, j, " ")
+    }
+}
+
+// Неправильно — одинаковые имена
+for i := 0; i < 3; i++ {
+    for i := 0; i < 3; i++ {  // затеняет внешний i!
+        // ...
+    }
+}</code></pre>
+        </div>
+
+        <p>Во втором случае внутренний <code>i</code> <strong>затеняет</strong> внешний. Программа скомпилируется, но работать будет неправильно.</p>
+
+        <h2 id="break">break во вложенных циклах</h2>
+
+        <p><code>break</code> прерывает только <strong>ближайший</strong> цикл:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 3; i++ {
+        for j := 1; j <= 5; j++ {
+            if j == 3 {
+                break  // выходим только из внутреннего
+            }
+            fmt.Println(i, j)
+        }
+    }
+}</code></pre>
+        </div>
+
+        <p>Внутренний цикл прерывается при <code>j == 3</code>, но внешний продолжает работать.</p>
+
+        <h2 id="practice">Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Сколько раз выполнится внутренний код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">for i := 0; i < 5; i++ {
+    for j := 0; j < 3; j++ {
+        // внутренний код
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>15 раз</strong> (5 * 3 = 15)</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Почему переменные должны иметь разные имена?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Если использовать одинаковые имена, внутренняя переменная <strong>затенит</strong> внешнюю. Это приведёт к тому, что внутри внутреннего цикла нельзя будет обратиться к переменной внешнего цикла.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Что произойдёт с внешним циклом при break во внутреннем?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Внешний цикл <strong>продолжит работу</strong>. <code>break</code> прерывает только ближайший (внутренний) цикл и переходит к следующей итерации внешнего.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 2; i++ {
+        for j := 1; j <= 3; j++ {
+            fmt.Print(i * j, " ")
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>1 2 3 2 4 6 </code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 3; i >= 1; i-- {
+        for j := 1; j <= i; j++ {
+            fmt.Print("*")
+        }
+        fmt.Println()
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <pre>***
+**
+*</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Сколько итераций?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">for i := 0; i < 4; i++ {
+    for j := 0; j < 5; j++ {
+        for k := 0; k < 2; k++ {
+            // ...
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Ответ:</strong> 40 итераций самого внутреннего цикла (4 * 5 * 2 = 40)</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">04</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 3; i++ {
+        for j := 1; j <= 3; j++ {
+            if i == j {
+                continue
+            }
+            fmt.Print(i, j, " ")
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>12 13 21 23 31 32 </code></p>
+                        <p>Пропускаются пары где i == j: (1,1), (2,2), (3,3)</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">05</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 3; i++ {
+        for j := 1; j <= 3; j++ {
+            if j == 2 {
+                break
+            }
+            fmt.Print(i, j, " ")
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>11 21 31 </code></p>
+                        <p>На каждой итерации внешнего цикла внутренний прерывается при j == 2.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-badge">Key</span>
+                <span class="summary-title">Ключевые идеи</span>
+            </div>
+            <ul class="summary-list">
+                <li>Вложенный цикл — цикл внутри цикла</li>
+                <li>Внутренний полностью выполняется на каждой итерации внешнего</li>
+                <li>Всего итераций = произведение итераций всех циклов</li>
+                <li>Переменные должны иметь разные имена</li>
+                <li><code>break</code> прерывает только ближайший цикл</li>
+            </ul>
+        </div>
+
+        <blockquote>
+            <p><strong>Правило:</strong> Внешний цикл — i, вложенный — j, ещё глубже — k.</p>
+        </blockquote>
+
+        <nav class="nav-footer">
+            <a href="04-break-continue.html" class="nav-link prev">
+                <span class="nav-arrow">&#8592;</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">break и continue</div>
+                </div>
+            </a>
+            <a href="06-labels.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">Метки (Labels)</div>
+                </div>
+                <span class="nav-arrow">&#8594;</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (scrollY >= s.offsetTop - 100) current = s.id; });
+        links.forEach(l => {
+            l.classList.remove('active');
+            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

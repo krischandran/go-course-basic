@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вложенные условия и else if — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+        }
+
+        .logo { font-size: 18px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo span { color: var(--accent-green); }
+
+        .nav-menu { display: flex; gap: 32px; }
+        .nav-menu a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-menu a:hover, .nav-menu a.current { color: var(--text-primary); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .progress-pill { display: flex; align-items: center; gap: 12px; padding: 6px 14px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px; }
+        .progress-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .progress-track { width: 80px; height: 4px; background: var(--border-color); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0; background: var(--accent-green); border-radius: 2px; transition: width 0.3s; }
+
+        .layout { display: flex; padding-top: 56px; min-height: 100vh; }
+
+        .sidebar { width: 280px; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; background: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 32px 24px; flex-shrink: 0; }
+
+        .course-info { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color); }
+        .course-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); margin-bottom: 8px; }
+        .course-name { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .course-progress { font-size: 13px; color: var(--text-muted); }
+
+        .toc-section { margin-bottom: 24px; }
+        .toc-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 4px; }
+        .toc-list a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--text-secondary); text-decoration: none; font-size: 14px; border-radius: 6px; transition: all 0.2s; }
+        .toc-list a:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active { color: var(--accent-green); background: rgba(42, 241, 107, 0.06); }
+        .toc-num { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+
+        main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 40px 80px; }
+
+        .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+        .lead { font-size: 19px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 48px; }
+
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 56px 0 24px; scroll-margin-top: 80px; }
+        h2::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 2px; }
+
+        h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin: 32px 0 16px; scroll-margin-top: 80px; }
+
+        p { font-size: 17px; line-height: 1.75; color: var(--text-secondary); margin-bottom: 20px; }
+        ul, ol { margin: 0 0 20px 24px; color: var(--text-secondary); }
+        li { margin-bottom: 8px; line-height: 1.7; }
+
+        .code-block { margin: 24px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
+
+        .alert { margin: 28px 0; padding: 20px 24px 20px 48px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
+        .alert-icon { position: absolute; left: 16px; top: 20px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: 700; }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert p { margin: 0; font-size: 15px; }
+
+        .flow-diagram { margin: 24px 0; padding: 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.5; color: var(--text-secondary); white-space: pre; overflow-x: auto; }
+
+        .card { margin: 20px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 20px; }
+        .card-body p { margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details { margin-top: 16px; }
+        details summary { cursor: pointer; color: var(--accent-green); font-size: 14px; font-weight: 500; padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        details summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+        /* Used by HTML — details open state */
+        details[open] summary::before { transform: rotate(90deg); }
+        details summary::-webkit-details-marker { display: none; }
+        .answer { margin-top: 12px; padding: 16px; background: rgba(42, 241, 107, 0.03); border-radius: 6px; border-left: 2px solid var(--accent-green); }
+        .answer p { font-size: 15px; color: var(--text-secondary); }
+
+        .summary-box { margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 12px; }
+        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .summary-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; background: var(--accent-green); color: var(--bg-primary); border-radius: 4px; }
+        .summary-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 20px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 8px; }
+
+        blockquote { margin: 24px 0; padding: 20px 24px; background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%); border-left: 2px solid var(--accent-green); border-radius: 0 6px 6px 0; }
+        blockquote p { font-size: 16px; font-weight: 500; color: var(--text-primary); margin: 0; }
+
+        .nav-footer { display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border-color); gap: 20px; }
+        .nav-link { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: all 0.2s; flex: 1; max-width: 48%; }
+        .nav-link:hover { border-color: var(--border-light); background: var(--bg-tertiary); }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 20px; color: var(--accent-green); }
+        .nav-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .nav-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+
+        @media (max-width: 1100px) { .sidebar { display: none; } main { max-width: 100%; padding: 40px 32px; } }
+        @media (max-width: 768px) { .nav-menu { display: none; } h1 { font-size: 28px; } main { padding: 32px 20px; } .nav-footer { flex-direction: column; } .nav-link { max-width: 100%; } }
+        @media print { .sidebar, .header { display: none; } body { background: white; color: black; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 3</div>
+            <div class="course-name">Условия</div>
+            <div class="course-progress">Урок 3 из 7</div>
+        </div>
+
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#intro"><span class="toc-num">01</span>Когда одного мало</a></li>
+                <li><a href="#bad-way"><span class="toc-num">02</span>Несколько if</a></li>
+                <li><a href="#nested"><span class="toc-num">03</span>Вложенные условия</a></li>
+                <li><a href="#else-if"><span class="toc-num">04</span>else if</a></li>
+                <li><a href="#example"><span class="toc-num">05</span>Примеры</a></li>
+                <li><a href="#check"><span class="toc-num">06</span>Проверь себя</a></li>
+                <li><a href="#summary"><span class="toc-num">07</span>Резюме</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">else if</span>
+        </nav>
+
+        <h1>Вложенные условия и else if</h1>
+        <p class="lead">Проверяем больше двух взаимоисключающих вариантов.</p>
+
+        <h2 id="intro">КОГДА ОДНОГО УСЛОВИЯ МАЛО</h2>
+
+        <p>Иногда нужно проверить <strong>больше двух</strong> вариантов. Например, определить знак числа:</p>
+        <ul>
+            <li>Положительное (больше нуля)</li>
+            <li>Отрицательное (меньше нуля)</li>
+            <li>Ноль</li>
+        </ul>
+
+        <p>Три разных случая — одним <code>if-else</code> не обойтись.</p>
+
+        <h2 id="bad-way">НЕСКОЛЬКО IF ПОДРЯД (ПЛОХОЙ СПОСОБ)</h2>
+
+        <p>Первое, что приходит в голову — написать три отдельных <code>if</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var n int
+    fmt.Scan(&n)
+
+    if n > 0 {
+        fmt.Println("Положительное")
+    }
+    if n < 0 {
+        fmt.Println("Отрицательное")
+    }
+    if n == 0 {
+        fmt.Println("Ноль")
+    }
+}</code></pre>
+        </div>
+
+        <p>Это работает, но есть <strong>две проблемы</strong>:</p>
+        <ol>
+            <li><strong>Лишние проверки.</strong> Если число положительное, зачем проверять <code>n < 0</code> и <code>n == 0</code>? Мы уже знаем ответ.</li>
+            <li><strong>Неочевидная структура.</strong> По коду непонятно, что это три взаимоисключающих случая. Другой программист может подумать, что несколько условий могут выполниться одновременно.</li>
+        </ol>
+
+        <h2 id="nested">ВЛОЖЕННЫЕ УСЛОВИЯ</h2>
+
+        <p>Правильный способ — использовать вложенные <code>if-else</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var n int
+    fmt.Scan(&n)
+
+    if n > 0 {
+        fmt.Println("Положительное")
+    } else {
+        if n < 0 {
+            fmt.Println("Отрицательное")
+        } else {
+            fmt.Println("Ноль")
+        }
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Как это работает:</strong></p>
+
+        <div class="flow-diagram">            ┌─────────┐
+            │ n > 0?  │
+            └────┬────┘
+          ┌──────┴──────┐
+         ДА            НЕТ
+          │             │
+          ▼             ▼
+    "Положительное"  ┌─────────┐
+                     │ n < 0?  │
+                     └────┬────┘
+                   ┌──────┴──────┐
+                  ДА            НЕТ
+                   │             │
+                   ▼             ▼
+            "Отрицательное"   "Ноль"</div>
+
+        <p><strong>Преимущества:</strong></p>
+        <ul>
+            <li>Нет лишних проверок — как только нашли подходящий вариант, остальные не проверяются</li>
+            <li>Код явно показывает, что это <strong>взаимоисключающие</strong> случаи</li>
+            <li>Последний <code>else</code> автоматически обрабатывает оставшийся случай</li>
+        </ul>
+
+        <h2 id="else-if">ELSE IF — КОРОТКАЯ ЗАПИСЬ</h2>
+
+        <p>Вложенные условия быстро становятся нечитаемыми. Представь пять уровней вложенности!</p>
+
+        <p>Go предлагает удобную запись <code>else if</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var n int
+    fmt.Scan(&n)
+
+    if n > 0 {
+        fmt.Println("Положительное")
+    } else if n < 0 {
+        fmt.Println("Отрицательное")
+    } else {
+        fmt.Println("Ноль")
+    }
+}</code></pre>
+        </div>
+
+        <p>Это <strong>тот же код</strong>, только записанный компактнее. Логика идентична вложенным условиям.</p>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <p><code>else if</code> — это не новый оператор, а просто <code>else</code>, после которого сразу идёт <code>if</code>.</p>
+        </div>
+
+        <h2 id="example">ПРИМЕРЫ</h2>
+
+        <h3>Пример: оценка по баллам</h3>
+
+        <p>Переведём баллы (0-100) в пятибалльную оценку:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var grade int
+    fmt.Scan(&grade)
+
+    if grade >= 90 {
+        fmt.Println(5)
+    } else if grade >= 80 {
+        fmt.Println(4)
+    } else if grade >= 70 {
+        fmt.Println(3)
+    } else if grade >= 60 {
+        fmt.Println(2)
+    } else {
+        fmt.Println(1)
+    }
+}</code></pre>
+        </div>
+
+        <p>При вводе <code>75</code>:</p>
+        <ol>
+            <li><code>75 >= 90</code>? Нет → переходим к следующему</li>
+            <li><code>75 >= 80</code>? Нет → переходим к следующему</li>
+            <li><code>75 >= 70</code>? <strong>Да</strong> → выводим <code>3</code>, остальные условия не проверяются</li>
+        </ol>
+
+        <h3>Ловушка: неправильный порядок условий</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ❌ НЕПРАВИЛЬНО: порядок условий важен!
+if grade >= 60 {
+    fmt.Println(2)  // 75 >= 60 — true, выведет 2!
+} else if grade >= 70 {
+    fmt.Println(3)  // сюда никогда не попадём при grade >= 60
+} else if grade >= 80 {
+    fmt.Println(4)
+} else if grade >= 90 {
+    fmt.Println(5)
+}</code></pre>
+        </div>
+
+        <p><strong>Правило:</strong> в цепочке <code>else if</code> располагай условия <strong>от более строгих к менее строгим</strong>: сначала <code>>= 90</code>, потом <code>>= 80</code>, потом <code>>= 70</code>...</p>
+
+        <h3>Ловушка: лишнее условие</h3>
+
+        <p>Начинающие часто добавляют лишнюю проверку в последний <code>else</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ❌ Лишнее условие
+if n > 0 {
+    fmt.Println("Положительное")
+} else if n < 0 {
+    fmt.Println("Отрицательное")
+} else if n == 0 {  // <- Лишняя проверка!
+    fmt.Println("Ноль")
+}</code></pre>
+        </div>
+
+        <p>Если мы дошли до последнего <code>else</code>, значит оба предыдущих условия (<code>n > 0</code> и <code>n < 0</code>) были ложными. Единственный оставшийся вариант — <code>n == 0</code>. Проверять это не нужно!</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ✅ Правильно: последний else без условия
+if n > 0 {
+    fmt.Println("Положительное")
+} else if n < 0 {
+    fmt.Println("Отрицательное")
+} else {
+    fmt.Println("Ноль")  // Автоматически n == 0
+}</code></pre>
+        </div>
+
+        <h3>Пример: максимум из трёх чисел</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var a, b, c int
+    fmt.Scan(&a, &b, &c)
+
+    if a > b {
+        if a > c {
+            fmt.Println(a)
+        } else {
+            fmt.Println(c)
+        }
+    } else {
+        if b > c {
+            fmt.Println(b)
+        } else {
+            fmt.Println(c)
+        }
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Логика:</strong></p>
+        <ol>
+            <li>Сравниваем <code>a</code> и <code>b</code></li>
+            <li>Победителя сравниваем с <code>c</code></li>
+            <li>Выводим максимальное</li>
+        </ol>
+
+        <h2 id="check">ПРОВЕРЬ СЕБЯ</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Чем else if отличается от нескольких if подряд?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><code>else if</code> создаёт <strong>взаимоисключающие</strong> ветки — как только одно условие выполнилось, остальные не проверяются.</p>
+                        <p>Несколько <code>if</code> подряд — независимые проверки, каждое условие проверяется всегда.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Нужно ли писать условие в последнем else?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Нет. Последний <code>else</code> обрабатывает все оставшиеся случаи. Если мы до него дошли, значит все предыдущие условия были ложными — дополнительная проверка избыточна.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Почему важен порядок условий в цепочке else if?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Потому что проверки идут сверху вниз, и как только одно условие истинно — остальные пропускаются.</p>
+                        <p>Если поставить менее строгое условие первым (например, <code>>= 60</code> перед <code>>= 90</code>), более строгие условия никогда не выполнятся.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">04</span>
+                <span class="card-title">Сколько условий может быть в цепочке if-else if-else?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Любое количество. Можно использовать сколько угодно <code>else if</code> между начальным <code>if</code> и финальным <code>else</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что выведет при вводе 5, 3, 7?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var a, b, c int
+    fmt.Scan(&a, &b, &c)
+
+    if a > b {
+        if a > c {
+            fmt.Println(a)
+        } else {
+            fmt.Println(c)
+        }
+    } else {
+        if b > c {
+            fmt.Println(b)
+        } else {
+            fmt.Println(c)
+        }
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>7</code></p>
+                        <p><strong>Почему:</strong></p>
+                        <ol>
+                            <li><code>a = 5</code>, <code>b = 3</code>, <code>c = 7</code></li>
+                            <li><code>a > b</code>? → <code>5 > 3</code>? → <code>true</code></li>
+                            <li>Входим в первый блок, проверяем <code>a > c</code>? → <code>5 > 7</code>? → <code>false</code></li>
+                            <li>Входим в <code>else</code>, выводим <code>c</code> → <code>7</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Принадлежность точки</span>
+            </div>
+            <div class="card-body">
+                <p>Точка <code>x</code> принадлежит отрезку <code>[-3, 1]</code> или <code>[5, 9]</code> (включая границы). Напиши условие для проверки.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">if (x >= -3 && x <= 1) || (x >= 5 && x <= 9) {
+    fmt.Println("YES")
+} else {
+    fmt.Println("NO")
+}</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong></p>
+                        <ul>
+                            <li>Для каждого отрезка нужно <code>&&</code> (оба условия)</li>
+                            <li>Между отрезками нужно <code>||</code> (любой из них)</li>
+                            <li>Скобки для явности</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Весовая категория</span>
+            </div>
+            <div class="card-body">
+                <p>По весу боксёра определи категорию:</p>
+                <ul>
+                    <li>до 60 кг — "Легкий вес"</li>
+                    <li>от 60 до 64 кг (не включая 64) — "Первый полусредний вес"</li>
+                    <li>от 64 до 69 кг (не включая 69) — "Полусредний вес"</li>
+                </ul>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">if weight < 60 {
+    fmt.Println("Легкий вес")
+} else if weight < 64 {
+    fmt.Println("Первый полусредний вес")
+} else if weight < 69 {
+    fmt.Println("Полусредний вес")
+}</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong></p>
+                        <ul>
+                            <li>Порядок от строгих к менее строгим</li>
+                            <li>Если <code>weight < 60</code> ложно, значит <code>weight >= 60</code> — проверять это явно не нужно</li>
+                            <li>Аналогично для следующих условий</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">04</span>
+                <span class="card-title">Количество равных</span>
+            </div>
+            <div class="card-body">
+                <p>Три числа. Выведи:</p>
+                <ul>
+                    <li><code>3</code> если все равны</li>
+                    <li><code>2</code> если два равны</li>
+                    <li><code>0</code> если все разные</li>
+                </ul>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">var a, b, c int
+fmt.Scan(&a, &b, &c)
+
+if a == b && b == c {
+    fmt.Println(3)
+} else if a == b || b == c || a == c {
+    fmt.Println(2)
+} else {
+    fmt.Println(0)
+}</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong></p>
+                        <ul>
+                            <li>Сначала проверяем самое строгое условие (все три равны)</li>
+                            <li>Потом менее строгое (хотя бы два равны)</li>
+                            <li>Если ни одно не подошло — все разные</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2 id="summary">РЕЗЮМЕ</h2>
+
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-badge">Key</span>
+                <span class="summary-title">Ключевые идеи</span>
+            </div>
+            <ul class="summary-list">
+                <li><code>else if</code> позволяет проверять несколько взаимоисключающих условий</li>
+                <li>Как только одно условие истинно — остальные не проверяются</li>
+                <li>Порядок условий важен: от строгих к менее строгим</li>
+                <li>Последний <code>else</code> ловит все оставшиеся случаи — условие не нужно</li>
+            </ul>
+        </div>
+
+        <p><strong>Главная ловушка:</strong> неправильный порядок условий (менее строгое первым)</p>
+
+        <blockquote>
+            <p><strong>Правило:</strong> Располагай условия от строгих к менее строгим</p>
+        </blockquote>
+
+        <nav class="nav-footer">
+            <a href="02-logical-operators.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">Логические операторы</div>
+                </div>
+            </a>
+            <a href="04-switch-case.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">switch-case</div>
+                </div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (scrollY >= s.offsetTop - 100) current = s.id;
+        });
+        links.forEach(l => {
+            l.classList.remove('active');
+            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fallthrough — Условия в Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .logo span { color: var(--accent-green); }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-menu a:hover { color: var(--text-primary); }
+        /* Used by HTML — current page indicator */
+        .nav-menu a.current { color: var(--text-primary); }
+
+        .header-right { display: flex; align-items: center; gap: 16px; }
+
+        .progress-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 16px;
+        }
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .progress-track {
+            width: 80px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .layout {
+            display: flex;
+            padding-top: 56px;
+        }
+
+        .sidebar {
+            width: 280px;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 32px 20px;
+            overflow-y: auto;
+        }
+
+        .course-info {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .course-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+        }
+        .course-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .course-progress {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .toc-section { margin-bottom: 24px; }
+        .toc-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .toc-list {
+            list-style: none;
+        }
+        .toc-list li { margin-bottom: 4px; }
+        .toc-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .toc-list a:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active {
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.06);
+        }
+        .toc-num {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+
+        main {
+            flex: 1;
+            margin-left: 280px;
+            max-width: 760px;
+            padding: 48px 64px 80px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .lead {
+            font-size: 19px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 56px 0 24px;
+        }
+        h2::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin: 40px 0 16px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 32px 0 12px;
+            color: var(--text-primary);
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        strong { color: var(--text-primary); font-weight: 600; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 24px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        .code-block code {
+            background: none;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .output-block {
+            margin: 16px 0 24px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 0 8px 8px 0;
+        }
+        .output-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .output-block code {
+            background: none;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .alert {
+            margin: 28px 0;
+            padding: 20px 24px 20px 48px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 16px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p { margin: 0; font-size: 15px; }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 8px;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 48px 0;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding-top: 4px;
+        }
+        .card-body { padding: 20px; }
+        .card-body p { margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 16px;
+        }
+        summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::before {
+            content: '→';
+            transition: transform 0.2s;
+        }
+        /* Used by HTML — details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        .answer {
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+        .answer p { margin: 0; font-size: 15px; }
+        .answer .code-block { margin: 12px 0; }
+
+        .summary-box {
+            margin: 40px 0;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08), rgba(42, 241, 107, 0.02));
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .summary-badge {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .summary-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(42, 241, 107, 0.1);
+            font-size: 15px;
+        }
+        .summary-list li:last-child { border-bottom: none; }
+
+        blockquote {
+            padding: 20px 24px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+            margin: 24px 0;
+        }
+        blockquote p {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            border-color: var(--border-light);
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow {
+            font-size: 20px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .nav-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar { display: none; }
+            main { margin-left: 0; max-width: 100%; padding: 40px 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            h1 { font-size: 28px; }
+            main { padding: 32px 20px; }
+            .nav-footer { flex-direction: column; }
+        }
+
+        @media print {
+            .sidebar, .header { display: none; }
+            main { margin-left: 0; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс по Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="progress-dot"></div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 3</div>
+            <div class="course-name">Условия</div>
+            <div class="course-progress">Урок 6 из 7</div>
+        </div>
+
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#default"><span class="toc-num">01</span>Поведение по умолчанию</a></li>
+                <li><a href="#fallthrough"><span class="toc-num">02</span>Ключевое слово</a></li>
+                <li><a href="#features"><span class="toc-num">03</span>Особенности</a></li>
+                <li><a href="#when"><span class="toc-num">04</span>Когда использовать</a></li>
+                <li><a href="#practice"><span class="toc-num">05</span>Проверь себя</a></li>
+                <li><a href="#summary"><span class="toc-num">06</span>Резюме</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс по Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">fallthrough</span>
+        </nav>
+
+        <h1>fallthrough</h1>
+        <p class="lead">Редкое, но полезное ключевое слово для "проваливания" в следующий case без проверки условия.</p>
+
+        <h2 id="default">Поведение switch по умолчанию</h2>
+
+        <p>В Go после выполнения блока <code>case</code> управление <strong>автоматически выходит</strong> из <code>switch</code>. Это отличается от некоторых других языков (C, Java), где нужно явно писать <code>break</code>.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    day := 2
+
+    switch day {
+    case 1:
+        fmt.Println("Понедельник")
+    case 2:
+        fmt.Println("Вторник")  // Выполнится только это
+    case 3:
+        fmt.Println("Среда")
+    }
+}</code></pre>
+        </div>
+
+        <div class="output-block">
+            <div class="output-label">Вывод</div>
+            <code>Вторник</code>
+        </div>
+
+        <p>После вывода "Вторник" <code>switch</code> завершается. Блок "Среда" <strong>не выполняется</strong>.</p>
+
+        <h2 id="fallthrough">Ключевое слово fallthrough</h2>
+
+        <p>Иногда нужно, чтобы после выполнения одного <code>case</code> управление <strong>перешло</strong> в следующий. Для этого используется <code>fallthrough</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    day := 2
+
+    switch day {
+    case 1:
+        fmt.Println("Понедельник")
+    case 2:
+        fmt.Println("Вторник")
+        fallthrough  // &lt;-- перейти к следующему case
+    case 3:
+        fmt.Println("Среда")
+    }
+}</code></pre>
+        </div>
+
+        <div class="output-block">
+            <div class="output-label">Вывод</div>
+            <code>Вторник<br>Среда</code>
+        </div>
+
+        <p><code>fallthrough</code> заставляет выполнить <strong>следующий блок</strong> <code>case</code>, независимо от его условия.</p>
+
+        <h2 id="features">Особенности fallthrough</h2>
+
+        <h3>1. fallthrough безусловный</h3>
+
+        <p><code>fallthrough</code> выполняет следующий блок <strong>без проверки условия</strong>:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 5
+
+    switch x {
+    case 5:
+        fmt.Println("Пять")
+        fallthrough
+    case 10:
+        fmt.Println("Десять")  // Выполнится, хотя x != 10
+    case 15:
+        fmt.Println("Пятнадцать")
+    }
+}</code></pre>
+        </div>
+
+        <div class="output-block">
+            <div class="output-label">Вывод</div>
+            <code>Пять<br>Десять</code>
+        </div>
+
+        <p>Блок <code>case 10</code> выполнился, хотя <code>x != 10</code>. <code>fallthrough</code> <strong>не проверяет</strong> условие следующего <code>case</code>.</p>
+
+        <h3>2. fallthrough только в конце блока</h3>
+
+        <p><code>fallthrough</code> должен быть <strong>последней инструкцией</strong> в блоке <code>case</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// ✅ Правильно
+case 1:
+    fmt.Println("Один")
+    fallthrough
+
+// ❌ Ошибка компиляции
+case 1:
+    fallthrough
+    fmt.Println("Один")  // Код после fallthrough</code></pre>
+        </div>
+
+        <h3>3. fallthrough не работает в последнем case/default</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// ❌ Ошибка: некуда "проваливаться"
+switch x {
+case 1:
+    fmt.Println("Один")
+default:
+    fmt.Println("Другое")
+    fallthrough  // Ошибка!
+}</code></pre>
+        </div>
+
+        <h2 id="when">Когда использовать fallthrough?</h2>
+
+        <p><code>fallthrough</code> используется <strong>редко</strong>. В большинстве случаев можно обойтись объединением <code>case</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Вместо fallthrough — объединение case
+switch day {
+case "Суббота", "Воскресенье":
+    fmt.Println("Выходной")
+}</code></pre>
+        </div>
+
+        <p><strong>Используй fallthrough когда:</strong></p>
+        <ul>
+            <li>Нужно выполнить <strong>разный код</strong> в нескольких <code>case</code>, но с общим продолжением</li>
+            <li>Логика требует "накопительного" поведения</li>
+        </ul>
+
+        <p><strong>Не используй fallthrough когда:</strong></p>
+        <ul>
+            <li>Нужно просто объединить несколько значений — используй запятую</li>
+            <li>Можно обойтись <code>if-else</code></li>
+        </ul>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <div class="alert-label">Tip</div>
+            <p>Если в коде много <code>fallthrough</code>, вероятно, стоит переписать логику с помощью <code>if-else</code> или функций.</p>
+        </div>
+
+        <h2 id="practice">Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что делает fallthrough?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><code>fallthrough</code> заставляет выполнить следующий блок <code>case</code> после текущего, <strong>без проверки его условия</strong>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Нужно ли писать break в конце case в Go?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Нет. В Go <code>switch</code> автоматически выходит после выполнения блока <code>case</code>. <code>break</code> не нужен (он есть, но используется для других целей — выход из циклов).</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Проверяется ли условие следующего case при fallthrough?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Нет. <code>fallthrough</code> выполняет следующий блок <strong>безусловно</strong>, независимо от того, подходит ли значение под <code>case</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    n := 1
+
+    switch n {
+    case 1:
+        fmt.Print("A")
+        fallthrough
+    case 2:
+        fmt.Print("B")
+        fallthrough
+    case 3:
+        fmt.Print("C")
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>ABC</code></p>
+                        <p><strong>Почему:</strong></p>
+                        <ol>
+                            <li><code>n = 1</code>, срабатывает <code>case 1</code></li>
+                            <li>Выводим <code>A</code>, затем <code>fallthrough</code></li>
+                            <li>Переходим в <code>case 2</code>, выводим <code>B</code>, затем <code>fallthrough</code></li>
+                            <li>Переходим в <code>case 3</code>, выводим <code>C</code></li>
+                            <li><code>switch</code> завершается</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+
+    switch x {
+    case 5:
+        fmt.Print("5")
+        fallthrough
+    case 10:
+        fmt.Print("10")
+    case 15:
+        fmt.Print("15")
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>10</code></p>
+                        <p><strong>Почему:</strong></p>
+                        <ol>
+                            <li><code>x = 10</code>, <code>case 5</code> не подходит</li>
+                            <li><code>case 10</code> подходит, выводим <code>10</code></li>
+                            <li>Нет <code>fallthrough</code>, <code>switch</code> завершается</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Что выведет код? (накопительный доступ)</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    level := 1
+
+    switch level {
+    case 1:
+        fmt.Println("Доступ к базе")
+        fallthrough
+    case 2:
+        fmt.Println("Доступ к API")
+        fallthrough
+    case 3:
+        fmt.Println("Полный доступ")
+    }
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <p><code>Доступ к базе<br>Доступ к API<br>Полный доступ</code></p>
+                        <p><strong>Почему:</strong> Это пример "накопительного" поведения — уровень 1 получает все три уровня доступа благодаря цепочке <code>fallthrough</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2 id="summary">Резюме</h2>
+
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-badge">Key</span>
+                <span class="summary-title">Ключевые идеи</span>
+            </div>
+            <ul class="summary-list">
+                <li>В Go <code>switch</code> автоматически выходит после <code>case</code> — <code>break</code> не нужен</li>
+                <li><code>fallthrough</code> заставляет выполнить следующий блок без проверки условия</li>
+                <li><code>fallthrough</code> должен быть последней инструкцией в блоке</li>
+                <li>Используется редко — чаще можно объединить <code>case</code> через запятую</li>
+            </ul>
+        </div>
+
+        <blockquote>
+            <p><strong>Правило:</strong> Избегай <code>fallthrough</code>, если можно объединить <code>case</code> через запятую</p>
+        </blockquote>
+
+        <nav class="nav-footer">
+            <a href="05-switch-true.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">switch без выражения</div>
+                </div>
+            </a>
+            <a href="07-practice.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">Практика условий</div>
+                </div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (scrollY >= s.offsetTop - 100) current = s.id;
+        });
+        links.forEach(l => {
+            l.classList.remove('active');
+            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

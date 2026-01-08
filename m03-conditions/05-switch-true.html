@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>switch без выражения — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root { --bg-primary: #070709; --bg-secondary: #0d0d0f; --bg-tertiary: #111113; --text-primary: #ffffff; --text-secondary: #dddddd; --text-muted: #a7a7a7; --border-color: #1a1a1c; --border-light: #363636; --accent-green: #2af16b; --accent-orange: #f1a12a; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; line-height: 1.65; color: var(--text-primary); background-color: var(--bg-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 100; }
+        .logo { font-size: 18px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .logo span { color: var(--accent-green); }
+        .nav-menu { display: flex; gap: 32px; }
+        .nav-menu a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-menu a:hover, .nav-menu a.current { color: var(--text-primary); }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .progress-pill { display: flex; align-items: center; gap: 12px; padding: 6px 14px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px; }
+        .progress-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .progress-track { width: 80px; height: 4px; background: var(--border-color); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0; background: var(--accent-green); border-radius: 2px; transition: width 0.3s; }
+        .layout { display: flex; padding-top: 56px; min-height: 100vh; }
+        .sidebar { width: 280px; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; background: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 32px 24px; flex-shrink: 0; }
+        .course-info { margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color); }
+        .course-tag { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); margin-bottom: 8px; }
+        .course-name { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .course-progress { font-size: 13px; color: var(--text-muted); }
+        .toc-section { margin-bottom: 24px; }
+        .toc-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 4px; }
+        .toc-list a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: var(--text-secondary); text-decoration: none; font-size: 14px; border-radius: 6px; transition: all 0.2s; }
+        .toc-list a:hover { background: rgba(255,255,255,0.03); color: var(--text-primary); }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active { color: var(--accent-green); background: rgba(42, 241, 107, 0.06); }
+        .toc-num { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 40px 80px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; font-size: 13px; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+        h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+        .lead { font-size: 19px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 48px; }
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 56px 0 24px; scroll-margin-top: 80px; }
+        h2::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 2px; }
+        h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin: 32px 0 16px; scroll-margin-top: 80px; }
+        p { font-size: 17px; line-height: 1.75; color: var(--text-secondary); margin-bottom: 20px; }
+        ul, ol { margin: 0 0 20px 24px; color: var(--text-secondary); }
+        li { margin-bottom: 8px; line-height: 1.7; }
+        .code-block { margin: 24px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
+        .alert { margin: 28px 0; padding: 20px 24px 20px 48px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
+        .alert-icon { position: absolute; left: 16px; top: 20px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 12px; font-weight: 700; }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert p { margin: 0; font-size: 15px; }
+        .card { margin: 20px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 20px; }
+        .card-body p { margin-bottom: 12px; }
+        .card-body p:last-child { margin-bottom: 0; }
+        details { margin-top: 16px; }
+        details summary { cursor: pointer; color: var(--accent-green); font-size: 14px; font-weight: 500; padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        details summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+        /* Used by HTML — details open state */
+        details[open] summary::before { transform: rotate(90deg); }
+        details summary::-webkit-details-marker { display: none; }
+        .answer { margin-top: 12px; padding: 16px; background: rgba(42, 241, 107, 0.03); border-radius: 6px; border-left: 2px solid var(--accent-green); }
+        .answer p { font-size: 15px; color: var(--text-secondary); }
+        .summary-box { margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 12px; }
+        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .summary-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 10px; background: var(--accent-green); color: var(--bg-primary); border-radius: 4px; }
+        .summary-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 20px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 8px; }
+        blockquote { margin: 24px 0; padding: 20px 24px; background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%); border-left: 2px solid var(--accent-green); border-radius: 0 6px 6px 0; }
+        blockquote p { font-size: 16px; font-weight: 500; color: var(--text-primary); margin: 0; }
+        .nav-footer { display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border-color); gap: 20px; }
+        .nav-link { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: all 0.2s; flex: 1; max-width: 48%; }
+        .nav-link:hover { border-color: var(--border-light); background: var(--bg-tertiary); }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 20px; color: var(--accent-green); }
+        .nav-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .nav-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+        @media (max-width: 1100px) { .sidebar { display: none; } main { max-width: 100%; padding: 40px 32px; } }
+        @media (max-width: 768px) { .nav-menu { display: none; } h1 { font-size: 28px; } main { padding: 32px 20px; } .nav-footer { flex-direction: column; } .nav-link { max-width: 100%; } }
+        @media print { .sidebar, .header { display: none; } body { background: white; color: black; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 3</div>
+            <div class="course-name">Условия</div>
+            <div class="course-progress">Урок 5 из 7</div>
+        </div>
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#problem"><span class="toc-num">01</span>Проблема</a></li>
+                <li><a href="#syntax"><span class="toc-num">02</span>switch без выражения</a></li>
+                <li><a href="#compare"><span class="toc-num">03</span>Сравнение с if</a></li>
+                <li><a href="#trap"><span class="toc-num">04</span>Ловушка</a></li>
+                <li><a href="#check"><span class="toc-num">05</span>Проверь себя</a></li>
+                <li><a href="#summary"><span class="toc-num">06</span>Резюме</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">switch без выражения</span>
+        </nav>
+
+        <h1>switch без выражения</h1>
+        <p class="lead">Проверяем диапазоны и сложные условия с помощью switch.</p>
+
+        <h2 id="problem">ПРОБЛЕМА: ДИАПАЗОНЫ В SWITCH</h2>
+
+        <p>В прошлом уроке мы узнали, что обычный <code>switch</code> работает только с <strong>конкретными значениями</strong>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ✅ Работает
+switch month {
+case 1, 2, 3:
+    fmt.Println("Первый квартал")
+}
+
+// ❌ Не работает
+switch score {
+case score >= 90:  // Ошибка!
+    fmt.Println("Отлично")
+}</code></pre>
+        </div>
+
+        <p>Но иногда нужно проверить <strong>диапазоны</strong> или <strong>сложные условия</strong>. Для этого в Go есть <code>switch</code> без выражения.</p>
+
+        <h2 id="syntax">SWITCH БЕЗ ВЫРАЖЕНИЯ (SWITCH TRUE)</h2>
+
+        <p>Если не указать выражение после <code>switch</code>, он работает как цепочка <code>if-else if</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var score int
+    fmt.Scan(&score)
+
+    switch {  // &lt;-- нет выражения после switch
+    case score >= 90:
+        fmt.Println("Отлично")
+    case score >= 75:
+        fmt.Println("Хорошо")
+    case score >= 60:
+        fmt.Println("Удовлетворительно")
+    default:
+        fmt.Println("Неудовлетворительно")
+    }
+}</code></pre>
+        </div>
+
+        <p><strong>Как это работает:</strong></p>
+        <ol>
+            <li>Каждый <code>case</code> содержит <strong>логическое выражение</strong></li>
+            <li>Проверяются по порядку сверху вниз</li>
+            <li>Первый <code>case</code> с результатом <code>true</code> выполняется</li>
+            <li>Остальные <code>case</code> пропускаются</li>
+        </ol>
+
+        <p>Это <strong>эквивалентно</strong> записи <code>switch true { ... }</code> — каждый <code>case</code> сравнивается с <code>true</code>.</p>
+
+        <h2 id="compare">СРАВНЕНИЕ С IF-ELSE</h2>
+
+        <p><code>switch</code> без выражения — альтернативный синтаксис для цепочки <code>if-else if</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// С помощью if-else
+if score >= 90 {
+    fmt.Println("Отлично")
+} else if score >= 75 {
+    fmt.Println("Хорошо")
+} else if score >= 60 {
+    fmt.Println("Удовлетворительно")
+} else {
+    fmt.Println("Неудовлетворительно")
+}
+
+// С помощью switch без выражения
+switch {
+case score >= 90:
+    fmt.Println("Отлично")
+case score >= 75:
+    fmt.Println("Хорошо")
+case score >= 60:
+    fmt.Println("Удовлетворительно")
+default:
+    fmt.Println("Неудовлетворительно")
+}</code></pre>
+        </div>
+
+        <p>Оба варианта делают одно и то же. Выбирай тот, который кажется более читаемым.</p>
+
+        <h3>Пример: возрастные группы</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var age int
+    fmt.Scan(&age)
+
+    switch {
+    case age <= 13:
+        fmt.Println("детство")
+    case age <= 24:
+        fmt.Println("молодость")
+    case age <= 59:
+        fmt.Println("зрелость")
+    default:
+        fmt.Println("старость")
+    }
+}</code></pre>
+        </div>
+
+        <p>При вводе <code>27</code>:</p>
+        <ol>
+            <li><code>27 <= 13</code>? Нет</li>
+            <li><code>27 <= 24</code>? Нет</li>
+            <li><code>27 <= 59</code>? <strong>Да</strong> → выводим "зрелость"</li>
+        </ol>
+
+        <h2 id="trap">ЛОВУШКА: ПОРЯДОК CASE ВАЖЕН!</h2>
+
+        <p>Как и в <code>if-else if</code>, порядок проверок имеет значение:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ❌ НЕПРАВИЛЬНО: первое условие всегда истинно для score >= 60
+switch {
+case score >= 60:
+    fmt.Println("Удовлетворительно")  // score = 95 попадёт сюда!
+case score >= 75:
+    fmt.Println("Хорошо")  // недостижимо для score >= 75
+case score >= 90:
+    fmt.Println("Отлично")  // недостижимо для score >= 90
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">// ✅ ПРАВИЛЬНО: от строгого к менее строгому
+switch {
+case score >= 90:
+    fmt.Println("Отлично")
+case score >= 75:
+    fmt.Println("Хорошо")
+case score >= 60:
+    fmt.Println("Удовлетворительно")
+default:
+    fmt.Println("Неудовлетворительно")
+}</code></pre>
+        </div>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <p>Располагай условия от <strong>строгих к менее строгим</strong> — сначала <code>>= 90</code>, потом <code>>= 75</code>, потом <code>>= 60</code>.</p>
+        </div>
+
+        <h3>Когда использовать switch без выражения</h3>
+
+        <p><strong>Используй switch без выражения когда:</strong></p>
+        <ul>
+            <li>Проверяешь диапазоны</li>
+            <li>Условия сложные (несколько переменных)</li>
+            <li>Много веток (4+) — код читается легче</li>
+        </ul>
+
+        <p><strong>Используй обычный switch когда:</strong></p>
+        <ul>
+            <li>Сравниваешь с конкретными значениями</li>
+            <li>Значения можно перечислить</li>
+        </ul>
+
+        <p><strong>Используй if-else когда:</strong></p>
+        <ul>
+            <li>2-3 простых условия</li>
+            <li>Условия очень разные по структуре</li>
+        </ul>
+
+        <h2 id="check">ПРОВЕРЬ СЕБЯ</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Чем switch без выражения отличается от обычного switch?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>В обычном <code>switch</code> сравнивается <strong>значение переменной</strong> с конкретными значениями в <code>case</code>.</p>
+                        <p>В <code>switch</code> без выражения каждый <code>case</code> содержит <strong>логическое выражение</strong>, которое проверяется на истинность.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что означает switch { ?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Это <code>switch</code> без выражения (эквивалентно <code>switch true</code>). Каждый <code>case</code> проверяется как логическое условие, первый истинный выполняется.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Почему важен порядок case в switch без выражения?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Потому что проверки идут сверху вниз, и первый истинный <code>case</code> выполняется. Если менее строгое условие стоит выше, более строгие никогда не сработают.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Оценка по баллам</span></div>
+            <div class="card-body">
+                <p>Напиши программу с <code>switch</code> без выражения: 90-100 → "5", 80-89 → "4", 70-79 → "3", 60-69 → "2", 0-59 → "1"</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var score int
+    fmt.Scan(&score)
+
+    switch {
+    case score >= 90:
+        fmt.Println("5")
+    case score >= 80:
+        fmt.Println("4")
+    case score >= 70:
+        fmt.Println("3")
+    case score >= 60:
+        fmt.Println("2")
+    default:
+        fmt.Println("1")
+    }
+}</code></pre></div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет при вводе 85?</span></div>
+            <div class="card-body">
+                <div class="code-block"><div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var score int
+    fmt.Scan(&score)
+
+    switch {
+    case score >= 60:
+        fmt.Println("Зачёт")
+    case score >= 90:
+        fmt.Println("Отлично")
+    default:
+        fmt.Println("Незачёт")
+    }
+}</code></pre></div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>Зачёт</code></p>
+                        <p><strong>Почему:</strong></p>
+                        <ol>
+                            <li><code>score = 85</code></li>
+                            <li>Проверяем <code>85 >= 60</code>? <strong>Да</strong> → выводим "Зачёт"</li>
+                            <li>Остальные <code>case</code> не проверяются</li>
+                        </ol>
+                        <p><strong>Проблема:</strong> условие <code>score >= 90</code> никогда не выполнится, потому что любое число >= 90 также >= 60, и первый <code>case</code> сработает раньше.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Исправь ошибку</span></div>
+            <div class="card-body">
+                <p>Программа должна выводить "Отлично" для оценок 90+, "Хорошо" для 70-89, "Плохо" для остальных. Исправь порядок:</p>
+                <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">switch {
+case score >= 70:
+    fmt.Println("Хорошо")
+case score >= 90:
+    fmt.Println("Отлично")
+default:
+    fmt.Println("Плохо")
+}</code></pre></div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">switch {
+case score >= 90:
+    fmt.Println("Отлично")
+case score >= 70:
+    fmt.Println("Хорошо")
+default:
+    fmt.Println("Плохо")
+}</code></pre></div>
+                        <p><strong>Порядок:</strong> сначала проверяем <code>>= 90</code>, потом <code>>= 70</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Знак числа</span></div>
+            <div class="card-body">
+                <p>Используя <code>switch</code> без выражения, напиши программу, которая выводит: <code>1</code> если число положительное, <code>-1</code> если отрицательное, <code>0</code> если равно нулю.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block"><div class="code-header"><span class="code-lang">Go</span></div><pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var x int
+    fmt.Scan(&x)
+
+    switch {
+    case x > 0:
+        fmt.Println(1)
+    case x < 0:
+        fmt.Println(-1)
+    default:
+        fmt.Println(0)
+    }
+}</code></pre></div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2 id="summary">РЕЗЮМЕ</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li><code>switch {</code> (без выражения) позволяет использовать логические условия в <code>case</code></li>
+                <li>Работает как цепочка <code>if-else if-else</code></li>
+                <li>Порядок <code>case</code> критически важен — от строгих к менее строгим</li>
+                <li>Выбирай между <code>switch</code> и <code>if-else</code> по читаемости кода</li>
+            </ul>
+        </div>
+
+        <p><strong>Главная ловушка:</strong> неправильный порядок условий</p>
+
+        <blockquote><p><strong>Правило:</strong> В <code>switch</code> без выражения располагай условия от строгих к менее строгим</p></blockquote>
+
+        <nav class="nav-footer">
+            <a href="04-switch-case.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">switch-case</div></div>
+            </a>
+            <a href="06-fallthrough.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">fallthrough</div></div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (scrollY >= s.offsetTop - 100) current = s.id; });
+        links.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + current) l.classList.add('active'); });
+    });
+</script>
+
+</body>
+</html>

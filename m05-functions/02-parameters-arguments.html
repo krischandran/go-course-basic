@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Параметры и аргументы — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .logo span { color: var(--accent-green); }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+        }
+        .nav-menu a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-menu a:hover,
+        .nav-menu a.current { color: var(--text-primary); }
+
+        .header-right { display: flex; align-items: center; gap: 16px; }
+
+        .progress-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-tertiary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .progress-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .progress-track {
+            width: 100px;
+            height: 4px;
+            background: var(--bg-primary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .layout {
+            display: flex;
+            padding-top: 56px;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 32px 20px;
+            position: sticky;
+            top: 56px;
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+        }
+
+        .course-info {
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        .course-tag {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+        }
+        .course-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .course-progress {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .toc-section { margin-bottom: 24px; }
+        .toc-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .toc-list {
+            list-style: none;
+        }
+        .toc-list li { margin-bottom: 4px; }
+        .toc-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .toc-list a:hover {
+            background: rgba(255,255,255,0.04);
+            color: var(--text-primary);
+        }
+        /* Used by JS — TOC active state on scroll */
+        .toc-list a.active {
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.06);
+        }
+        .toc-num {
+            font-size: 11px;
+            font-weight: 600;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        /* Used by JS — TOC number active state */
+        .toc-list a.active .toc-num {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+
+        main {
+            flex: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 48px 40px 80px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover { color: var(--accent-green); }
+        .breadcrumb-sep { color: var(--border-light); }
+        .breadcrumb-current { color: var(--text-secondary); }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .lead {
+            font-size: 19px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 56px 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h2::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin: 32px 0 16px;
+            color: var(--text-primary);
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        ul, ol {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; }
+
+        .code-block {
+            margin: 24px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .output-block {
+            margin: 16px 0 24px;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 15px;
+        }
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 14px 16px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent-green);
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .alert {
+            margin: 28px 0;
+            padding: 20px 24px 20px 48px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 16px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p { margin-bottom: 0; }
+
+        .card {
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-size: 14px;
+            font-weight: 700;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-body pre {
+            margin: 0 0 16px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .card-body code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        details {
+            margin-top: 16px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        details summary::before {
+            content: '>';
+            font-family: 'JetBrains Mono', monospace;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML — details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        .answer {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+        }
+        .answer p { margin-bottom: 12px; }
+        .answer p:last-child { margin-bottom: 0; }
+
+        blockquote {
+            margin: 28px 0;
+            padding: 20px 24px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0;
+        }
+
+        .summary-box {
+            margin: 32px 0;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .summary-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 4px 10px;
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            list-style: none;
+            margin-top: 12px;
+            padding-left: 0;
+        }
+        .summary-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+        .summary-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+            max-width: 45%;
+        }
+        .nav-link:hover {
+            border-color: var(--border-light);
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev { text-align: left; }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow {
+            font-size: 20px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .nav-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar { display: none; }
+            main { max-width: 100%; padding: 40px 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            h1 { font-size: 28px; }
+            main { padding: 32px 20px; }
+            .nav-footer { flex-direction: column; gap: 12px; }
+            .nav-link { max-width: 100%; }
+        }
+
+        @media print {
+            .sidebar, .header { display: none; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">course<span>.</span>go</a>
+    <nav class="nav-menu">
+        <a href="#">Курсы</a>
+        <a href="#" class="current">Вводный курс Go</a>
+        <a href="#">О проекте</a>
+    </nav>
+    <div class="header-right">
+        <div class="progress-pill">
+            <span class="progress-label">Прогресс</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <div class="progress-dot"></div>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="course-info">
+            <div class="course-tag">Модуль 5</div>
+            <div class="course-name">Функции</div>
+            <div class="course-progress">Урок 2 из 12</div>
+        </div>
+
+        <div class="toc-section">
+            <div class="toc-title">Содержание</div>
+            <ul class="toc-list">
+                <li><a href="#ogranicheniye"><span class="toc-num">01</span>Ограничение простых функций</a></li>
+                <li><a href="#parametry"><span class="toc-num">02</span>Параметры на самом деле</a></li>
+                <li><a href="#sintaksis"><span class="toc-num">03</span>Синтаксис</a></li>
+                <li><a href="#poryadok"><span class="toc-num">04</span>Порядок аргументов</a></li>
+                <li><a href="#tipy"><span class="toc-num">05</span>Типы должны совпадать</a></li>
+                <li><a href="#peredacha"><span class="toc-num">06</span>Передача по значению</a></li>
+                <li><a href="#proverka"><span class="toc-num">07</span>Проверь себя</a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main>
+        <nav class="breadcrumb">
+            <a href="#">Курсы</a>
+            <span class="breadcrumb-sep">/</span>
+            <a href="#">Вводный курс Go</a>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current">Параметры и аргументы</span>
+        </nav>
+
+        <h1>Параметры и аргументы</h1>
+        <p class="lead">Параметры позволяют передавать данные в функцию извне, делая её гибкой и переиспользуемой для разных входных значений.</p>
+
+        <h2 id="ogranicheniye">Ограничение простых функций</h2>
+
+        <p>В прошлом уроке функция <code>printGreeting</code> сама читала имя пользователя:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">func printGreeting() {
+    var name string
+    fmt.Scan(&name)
+    fmt.Println("Привет,", name)
+}</code></pre>
+        </div>
+
+        <p>Проблема: имя пользователя <strong>застревает</strong> внутри функции. Мы не можем использовать его в <code>main</code> или передать уже известное имя.</p>
+
+        <p>Решение — <strong>параметры</strong>. Они позволяют передавать данные в функцию извне.</p>
+
+        <h2 id="parametry">Параметры на самом деле</h2>
+
+        <h3>Что такое параметр</h3>
+
+        <p><strong>Параметр</strong> — это переменная, которая объявляется в круглых скобках функции и получает значение при вызове.</p>
+
+        <div class="info-box">
+            <div class="info-row"><code>name</code> — имя параметра</div>
+            <div class="info-row"><code>string</code> — тип параметра</div>
+            <div class="info-row">Параметр = переменная внутри функции, значение которой задаётся при вызове</div>
+        </div>
+
+        <h3>Что такое аргумент</h3>
+
+        <p><strong>Аргумент</strong> — это конкретное значение, которое передаётся в функцию при вызове.</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">printName("Алексей")  // "Алексей" — аргумент</code></pre>
+        </div>
+
+        <h3>Параметр vs Аргумент</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Термин</th>
+                    <th>Где</th>
+                    <th>Что это</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Параметр</td>
+                    <td>В объявлении функции</td>
+                    <td>Переменная, ожидающая значение</td>
+                </tr>
+                <tr>
+                    <td>Аргумент</td>
+                    <td>При вызове функции</td>
+                    <td>Конкретное значение</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="sintaksis">Синтаксис функции с параметрами</h2>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">func имяФункции(параметр1 тип1, параметр2 тип2) {
+    // тело функции
+}</code></pre>
+        </div>
+
+        <h3>Один параметр</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    printGreeting("Алексей")
+    printGreeting("Мария")
+}
+
+func printGreeting(name string) {
+    fmt.Println("Привет,", name, "!")
+}</code></pre>
+        </div>
+
+        <div class="output-block">Привет, Алексей !<br>Привет, Мария !</div>
+
+        <h3>Несколько параметров</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    printUserInfo("Алексей", 25)
+}
+
+func printUserInfo(name string, age int) {
+    fmt.Println("Имя:", name)
+    fmt.Println("Возраст:", age)
+}</code></pre>
+        </div>
+
+        <div class="output-block">Имя: Алексей<br>Возраст: 25</div>
+
+        <h3>Сокращённая запись для одинаковых типов</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Полная запись
+func printFullName(firstName string, lastName string) {
+    fmt.Println(firstName, lastName)
+}
+
+// Сокращённая запись
+func printFullName(firstName, lastName string) {
+    fmt.Println(firstName, lastName)
+}</code></pre>
+        </div>
+
+        <h2 id="poryadok">Порядок аргументов</h2>
+
+        <p>При вызове аргументы передаются <strong>в том же порядке</strong>, в каком объявлены параметры.</p>
+
+        <h3>Ловушка: перепутанный порядок</h3>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">firstName := "Иван"
+lastName := "Иванов"
+
+// Неправильный порядок!
+printFullName(lastName, firstName)</code></pre>
+        </div>
+
+        <p>Компилятор не поймёт ошибку — типы совпадают. Логика программы будет неверной.</p>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <p>Всегда проверяйте порядок аргументов при вызове функции. Компилятор проверяет только типы, но не смысл.</p>
+        </div>
+
+        <h2 id="tipy">Типы аргументов должны совпадать</h2>
+
+        <p>Go строго проверяет типы. Тип аргумента должен совпадать с типом параметра:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">func printAge(age int) {
+    fmt.Println("Возраст:", age)
+}
+
+func main() {
+    printAge(25)      // OK: int
+    printAge("25")    // Ошибка компиляции: string != int
+}</code></pre>
+        </div>
+
+        <h2 id="peredacha">Передача по значению</h2>
+
+        <p>Для базовых типов (<code>int</code>, <code>string</code>, <code>bool</code>, <code>float64</code>) Go передаёт <strong>копию</strong> значения в функцию. Изменение параметра внутри функции <strong>не влияет</strong> на оригинал:</p>
+
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+    fmt.Println("До вызова:", x)
+
+    tryToChange(x)
+
+    fmt.Println("После вызова:", x)
+}
+
+func tryToChange(value int) {
+    value = 100
+    fmt.Println("Внутри функции:", value)
+}</code></pre>
+        </div>
+
+        <div class="output-block">До вызова: 10<br>Внутри функции: 100<br>После вызова: 10</div>
+
+        <p>Функция изменила свою <strong>копию</strong> <code>value</code>, но оригинальная переменная <code>x</code> осталась неизменной.</p>
+
+        <h2 id="proverka">Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Чем отличается параметр от аргумента?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>Параметр</strong> — переменная в объявлении функции, ожидающая значение. <strong>Аргумент</strong> — конкретное значение, передаваемое при вызове функции.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Что произойдёт, если передать аргумент не того типа?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Ошибка компиляции. Go строго проверяет типы — тип аргумента должен точно соответствовать типу параметра. Автоматического преобразования нет.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Изменится ли значение переменной в main, если изменить параметр внутри функции?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Нет. Для базовых типов передаётся <strong>копия</strong> значения. Изменение копии внутри функции не влияет на оригинал.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    printSum(3, 5)
+}
+
+func printSum(a, b int) {
+    fmt.Println(a + b)
+}</code></pre>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>8</code></p>
+                        <p>a получает значение 3, b получает значение 5. Выводится 3 + 5 = 8.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+    double(x)
+    fmt.Println(x)
+}
+
+func double(n int) {
+    n = n * 2
+}</code></pre>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>10</code></p>
+                        <p>Передаётся копия значения 10. Внутри функции n становится 20, но оригинальный x остаётся 10.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Что выведет код?</span>
+            </div>
+            <div class="card-body">
+                <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := "X"
+    b := "Y"
+    printTwo(b, a)
+}
+
+func printTwo(first, second string) {
+    fmt.Print(first, second)
+}</code></pre>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>YX</code></p>
+                        <p>Вызывается printTwo(b, a) — передаём "Y" и "X". first = "Y", second = "X".</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-badge">Резюме</span>
+                <span class="summary-title">Ключевые идеи</span>
+            </div>
+            <ul class="summary-list">
+                <li>Параметр — переменная в объявлении функции</li>
+                <li>Аргумент — значение, передаваемое при вызове</li>
+                <li>Порядок аргументов должен совпадать с порядком параметров</li>
+                <li>Базовые типы передаются по значению (копируются)</li>
+            </ul>
+        </div>
+
+        <blockquote>
+            <p><strong>Правило:</strong> Количество и типы аргументов должны точно соответствовать параметрам функции.</p>
+        </blockquote>
+
+        <nav class="nav-footer">
+            <a href="01-function-declaration.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">Объявление функций</div>
+                </div>
+            </a>
+            <a href="03-return-values.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">Возвращаемые значения</div>
+                </div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+</div>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+        document.getElementById('progress').style.width = p + '%';
+    });
+
+    const links = document.querySelectorAll('.toc-list a');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (scrollY >= s.offsetTop - 100) current = s.id;
+        });
+        links.forEach(l => {
+            l.classList.remove('active');
+            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
