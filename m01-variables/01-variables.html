@@ -22,7 +22,19 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
-            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            integrity="sha512-5gfPjEDH+HpGTr46p0e8XFOO5Uk8B3sKi+GlZmdxTA62R/GiI/GkDMt0vj/AUQWDQKE+GMa7U6Lzb3/3OLwzfg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"
+            integrity="sha512-z7G1wYFxZG44tU2WV+0KT5EOdI1wzNwQOzGxFvpqlpwpR8WPFh1HPMBM5w2sXlvz2E0D3VdBVGMY9/dDBRJPyQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"
+            integrity="sha512-Ivqt2+RNgfVliZo/Qo/QE3kgm3HzTmN9EJ2A5e2LCGCrPqurlnkrmf7AgvBfXUb6becs7W7e2SZRMoE9E/pK2w=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"
+            integrity="sha512-wfwdoL0x5zDxfPt1Rp4fA/jKJwPkip2g7m4ksGUvLC4p2D2csFP3uFF1ELLg2l7U8N6/JB2s+YBdl0NKbHzTYw=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer"></script>
 
@@ -38,7 +50,6 @@
             --border-light: #363636;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
-
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,18 +63,15 @@
             background-color: var(--bg-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            /* Safe area for notch devices */
             padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        /* Main content - no sidebar, no fixed header */
         main {
             max-width: 100%;
             padding: 16px;
             padding-bottom: calc(24px + env(safe-area-inset-bottom));
         }
 
-        /* Module badge */
         .module-badge {
             display: inline-block;
             font-size: 10px;
@@ -119,6 +127,13 @@
             letter-spacing: -0.01em;
             color: var(--text-primary);
             margin: 24px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
         }
 
         p {
@@ -206,6 +221,49 @@
             color: inherit;
         }
 
+        /* Variable box diagram */
+        .var-box-diagram {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .var-box {
+            border: 2px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 20px 40px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .var-box .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+        .var-box .value-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .var-labels {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+        .var-labels .name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .var-labels .type {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
         /* Memory diagram */
         .memory-diagram {
             margin: 20px 0;
@@ -225,6 +283,7 @@
             align-items: center;
             gap: 2px;
             margin-bottom: 8px;
+            overflow-x: auto;
         }
         .memory-cell {
             padding: 12px 16px;
@@ -235,6 +294,7 @@
             font-size: 14px;
             color: var(--text-muted);
             text-align: center;
+            min-width: 60px;
         }
         .memory-cell.highlight {
             background: rgba(42, 241, 107, 0.15);
@@ -273,6 +333,84 @@
             color: var(--accent-green);
             font-weight: 500;
             margin-top: 4px;
+        }
+
+        /* Scope diagram */
+        .scope-diagram {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+        .scope-level {
+            border-left: 3px solid var(--border-light);
+            padding-left: 16px;
+            margin: 8px 0 8px 8px;
+        }
+        .scope-level.package { border-color: var(--accent-green); }
+        .scope-level.func { border-color: var(--accent-orange); }
+        .scope-level.block { border-color: #6c5ce7; }
+        .scope-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .scope-code {
+            color: var(--text-primary);
+        }
+        .scope-comment {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Shadow diagram */
+        .shadow-diagram {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+        .shadow-state {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .shadow-label {
+            min-width: 120px;
+            color: var(--text-muted);
+        }
+        .shadow-value {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+        .shadow-box {
+            border: 2px dashed var(--accent-orange);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            background: rgba(241, 161, 42, 0.05);
+        }
+        .shadow-box-label {
+            font-size: 11px;
+            color: var(--accent-orange);
+            margin-bottom: 8px;
+        }
+        .shadow-arrow {
+            text-align: center;
+            color: var(--text-muted);
+            margin: 8px 0;
+        }
+        .shadow-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
         }
 
         .alert {
@@ -485,18 +623,6 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-        .summary-formula {
-            background: var(--bg-primary);
-            padding: 12px 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            border-radius: 6px;
-            border-left: 2px solid var(--accent-green);
-            white-space: pre-line;
-        }
         .summary-list {
             margin: 0;
             padding-left: 18px;
@@ -506,8 +632,11 @@
             margin-bottom: 6px;
             font-size: 14px;
         }
+        .summary-list .warning {
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
 
-        /* Navigation footer */
         .nav-footer {
             display: flex;
             flex-direction: column;
@@ -557,18 +686,53 @@
     <div class="module-badge">Модуль 1 / Урок 1</div>
 
     <h1>Переменные в Go</h1>
-    <p class="lead">На собеседованиях по переменным редко задают прямые вопросы - обычно дают код и просят найти ошибку или предсказать поведение. Чтобы уверенно отвечать, нужно понимать как Go работает с памятью.</p>
+
+    <!-- SECTION: Что спрашивают на собеседованиях -->
+    <h2 id="interviews">Что спрашивают на собеседованиях</h2>
+
+    <p>На собеседованиях по переменным редко задают прямые вопросы — обычно дают код и просят найти ошибку или предсказать поведение. Типичные ловушки:</p>
 
     <blockquote>
-        <p>"Что выведет этот код?" - и дальше shadowing или переопределение переменной.</p>
+        <p><strong>"Что выведет этот код?"</strong> — и дальше shadowing или переопределение переменной.</p>
     </blockquote>
 
-    <h2 id="memory">Что такое переменная на самом деле</h2>
+    <p>Чтобы уверенно отвечать, нужно понимать <strong>как Go работает с памятью</strong> и <strong>почему язык устроен именно так</strong>.</p>
 
-    <p>Переменная - это <strong>именованная область памяти</strong>. Когда ты пишешь <code>x := 42</code>, происходит следующее:</p>
+    <hr>
+
+    <!-- SECTION: Переменная — это ящик -->
+    <h2 id="variable-box">Переменная — это ящик</h2>
+
+    <p>Переменную можно представить как <strong>ящик для хранения</strong>. У ящика есть:</p>
+
+    <ul>
+        <li><strong>Имя</strong> — наклейка, по которой ты его находишь (<code>age</code>, <code>userName</code>, <code>isActive</code>)</li>
+        <li><strong>Тип</strong> — размер и форма ящика (что туда можно положить)</li>
+        <li><strong>Значение</strong> — то, что лежит внутри</li>
+    </ul>
+
+    <div class="var-box-diagram">
+        <div class="var-box">
+            <div class="value">42</div>
+            <div class="value-label">значение</div>
+        </div>
+        <div class="var-labels">
+            <div class="name">"age"</div>
+            <div class="type">тип: int — определяет размер и допустимые значения</div>
+        </div>
+    </div>
+
+    <p>Под каждый тип данных нужен свой ящик: ты не будешь хранить воду в картонной коробке, а документы — в ведре. Так и в Go — <code>int</code> хранит числа, <code>string</code> хранит текст, и смешивать нельзя.</p>
+
+    <hr>
+
+    <!-- SECTION: Что происходит в памяти -->
+    <h2 id="memory">Что происходит в памяти</h2>
+
+    <p>Когда ты пишешь <code>x := 42</code>, происходит следующее:</p>
 
     <ol>
-        <li>Go выделяет участок памяти (для <code>int</code> - 8 байт на 64-bit системе)</li>
+        <li>Go выделяет участок памяти (для <code>int</code> — 8 байт на 64-bit системе)</li>
         <li>Записывает туда значение <code>42</code></li>
         <li>Связывает имя <code>x</code> с адресом этой памяти</li>
     </ol>
@@ -579,13 +743,14 @@
             <div class="memory-cell">...</div>
             <div class="memory-cell highlight">
                 <span class="value">42</span>
-                <span class="size">8 байт</span>
-                <div class="memory-pointer">
-                    <span class="arrow">↑</span>
-                    <span class="name">имя "x"</span>
-                </div>
+                <span class="size">(8b)</span>
             </div>
             <div class="memory-cell">...</div>
+            <div class="memory-cell"></div>
+        </div>
+        <div class="memory-pointer">
+            <span class="arrow">^</span>
+            <span class="name">имя "x"</span>
         </div>
     </div>
 
@@ -593,39 +758,45 @@
 
     <h3>Почему это важно понимать?</h3>
 
-    <p>Потому что многие ошибки новичков связаны с непониманием того, <strong>что именно копируется</strong> при передаче переменных. Когда ты передаёшь <code>x</code> в функцию - копируется <strong>значение</strong>, а не сама переменная:</p>
+    <p>Потому что в Go переменные <strong>копируются</strong> при присваивании — изменение копии не влияет на оригинал:</p>
 
     <div class="code-block">
         <div class="code-header">
             <span class="code-lang">Go</span>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-        <pre><code class="language-go">func double(n int) {
-    n = n * 2  // меняем копию, не оригинал!
-}
+        <pre><code class="language-go">x := 10
+y := x    // y получает КОПИЮ значения x
+y = 20    // меняем y
 
-func main() {
-    x := 10
-    double(x)
-    fmt.Println(x)  // 10 - не изменился!
-}</code></pre>
+fmt.Println(x)  // 10 — x не изменился!
+fmt.Println(y)  // 20</code></pre>
     </div>
 
-    <p>В Go всё передаётся <strong>по значению</strong> (by value). Это фундаментальный принцип языка.</p>
+    <p>Это называется <strong>передача по значению</strong> (by value) — фундаментальный принцип Go.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Подробнее о передаче в функции изучим в модуле функций.</p>
+    </div>
 
     <hr>
 
-    <h2 id="static-typing">Статическая типизация</h2>
+    <!-- SECTION: Статическая типизация -->
+    <h2 id="static-typing">Статическая типизация: почему Go строгий</h2>
 
-    <p>Go - <strong>статически типизированный</strong> язык. Это значит, что тип переменной:</p>
+    <p>Go — <strong>статически типизированный</strong> язык. Это значит, что тип переменной:</p>
 
     <ol>
         <li>Определяется при объявлении</li>
         <li><strong>Не может измениться</strong> за всё время жизни переменной</li>
-        <li>Проверяется на этапе компиляции, а не выполнения</li>
+        <li>Проверяется <strong>компилятором</strong> (программа, которая переводит Go-код в исполняемый файл) до запуска</li>
     </ol>
 
     <h3>Сравнение с динамической типизацией</h3>
+
+    <p>В Python или JavaScript переменная — это просто "ярлык", который можно прицепить к любому объекту:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -636,30 +807,67 @@ func main() {
 x = 42          # x указывает на число
 x = "hello"     # теперь на строку
 x = [1, 2, 3]   # теперь на список
-# Всё работает</code></pre>
+# Всё работает — Python не проверяет типы</code></pre>
     </div>
+
+    <p>В Go переменная — это <strong>конкретная область памяти определённого размера</strong>:</p>
 
     <div class="code-block">
         <div class="code-header">
             <span class="code-lang">Go</span>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-        <pre><code class="language-go">// Go: переменная - это типизированная память
+        <pre><code class="language-go">// Go: переменная — это типизированная память
 x := 42          // выделено 8 байт под int
 // x = "hello"   // Ошибка: строка не влезет в 8 байт int'а!</code></pre>
+    </div>
+
+    <h3>Зачем такие ограничения?</h3>
+
+    <p><strong>1. Производительность.</strong> Компилятор знает точный размер каждой переменной и может оптимально разместить их в памяти. В Python каждая переменная — это объект с метаданными, что замедляет работу.</p>
+
+    <p><strong>2. Безопасность.</strong> Ошибки типов ловятся при компиляции, а не у пользователя в продакшене:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Go гарантирует типы при компиляции:
+var age int = 25
+var name string = "Alice"
+
+// age = name  // Ошибка компиляции! Нельзя присвоить string к int
+// Ошибка найдена ДО запуска программы</code></pre>
+    </div>
+
+    <p><strong>3. Читаемость.</strong> Типы переменных сразу видны в объявлении:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">var count int = 10
+var message string = "Hello"
+var ratio float64 = 0.75
+// Сразу понятно: число, текст, дробное число</code></pre>
     </div>
 
     <div class="alert alert-important">
         <div class="alert-icon">!</div>
         <div class="alert-label">Important</div>
-        <p>Go выбрал статическую типизацию ради <strong>надёжности и скорости</strong>. Если код скомпилировался - целый класс ошибок уже исключён.</p>
+        <p>Go выбрал статическую типизацию ради <strong>надёжности и скорости</strong>. Если код скомпилировался — целый класс ошибок уже исключён.</p>
     </div>
 
     <hr>
 
+    <!-- SECTION: Объявление переменных -->
     <h2 id="declaration">Объявление переменных: три способа</h2>
 
     <h3>Способ 1: var с типом</h3>
+
+    <p>Самый явный способ — указываем и тип, и значение:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -684,6 +892,8 @@ var smallFloat float32 = 3.14  // без float32 будет float64</code></pre>
 
     <h3>Способ 2: var с выводом типа</h3>
 
+    <p>Компилятор сам определит тип по значению:</p>
+
     <div class="code-block">
         <div class="code-header">
             <span class="code-lang">Go</span>
@@ -697,6 +907,8 @@ var pi = 3.14       // float64 (по умолчанию для дробных)</
     <p><strong>Когда использовать:</strong> на уровне пакета (вне функций), где <code>:=</code> не работает.</p>
 
     <h3>Способ 3: короткое объявление :=</h3>
+
+    <p>Самый частый способ внутри функций:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -714,6 +926,8 @@ isActive := true</code></pre>
         <li><strong>Присваивает</strong> ей значение</li>
     </ol>
 
+    <p><strong>Когда использовать:</strong> везде внутри функций, если не нужен особый тип.</p>
+
     <h3>Сравнение способов</h3>
 
     <table>
@@ -721,7 +935,7 @@ isActive := true</code></pre>
             <tr>
                 <th>Способ</th>
                 <th>Где работает</th>
-                <th>Когда</th>
+                <th>Когда использовать</th>
             </tr>
         </thead>
         <tbody>
@@ -743,9 +957,26 @@ isActive := true</code></pre>
         </tbody>
     </table>
 
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+var globalConfig = "production"  // var — на уровне пакета
+// globalConfig := "production"  // := не работает вне функций
+
+func main() {
+    localVar := 42  // := — внутри функции (предпочтительно)
+    var anotherVar = 42  // var — тоже работает, но длиннее
+}</code></pre>
+    </div>
+
     <hr>
 
-    <h2 id="zero-values">Нулевые значения</h2>
+    <!-- SECTION: Нулевые значения -->
+    <h2 id="zero-values">Нулевые значения: Go не оставляет мусор</h2>
 
     <p>В Go каждая переменная <strong>автоматически инициализируется нулевым значением</strong> своего типа. Никакого "мусора" из памяти:</p>
 
@@ -757,8 +988,33 @@ isActive := true</code></pre>
         <pre><code class="language-go">var i int      // 0
 var f float64  // 0.0
 var s string   // "" (пустая строка)
-var b bool     // false
-var p *int     // nil</code></pre>
+var b bool     // false</code></pre>
+    </div>
+
+    <h3>Почему это важно?</h3>
+
+    <p>В C/C++ неинициализированная переменная содержит <strong>случайный мусор</strong> — то, что было в этой памяти раньше. Это источник багов:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">C</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-c">// C: опасно!
+int x;
+printf("%d", x);  // Может напечатать что угодно: 0, -12345, 42...</code></pre>
+    </div>
+
+    <p>В Go такой проблемы нет:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Go: безопасно
+var x int
+fmt.Println(x)  // Всегда 0</code></pre>
     </div>
 
     <h3>Таблица нулевых значений</h3>
@@ -772,7 +1028,11 @@ var p *int     // nil</code></pre>
         </thead>
         <tbody>
             <tr>
-                <td><code>int</code>, <code>int8</code>, <code>int64</code>...</td>
+                <td><code>int</code>, <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code></td>
+                <td><code>0</code></td>
+            </tr>
+            <tr>
+                <td><code>uint</code>, <code>uint8</code>, ...</td>
                 <td><code>0</code></td>
             </tr>
             <tr>
@@ -785,24 +1045,75 @@ var p *int     // nil</code></pre>
             </tr>
             <tr>
                 <td><code>string</code></td>
-                <td><code>""</code></td>
-            </tr>
-            <tr>
-                <td>Указатели, слайсы, map, chan</td>
-                <td><code>nil</code></td>
+                <td><code>""</code> (пустая строка)</td>
             </tr>
         </tbody>
     </table>
 
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Нулевые значения для указателей, срезов, map и структур — в соответствующих уроках.</p>
+    </div>
+
     <hr>
 
+    <!-- SECTION: Множественное объявление -->
+    <h2 id="multiple">Множественное объявление</h2>
+
+    <h3>Несколько переменных в одной строке</h3>
+
+    <p>Удобно при работе с функциями, возвращающими несколько значений:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Объявление
+x, y := 10, 20
+
+// Из функции
+file, err := os.Open("config.json")
+
+// Обмен значений (swap) — элегантно!
+a, b := 1, 2
+a, b = b, a  // теперь a=2, b=1</code></pre>
+    </div>
+
+    <h3>Группировка с var ()</h3>
+
+    <p>Для связанных переменных на уровне пакета:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">var (
+    // Настройки базы данных
+    dbHost     = "localhost"
+    dbPort     = 5432
+    dbUser     = "admin"
+
+    // Таймауты
+    readTimeout  = 30 * time.Second
+    writeTimeout = 30 * time.Second
+)</code></pre>
+    </div>
+
+    <p>Это <strong>чисто визуальная группировка</strong> — помогает читать код, но технически эквивалентна отдельным <code>var</code>.</p>
+
+    <hr>
+
+    <!-- SECTION: Изменение значений -->
     <h2 id="assignment">Изменение значений: = vs :=</h2>
 
     <p>Это частый источник ошибок у новичков. Запомни:</p>
 
     <ul>
-        <li><code>:=</code> - <strong>создаёт</strong> новую переменную</li>
-        <li><code>=</code> - <strong>изменяет</strong> существующую</li>
+        <li><code>:=</code> — <strong>создаёт</strong> новую переменную</li>
+        <li><code>=</code> — <strong>изменяет</strong> существующую</li>
     </ul>
 
     <div class="code-block">
@@ -815,9 +1126,25 @@ x = 20       // меняем значение на 20
 // x := 30   // ошибка: x уже существует!</code></pre>
     </div>
 
+    <h3>Почему Go запрещает повторное :=?</h3>
+
+    <p>Это <strong>защита от опечаток</strong>. Представь:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">user := getCurrentUser()
+// ... 100 строк кода ...
+user := getAdminUser()  // Опечатка! Хотел =, написал :=</code></pre>
+    </div>
+
+    <p>В Python такой код молча сработает — и ты потеряешь первого user'а. В Go компилятор скажет: "user уже объявлен. Ты уверен?"</p>
+
     <h3>Исключение: новые переменные в группе</h3>
 
-    <p>Если <strong>хотя бы одна</strong> переменная в <code>:=</code> новая - всё работает:</p>
+    <p>Если <strong>хотя бы одна</strong> переменная в <code>:=</code> новая — всё работает:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -825,14 +1152,27 @@ x = 20       // меняем значение на 20
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
         <pre><code class="language-go">x := 10
-x, y := 20, 30  // OK - y новая, x переиспользуется</code></pre>
+x, y := 20, 30  // OK — y новая, x переиспользуется</code></pre>
+    </div>
+
+    <p>Это удобно при работе с ошибками:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">data, err := readFile("config.json")
+// ... обработка ...
+settings, err := readFile("settings.json")  // OK — settings новая</code></pre>
     </div>
 
     <hr>
 
+    <!-- SECTION: Область видимости -->
     <h2 id="scope">Область видимости (scope)</h2>
 
-    <p>Переменная "живёт" только в том блоке, где объявлена:</p>
+    <p>Переменная "живёт" только в том блоке, где объявлена. Блок — это код между <code>{</code> и <code>}</code>:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -842,28 +1182,55 @@ x, y := 20, 30  // OK - y новая, x переиспользуется</code><
         <pre><code class="language-go">func main() {
     x := 10  // x видна во всей функции main
 
-    if true {
-        y := 20  // y видна только внутри if
-        fmt.Println(x, y)  // OK
-    }
+    {  // начало вложенного блока
+        y := 20  // y видна только внутри этого блока
+        fmt.Println(x, y)  // OK — видны обе переменные
+    }  // конец блока, y уничтожается
 
+    fmt.Println(x)   // OK — x всё ещё видна
     // fmt.Println(y)  // ошибка: y не определена
 }</code></pre>
     </div>
 
-    <hr>
+    <h3>Визуализация областей видимости</h3>
 
-    <h2 id="shadowing">Shadowing - главная ловушка</h2>
+    <div class="scope-diagram">
+        <div class="scope-level package">
+            <div class="scope-label">Уровень пакета (видна везде в пакете)</div>
+            <div class="scope-code">var globalVar = 100</div>
+        </div>
+        <div class="scope-level func">
+            <div class="scope-label">Уровень функции (видна во всей функции)</div>
+            <div class="scope-code">localVar := 200</div>
+            <div class="scope-level block">
+                <div class="scope-label">Уровень блока (только внутри {})</div>
+                <div class="scope-code">blockVar := 300</div>
+                <div class="scope-comment">Здесь видны: globalVar, localVar, blockVar</div>
+            </div>
+            <div class="scope-comment">blockVar не видна</div>
+        </div>
+    </div>
 
     <div class="alert alert-tip">
         <div class="alert-icon">*</div>
         <div class="alert-label">Tip</div>
-        <p><strong>Мнемоника "ТЕНЬ"</strong>: Переменная во внутреннем блоке <strong>Т</strong>ак же названа - <strong>Е</strong>ё <strong>Н</strong>е видно из внешнего, она в тени!</p>
+        <p>В модуле условий изучим <code>if</code>, который тоже создаёт блок со своей областью видимости.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Shadowing -->
+    <h2 id="shadowing">Shadowing — главная ловушка</h2>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Мнемоника "ТЕНЬ"</strong>: Переменная во внутреннем блоке <strong>Т</strong>ак же названа — <strong>Е</strong>ё <strong>Н</strong>е видно из внешнего, она в тени! <strong>Ь</strong> — мягкий знак, мягко напоминает быть осторожным.</p>
     </div>
 
     <h3>Что такое shadowing?</h3>
 
-    <p>Shadowing (затенение) - когда переменная во внутреннем блоке "перекрывает" переменную с тем же именем из внешнего:</p>
+    <p>Shadowing (затенение) — когда переменная во внутреннем блоке "перекрывает" переменную с тем же именем из внешнего:</p>
 
     <div class="code-block">
         <div class="code-header">
@@ -873,61 +1240,111 @@ x, y := 20, 30  // OK - y новая, x переиспользуется</code><
         <pre><code class="language-go">x := 10
 fmt.Println(x)  // 10
 
-if true {
+{
     x := 20  // Это НОВАЯ переменная x!
     fmt.Println(x)  // 20
 }
 
-fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></pre>
+fmt.Println(x)  // 10 (!) — внешняя x не изменилась</code></pre>
     </div>
 
-    <h3>Типичная ошибка с err</h3>
+    <h3>Визуализация shadowing</h3>
+
+    <div class="shadow-diagram">
+        <div class="shadow-state">
+            <div class="shadow-label">Внешний блок:</div>
+            <div class="shadow-value">x = 10</div>
+        </div>
+        <div class="shadow-arrow">|</div>
+        <div class="shadow-box">
+            <div class="shadow-box-label">shadow (новая x)</div>
+            <div><code>x := 20</code></div>
+            <div class="shadow-state">
+                <div class="shadow-label"></div>
+                <div class="shadow-value">x = 20</div>
+            </div>
+            <div class="shadow-note">Новая x "закрывает" внешнюю</div>
+        </div>
+        <div class="shadow-arrow">|</div>
+        <div class="shadow-state">
+            <div class="shadow-label">После блока:</div>
+            <div class="shadow-value">x = 10</div>
+            <div class="shadow-note">Внешняя x никогда не менялась!</div>
+        </div>
+    </div>
+
+    <h3>Почему shadowing опасен?</h3>
+
+    <p>Ты думаешь, что меняешь переменную, а на самом деле создаёшь новую:</p>
 
     <div class="code-block">
         <div class="code-header">
             <span class="code-lang">Go</span>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-        <pre><code class="language-go">func getConfig() (Config, error) {
-    cfg := Config{Default: true}
+        <pre><code class="language-go">counter := 0
+fmt.Println("Начало:", counter)  // 0
 
-    if needsDB {
-        cfg, err := loadFromDB()  // Создали НОВУЮ cfg!
-        if err != nil {
-            return Config{}, err
-        }
-        // cfg из if - не та же, что cfg из функции
-    }
+{
+    counter := 100  // Новая переменная counter!
+    counter = counter + 1
+    fmt.Println("Внутри блока:", counter)  // 101
+}
 
-    return cfg  // Возвращается пустая Config{}!
-}</code></pre>
+fmt.Println("После блока:", counter)  // 0 (!) — не 101!</code></pre>
     </div>
 
-    <h3>Как исправить?</h3>
+    <p><strong>Правильный вариант</strong> — без <code>:=</code> во внутреннем блоке:</p>
 
     <div class="code-block">
         <div class="code-header">
             <span class="code-lang">Go</span>
             <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-        <pre><code class="language-go">func getConfig() (Config, error) {
-    cfg := Config{Default: true}
+        <pre><code class="language-go">counter := 0
+fmt.Println("Начало:", counter)  // 0
 
-    if needsDB {
-        var err error
-        cfg, err = loadFromDB()  // Используем внешнюю cfg
-        if err != nil {
-            return Config{}, err
-        }
-    }
+{
+    counter = 100  // Меняем внешнюю переменную
+    counter = counter + 1
+    fmt.Println("Внутри блока:", counter)  // 101
+}
 
-    return cfg  // Теперь правильно!
-}</code></pre>
+fmt.Println("После блока:", counter)  // 101</code></pre>
+    </div>
+
+    <h3>Как защититься от shadowing?</h3>
+
+    <ol>
+        <li><strong>Используй линтер</strong> — автоматически находит shadowing</li>
+        <li><strong>Называй переменные уникально</strong> — <code>innerCounter</code> вместо <code>counter</code></li>
+        <li><strong>Будь внимателен с <code>:=</code></strong> — если переменная уже существует, используй <code>=</code></li>
+    </ol>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash"># Установка линтера для проверки shadowing
+go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
+
+# Проверка кода
+go vet -vettool=$(which shadow) ./...</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Shadowing особенно коварен с переменной <code>err</code> в функциях — изучим это в модуле функций.</p>
     </div>
 
     <hr>
 
+    <!-- SECTION: Проверь себя -->
     <h2 id="check-yourself">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
 
     <div class="card question-card">
         <div class="card-head">
@@ -938,7 +1355,7 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
             <details>
                 <summary>Показать ответ</summary>
                 <div class="answer">
-                    <p>Переменная - это <strong>именованная область памяти</strong> определённого размера. Имя переменной связано с адресом в памяти, где хранится значение.</p>
+                    <p>Переменная — это <strong>именованная область памяти</strong> определённого размера. Имя переменной связано с адресом в памяти, где хранится значение. Размер области зависит от типа (например, <code>int</code> занимает 8 байт на 64-bit системе).</p>
                 </div>
             </details>
         </div>
@@ -947,18 +1364,19 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
     <div class="card question-card">
         <div class="card-head">
             <span class="card-num">02</span>
-            <span class="card-title">В чём разница между var x = 10 и x := 10?</span>
+            <span class="card-title">Почему Go статически типизирован? Какие преимущества это даёт?</span>
         </div>
         <div class="card-body">
             <details>
                 <summary>Показать ответ</summary>
                 <div class="answer">
-                    <p>Функционально - разницы нет, обе создают переменную <code>x</code> типа <code>int</code> со значением <code>10</code>.</p>
-                    <p><strong>Различия:</strong></p>
-                    <ul>
-                        <li><code>var</code> работает везде (и в функциях, и на уровне пакета)</li>
-                        <li><code>:=</code> работает <strong>только внутри функций</strong></li>
-                    </ul>
+                    <p><strong>Преимущества статической типизации:</strong></p>
+                    <ol>
+                        <li><strong>Производительность</strong> — компилятор знает точные размеры и может оптимизировать</li>
+                        <li><strong>Безопасность</strong> — ошибки типов ловятся при компиляции, а не в runtime</li>
+                        <li><strong>Читаемость</strong> — сигнатуры функций сразу показывают типы</li>
+                        <li><strong>IDE поддержка</strong> — автодополнение и рефакторинг работают лучше</li>
+                    </ol>
                 </div>
             </details>
         </div>
@@ -967,20 +1385,81 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
     <div class="card question-card">
         <div class="card-head">
             <span class="card-num">03</span>
+            <span class="card-title">В чём разница между var x = 10 и x := 10?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Функционально — разницы нет, обе создают переменную <code>x</code> типа <code>int</code> со значением <code>10</code>.</p>
+                    <p>Различия:</p>
+                    <ul>
+                        <li><code>var</code> работает везде (и в функциях, и на уровне пакета)</li>
+                        <li><code>:=</code> работает <strong>только внутри функций</strong></li>
+                        <li><code>:=</code> короче и предпочтительнее для локальных переменных</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Какое нулевое значение у string, bool, float64?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ul>
+                        <li><code>string</code> — <code>""</code> (пустая строка)</li>
+                        <li><code>bool</code> — <code>false</code></li>
+                        <li><code>float64</code> — <code>0.0</code></li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Почему Go запрещает повторное объявление переменной через :=?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Это <strong>защита от опечаток</strong>. Если ты случайно написал <code>:=</code> вместо <code>=</code>, компилятор поймает ошибку. Без этой проверки ты мог бы случайно создать новую переменную вместо изменения существующей, потеряв предыдущее значение.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">06</span>
             <span class="card-title">Что такое shadowing и почему это опасно?</span>
         </div>
         <div class="card-body">
             <details>
                 <summary>Показать ответ</summary>
                 <div class="answer">
-                    <p><strong>Shadowing</strong> - когда переменная во внутреннем блоке "перекрывает" переменную с тем же именем из внешнего.</p>
-                    <p>Опасно тем, что изменения во внутреннем блоке не влияют на внешнюю переменную.</p>
+                    <p><strong>Shadowing</strong> — когда переменная во внутреннем блоке "перекрывает" переменную с тем же именем из внешнего. Опасно тем, что:</p>
+                    <ul>
+                        <li>Изменения во внутреннем блоке не влияют на внешнюю переменную</li>
+                        <li>Легко ошибиться, думая что меняешь внешнюю переменную</li>
+                        <li>Особенно коварно с <code>err</code> — типичная ловушка Go</li>
+                    </ul>
                 </div>
             </details>
         </div>
     </div>
 
-    <h2 id="tasks">Задачи</h2>
+    <hr>
+
+    <h3>Задачи</h3>
 
     <div class="card task-card">
         <div class="card-head">
@@ -995,24 +1474,29 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
                 </div>
                 <pre><code class="language-go">func main() {
     x := 10
-    if true {
+
+    {
         x := 20
         x = 30
+        fmt.Println("Внутри:", x)
     }
-    fmt.Println(x)
+
+    fmt.Println("Снаружи:", x)
 }</code></pre>
             </div>
             <details>
                 <summary>Показать решение</summary>
                 <div class="solution">
-                    <p><strong>Вывод: <code>10</code></strong></p>
+                    <p><strong>Вывод:</strong></p>
+                    <pre>Внутри: 30
+Снаружи: 10</pre>
                     <p><strong>Разбор:</strong></p>
                     <ol>
-                        <li><code>x := 10</code> - создаём x = 10 в main</li>
-                        <li><code>x := 20</code> - создаём <strong>новую</strong> x = 20 внутри if (shadowing!)</li>
-                        <li><code>x = 30</code> - меняем внутреннюю x на 30</li>
-                        <li>После if внутренняя x уничтожается</li>
-                        <li><code>fmt.Println(x)</code> - выводим внешнюю x, которая всё ещё 10</li>
+                        <li><code>x := 10</code> — создаём x = 10 в main</li>
+                        <li><code>x := 20</code> — создаём <strong>новую</strong> x = 20 внутри блока (shadowing!)</li>
+                        <li><code>x = 30</code> — меняем внутреннюю x на 30</li>
+                        <li>После блока внутренняя x уничтожается</li>
+                        <li>Внешняя x всё ещё 10</li>
                     </ol>
                 </div>
             </details>
@@ -1022,6 +1506,49 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
     <div class="card task-card">
         <div class="card-head">
             <span class="card-num">02</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">func main() {
+    a := 1
+
+    {
+        a = 10  // = не :=
+        b := 20
+        fmt.Println(a, b)
+    }
+
+    fmt.Println(a)
+}</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong></p>
+                    <pre>10 20
+10</pre>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li><code>a := 1</code> — создаём a = 1</li>
+                        <li><code>a = 10</code> — меняем <strong>ту же</strong> a (используем <code>=</code>, не <code>:=</code>)</li>
+                        <li><code>b := 20</code> — создаём b внутри блока</li>
+                        <li>Внутри блока: a = 10, b = 20</li>
+                        <li>После блока b уничтожается, a осталась 10</li>
+                    </ol>
+                    <p><strong>Ключ:</strong> Здесь нет shadowing, потому что <code>a = 10</code> использует <code>=</code> вместо <code>:=</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
             <span class="card-title">Что выведет?</span>
         </div>
         <div class="card-body">
@@ -1042,15 +1569,97 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
                     <p><strong>Вывод: <code>2 3</code></strong></p>
                     <p><strong>Разбор:</strong></p>
                     <ol>
-                        <li><code>x := 1</code> - создаём x = 1</li>
-                        <li><code>x, y := 2, 3</code> - y новая, поэтому := разрешён. x <strong>переиспользуется</strong> и получает 2</li>
+                        <li><code>x := 1</code> — создаём x = 1</li>
+                        <li><code>x, y := 2, 3</code> — y новая, поэтому := разрешён. x <strong>переиспользуется</strong> и получает 2</li>
+                        <li>Итого: x = 2, y = 3</li>
                     </ol>
-                    <p>Это исключение из правила "нельзя объявить повторно" - если хотя бы одна переменная новая.</p>
+                    <p>Это исключение из правила "нельзя объявить повторно" — если хотя бы одна переменная новая.</p>
                 </div>
             </details>
         </div>
     </div>
 
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Исправь код</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">package main
+
+globalCounter := 0  // ошибка компиляции!
+
+func main() {
+    fmt.Println(globalCounter)
+}</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Проблема:</strong> <code>:=</code> не работает на уровне пакета.</p>
+                    <p><strong>Исправление:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
+
+var globalCounter = 0  // используем var на уровне пакета
+
+func main() {
+    fmt.Println(globalCounter)  // 0
+}</code></pre>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Swap без временной переменной</span>
+        </div>
+        <div class="card-body">
+            <p>Поменяй местами значения переменных <code>a</code> и <code>b</code> без использования третьей переменной. Подсказка: в Go это делается элегантно в одну строку.</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">a := 1
+b := 2
+// Твой код — поменяй a и b местами
+fmt.Println(a, b)  // должно вывести: 2 1</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">a := 1
+b := 2
+a, b = b, a  // swap в одну строку!
+fmt.Println(a, b)  // 2 1</code></pre>
+                    </div>
+                    <p>Go поддерживает множественное присваивание. Сначала вычисляются все правые части (<code>b, a</code> = <code>2, 1</code>), потом присваиваются левым (<code>a, b</code>).</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Резюме -->
     <h2 id="summary">Резюме</h2>
 
     <div class="summary-box">
@@ -1058,24 +1667,26 @@ fmt.Println(x)  // 10 (!) - внешняя x не изменилась</code></p
             <span class="summary-badge">Key</span>
             <span class="summary-title">Переменные в Go</span>
         </div>
-        <div class="summary-formula">ПЕРЕМЕННЫЕ В GO
-
-Переменная = именованная область памяти
-Тип фиксирован при объявлении (статика)
-var - везде, := - только в функциях
-= меняет, := создаёт
-Нулевые значения: 0, "", false, nil</div>
         <ul class="summary-list">
             <li>Переменная = именованная область памяти</li>
             <li>Тип фиксирован при объявлении (статика)</li>
-            <li><code>var</code> - везде, <code>:=</code> - только в функциях</li>
+            <li><code>var</code> — везде, <code>:=</code> — только в функциях</li>
             <li><code>=</code> меняет, <code>:=</code> создаёт</li>
             <li>Нулевые значения: <code>0</code>, <code>""</code>, <code>false</code>, <code>nil</code></li>
-            <li><strong>SHADOWING - главная ловушка!</strong></li>
+            <li class="warning">SHADOWING — главная ловушка!</li>
         </ul>
     </div>
 
+    <hr>
+
     <nav class="nav-footer">
+        <a href="../index.html" class="nav-link">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Все модули</div>
+                <div class="nav-title">Оглавление</div>
+            </div>
+        </a>
         <a href="02-types-numeric.html" class="nav-link next">
             <div>
                 <div class="nav-label">Следующий урок</div>
@@ -1091,31 +1702,22 @@ var - везде, := - только в функциях
     const tg = window.Telegram?.WebApp;
 
     if (tg) {
-        // Signal that app is ready
         tg.ready();
-
-        // Expand to full height
         tg.expand();
-
-        // Show back button (would navigate to lesson list in full app)
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
-            // In demo - just show alert
-            tg.showAlert('В полной версии здесь будет список уроков');
+            history.back();
         });
     }
 
-    // Highlight.js init
     /* global hljs */
     // noinspection JSUnresolvedReference
     hljs.highlightAll();
 
-    // Copy code function
     function copyCode(btn) {
         const code = btn.closest('.code-block').querySelector('code');
         const text = code.textContent;
 
-        // Try clipboard API first
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(() => {
                 showCopied(btn);
