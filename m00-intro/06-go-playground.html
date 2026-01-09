@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Go Playground и запуск программ</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"
+            integrity="sha512-10MAbvV683nchyNnutInZDUUmwsAF8IpMc6fmkhMeJfCxEMoKkiOkBYnLjWMULT9iiS2zg+Lj8WS4QlI8QMYgw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            /* Safe area for notch devices */
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Main content - no sidebar, no fixed header */
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        /* Module badge */
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by JS - copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML - details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        /* Navigation footer */
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML - navigation link alignment (prev) */
+        .nav-link.prev {
+            text-align: left;
+        }
+        /* Used by HTML - navigation link alignment (next) */
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 0 / Урок 6</div>
+
+    <h1>Go Playground и запуск программ</h1>
+    <p class="lead">Go предоставляет несколько способов запуска программ: от онлайн-песочницы до полноценной компиляции. Разберём основные инструменты.</p>
+
+    <h2 id="playground">Go Playground: песочница в браузере</h2>
+
+    <h3>Что такое Go Playground</h3>
+
+    <p><strong>Go Playground</strong> - это онлайн-редактор, где можно писать и запускать Go-код без установки компилятора. Работает прямо в браузере.</p>
+
+    <p>Найти его просто: введите в поисковике "Go Playground" - первая ссылка откроет сайт play.golang.org (или go.dev/play).</p>
+
+    <h3>Когда использовать</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Сценарий</th>
+                <th>Подходит</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Быстро проверить идею</td>
+                <td>Да</td>
+            </tr>
+            <tr>
+                <td>Поделиться кодом с другими</td>
+                <td>Да</td>
+            </tr>
+            <tr>
+                <td>Задать вопрос и показать проблему</td>
+                <td>Да</td>
+            </tr>
+            <tr>
+                <td>Разработка реального проекта</td>
+                <td>Нет</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Как поделиться кодом</h3>
+
+    <p>Одна из главных фич Playground - возможность поделиться кодом:</p>
+
+    <ol>
+        <li>Напишите код</li>
+        <li>Нажмите <strong>Share</strong></li>
+        <li>Скопируйте ссылку</li>
+        <li>Отправьте тому, кому нужна помощь</li>
+    </ol>
+
+    <p>Человек откроет ссылку и увидит ваш код. Это удобно для вопросов в чатах и форумах.</p>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p>Всегда прикрепляйте код, когда задаёте вопрос. Без кода невозможно понять проблему.</p>
+    </div>
+
+    <h3>Ограничения</h3>
+
+    <ul>
+        <li>Нет доступа к файловой системе</li>
+        <li>Ограничено время выполнения</li>
+        <li>Не все пакеты доступны</li>
+        <li>Для серьёзной разработки используйте локальное окружение</li>
+    </ul>
+
+    <hr>
+
+    <h2 id="go-run">Запуск программы: go run</h2>
+
+    <h3>Основы go run</h3>
+
+    <p>Команда <code>go run</code> - самый быстрый способ запустить программу:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">go run main.go</code></pre>
+    </div>
+
+    <p>Что происходит внутри:</p>
+    <ol>
+        <li>Go компилирует исходный код</li>
+        <li>Создаёт временный исполняемый файл</li>
+        <li>Запускает его</li>
+        <li>После выполнения удаляет временный файл</li>
+    </ol>
+
+    <h3>Навигация в терминале</h3>
+
+    <p>Стрелка вверх в терминале показывает предыдущую команду. Не нужно печатать <code>go run main.go</code> каждый раз - просто нажмите стрелку вверх и Enter.</p>
+
+    <h3>Запуск нескольких файлов</h3>
+
+    <p>Если проект состоит из нескольких файлов в одном пакете:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">go run .</code></pre>
+    </div>
+
+    <p>Точка означает "все Go-файлы в текущей директории".</p>
+
+    <hr>
+
+    <h2 id="go-build">Компиляция: go build</h2>
+
+    <h3>Зачем компилировать</h3>
+
+    <p><code>go run</code> удобен для разработки, но созданный файл - временный. Если хотите:</p>
+
+    <ul>
+        <li>Передать программу на другой компьютер</li>
+        <li>Запускать без установленного Go</li>
+        <li>Распространять программу</li>
+    </ul>
+
+    <p>...нужна компиляция через <code>go build</code>.</p>
+
+    <h3>Базовая компиляция</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">go build</code></pre>
+    </div>
+
+    <p>Создаст исполняемый файл с именем модуля (из go.mod). Если модуль называется <code>your-go</code>, появится файл <code>your-go</code> (или <code>your-go.exe</code> на Windows).</p>
+
+    <h3>Компиляция с указанием имени</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">go build -o myprogram main.go</code></pre>
+    </div>
+
+    <p>Флаг <code>-o</code> (output) позволяет задать имя:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Команда</th>
+                <th>Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>go build</code></td>
+                <td><code>your-go</code> (имя модуля)</td>
+            </tr>
+            <tr>
+                <td><code>go build -o prog main.go</code></td>
+                <td><code>prog</code></td>
+            </tr>
+            <tr>
+                <td><code>go build -o app.exe main.go</code></td>
+                <td><code>app.exe</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Запуск скомпилированного файла</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">./myprogram</code></pre>
+    </div>
+
+    <p>На Linux/Mac нужен <code>./</code> перед именем файла, чтобы указать "файл в текущей директории".</p>
+
+    <p>На Windows:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">myprogram.exe</code></pre>
+    </div>
+
+    <h3>Преимущество компиляции</h3>
+
+    <p>Скомпилированный файл не требует Go на целевом компьютере. Это готовая программа - можно передать кому угодно, и она запустится.</p>
+
+    <hr>
+
+    <h2 id="cross-compile">Кросс-компиляция</h2>
+
+    <h3>Сборка под другую ОС</h3>
+
+    <p>Go умеет компилировать программы для другой операционной системы. Это называется <strong>кросс-компиляция</strong>.</p>
+
+    <p>Работая на Linux, можно собрать программу для Windows:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">GOOS=windows GOARCH=amd64 go build -o prog.exe main.go</code></pre>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Переменная</th>
+                <th>Значение</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>GOOS</code></td>
+                <td>windows</td>
+                <td>Целевая ОС</td>
+            </tr>
+            <tr>
+                <td><code>GOARCH</code></td>
+                <td>amd64</td>
+                <td>Архитектура (64-бит)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Популярные комбинации</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>GOOS</th>
+                <th>GOARCH</th>
+                <th>Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>windows</td>
+                <td>amd64</td>
+                <td>Windows 64-bit</td>
+            </tr>
+            <tr>
+                <td>linux</td>
+                <td>amd64</td>
+                <td>Linux 64-bit</td>
+            </tr>
+            <tr>
+                <td>darwin</td>
+                <td>amd64</td>
+                <td>macOS Intel</td>
+            </tr>
+            <tr>
+                <td>darwin</td>
+                <td>arm64</td>
+                <td>macOS Apple Silicon</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Список всех платформ</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">go tool dist list</code></pre>
+    </div>
+
+    <p>Покажет все поддерживаемые комбинации ОС и архитектур. Их очень много - от Android до Plan 9.</p>
+
+    <hr>
+
+    <h2 id="code-style">Стиль кода и форматирование</h2>
+
+    <h3>Единый стиль в Go</h3>
+
+    <p>В отличие от многих языков, в Go <strong>стиль кода регламентирован</strong>. Разработчики Go решили: "Пишем так, и никак иначе".</p>
+
+    <p><strong>Нельзя</strong> перенести фигурную скобку на новую строку:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// ОШИБКА - так нельзя в Go
+func main()
+{
+    fmt.Println("Hello")
+}
+
+// ПРАВИЛЬНО - скобка на той же строке
+func main() {
+    fmt.Println("Hello")
+}</code></pre>
+    </div>
+
+    <h3>Почему это хорошо</h3>
+
+    <p>В других языках люди спорят о стилях: "Скобка на той же строке или на новой?", "Пробелы или табы?". В Go споров нет - есть один правильный способ.</p>
+
+    <p><strong>Преимущества:</strong></p>
+
+    <ul>
+        <li>Весь Go-код выглядит одинаково</li>
+        <li>Легче читать чужой код</li>
+        <li>Код выглядит так, будто его писал один человек</li>
+    </ul>
+
+    <h3>Автоформатирование</h3>
+
+    <p>При сохранении файла в VS Code (Ctrl+S) Go-расширение автоматически форматирует код:</p>
+
+    <p><strong>До сохранения:</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func main(){
+fmt.Println(   "Hello"   )
+    }</code></pre>
+    </div>
+
+    <p><strong>После сохранения:</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func main() {
+    fmt.Println("Hello")
+}</code></pre>
+    </div>
+
+    <p>Это делает утилита <code>gofmt</code>, встроенная в Go. Не нужно следить за пробелами и отступами - форматирование происходит автоматически.</p>
+
+    <h3>Ручное форматирование</h3>
+
+    <p>Если хотите отформатировать файл из командной строки:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Bash</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-bash">gofmt -w main.go</code></pre>
+    </div>
+
+    <p>Флаг <code>-w</code> (write) перезаписывает файл. Без него gofmt только выводит отформатированный код, не изменяя файл.</p>
+
+    <hr>
+
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Для чего нужен Go Playground?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Go Playground - онлайн-песочница для написания и запуска Go-кода в браузере. Удобен для быстрых экспериментов и для того, чтобы делиться кодом с другими (например, при вопросах на форумах).</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Чем go run отличается от go build?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>go run</code> компилирует и сразу запускает программу, создавая временный файл, который удаляется после выполнения. <code>go build</code> создаёт постоянный исполняемый файл, который можно запускать без Go и передавать на другие компьютеры.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Как собрать программу для Windows, работая на Linux?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Использовать кросс-компиляцию с переменными окружения:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-bash">GOOS=windows GOARCH=amd64 go build -o prog.exe main.go</code></pre>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Что делает gofmt?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>gofmt - утилита для автоматического форматирования Go-кода по единому стандарту. Выравнивает отступы, расставляет пробелы, приводит код к стандартному стилю Go.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h2 id="tasks">Задачи</h2>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Какая команда?</span>
+        </div>
+        <div class="card-body">
+            <p>Вам нужно создать исполняемый файл с именем <code>calculator</code> из файла <code>main.go</code>. Какую команду использовать?</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-bash">go build -o calculator main.go</code></pre>
+                    </div>
+                    <p>Флаг <code>-o</code> задаёт имя выходного файла.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Что не так?</span>
+        </div>
+        <div class="card-body">
+            <p>Код не компилируется. Найдите ошибку:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">package main
+
+import "fmt"
+
+func main()
+{
+    fmt.Println("Hello")
+}</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Ошибка:</strong> Фигурная скобка на новой строке.</p>
+                    <p><strong>Исправление:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">func main() {
+    fmt.Println("Hello")
+}</code></pre>
+                    </div>
+                    <p>В Go открывающая фигурная скобка должна быть на той же строке, что и объявление функции.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Кросс-компиляция</span>
+        </div>
+        <div class="card-body">
+            <p>Напишите команду для сборки программы под macOS с процессором Apple Silicon (arm64).</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Bash</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-bash">GOOS=darwin GOARCH=arm64 go build -o myapp main.go</code></pre>
+                    </div>
+                    <p><code>darwin</code> - это внутреннее имя macOS в Go.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Что произойдёт?</span>
+        </div>
+        <div class="card-body">
+            <p>Вы выполнили:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-bash">go build -o app
+./app</code></pre>
+            </div>
+            <p>Программа выводит "Hello". Затем вы изменили код на "Hello, World!" и снова выполнили:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-bash">./app</code></pre>
+            </div>
+            <p>Что выведется?</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Выведется:</strong> <code>Hello</code></p>
+                    <p><strong>Почему:</strong> Вы не перекомпилировали программу. Файл <code>app</code> содержит старую версию. Нужно снова выполнить <code>go build -o app</code>, чтобы обновить исполняемый файл.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Порядок действий</span>
+        </div>
+        <div class="card-body">
+            <p>Расставьте действия в правильном порядке для создания и запуска программы:</p>
+            <p>A) go mod init myproject<br>
+            B) Создать файл main.go<br>
+            C) Написать код<br>
+            D) go run main.go</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Правильный порядок:</strong> A -> B -> C -> D</p>
+                    <ol>
+                        <li>A) <code>go mod init myproject</code> - инициализировать модуль</li>
+                        <li>B) Создать файл main.go</li>
+                        <li>C) Написать код</li>
+                        <li>D) <code>go run main.go</code> - запустить</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Go Playground и запуск программ</span>
+        </div>
+        <ul class="summary-list">
+            <li>Go Playground - онлайн-песочница для экспериментов и обмена кодом</li>
+            <li><code>go run</code> - компилирует и запускает (временный файл)</li>
+            <li><code>go build</code> - создаёт постоянный исполняемый файл</li>
+            <li><code>go build -o name</code> - задаёт имя выходного файла</li>
+            <li>Кросс-компиляция: <code>GOOS=os GOARCH=arch go build</code></li>
+            <li>gofmt автоматически форматирует код по стандарту Go</li>
+            <li>Стиль кода в Go единый - скобки на той же строке</li>
+        </ul>
+    </div>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Главная ловушка</div>
+        <p>Забыть перекомпилировать после изменения кода. <strong>Правило:</strong> Изменил код - перекомпилируй перед запуском.</p>
+    </div>
+
+    <nav class="nav-footer">
+        <a href="05-program-structure.html" class="nav-link prev">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Структура программы</div>
+            </div>
+        </a>
+        <a href="../m01-variables/01-variables.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий модуль</div>
+                <div class="nav-title">Переменные и типы данных</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        // Signal that app is ready
+        tg.ready();
+
+        // Expand to full height
+        tg.expand();
+
+        // Show back button
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    // Copy code function
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        // Try clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Что такое Go</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            /* Safe area for notch devices */
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Main content - no sidebar, no fixed header */
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        /* Module badge */
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by JS - copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML - details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-section {
+            margin-bottom: 16px;
+        }
+        .summary-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .summary-mnemonic {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .summary-mnemonic p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .summary-mnemonic p:last-child {
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 4px;
+        }
+
+        /* Navigation footer */
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML - navigation link alignment (next) */
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 0 / Урок 1</div>
+
+    <h1>Что такое Go</h1>
+    <p class="lead">Программирование - это не просто написание кода. Это решение задач. Go появился, чтобы решать конкретные проблемы крупных компаний. Давай разберемся - не просто запомним факты, а поймем почему Go стал таким популярным.</p>
+
+    <h2 id="about">Go на самом деле</h2>
+
+    <h3>Немного истории</h3>
+
+    <p>Go появился в <strong>2007 году</strong> и был представлен публично в <strong>2009 году</strong>. И он быстро стал популярным. Почему?</p>
+
+    <p>Потому что Go решает реальные проблемы, с которыми сталкиваются разработчики крупных систем.</p>
+
+    <h3>Какие проблемы решает Go?</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Проблема</th>
+                <th>Что это значит</th>
+                <th>Как Go решает</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Медленная компиляция</td>
+                <td>Ждешь минуты, пока программа соберется</td>
+                <td>Go компилируется за секунды</td>
+            </tr>
+            <tr>
+                <td>Сложные зависимости</td>
+                <td>Библиотеки конфликтуют друг с другом</td>
+                <td>Простая система модулей</td>
+            </tr>
+            <tr>
+                <td>Неудобный синтаксис</td>
+                <td>Много "шума" в коде, сложно читать</td>
+                <td>Минимум синтаксиса, все понятно</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Компиляция</strong> - это как перевод книги. Ты пишешь код на языке Go, компилятор переводит его в язык, который понимает компьютер. Один раз перевел - потом читаешь (выполняешь) быстро.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="why-go">Почему разработчики любят Go</h2>
+
+    <h3>Простота</h3>
+
+    <p>Go прост и лаконичен. У него интуитивно понятный синтаксис, который позволяет быстро начать работу.</p>
+
+    <p>Это как разница между инструкцией IKEA (картинки, минимум текста) и юридическим договором (страницы мелкого шрифта). Go - это IKEA в мире языков программирования.</p>
+
+    <h3>Скорость работы</h3>
+
+    <p>Go имеет высокую производительность благодаря двум вещам:</p>
+
+    <p><strong>Статическая типизация</strong> - компьютер заранее знает, какие данные где хранятся.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Представь склад с подписанными коробками: "Книги", "Одежда", "Посуда". Ты сразу знаешь, где что лежит. Это статическая типизация - типы данных известны заранее.</p>
+    </div>
+
+    <p><strong>Компиляция в нативный код</strong> - программа работает напрямую на процессоре, без посредников.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Это как разговор на родном языке vs через переводчика. Без переводчика быстрее и точнее.</p>
+    </div>
+
+    <h3>Параллелизм через горутины</h3>
+
+    <p>Особая гордость Go - поддержка параллелизма через <strong>горутины</strong>. Это легковесные потоки, которые делают Go идеальным языком для высоконагруженных серверных приложений.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Горутины</strong> - представь супермаркет. Одна касса обслуживает одного покупателя. Но если открыть 10 касс - 10 покупателей обслуживаются одновременно. Горутины - это те самые дополнительные кассы, которые Go открывает легко и быстро.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="usage">Где используется Go</h2>
+
+    <h3>Области применения</h3>
+
+    <p>Go находит применение в разных сферах:</p>
+
+    <p><strong>Сетевые приложения и API</strong> - программы, которые общаются по сети.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>API</strong> - это как меню в ресторане. Меню говорит, что можно заказать. API говорит, какие данные можно запросить у программы.</p>
+    </div>
+
+    <p><strong>Микросервисы</strong> - когда большое приложение разбито на маленькие независимые части.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Представь конструктор Lego: каждый кубик делает что-то одно, но вместе они создают целое. Микросервисы - это кубики, из которых строится приложение.</p>
+    </div>
+
+    <p><strong>DevOps инструменты</strong> - Docker, Kubernetes, работа с контейнерами.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Контейнер</strong> - это коробка для доставки. Внутри упаковано приложение со всем необходимым. Можно отправить эту коробку на любой компьютер, и приложение будет работать одинаково.</p>
+    </div>
+
+    <p><strong>Облачные вычисления</strong> - разработка приложений, которые работают в "облаке" (на удаленных серверах).</p>
+
+    <h3>Компании, использующие Go</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Компания</th>
+                <th>Что делают на Go</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Google</td>
+                <td>Внутренние сервисы</td>
+            </tr>
+            <tr>
+                <td>Dropbox</td>
+                <td>Хранение файлов</td>
+            </tr>
+            <tr>
+                <td>Uber</td>
+                <td>Сервисы для такси</td>
+            </tr>
+            <tr>
+                <td>Yandex</td>
+                <td>Инфраструктура</td>
+            </tr>
+            <tr>
+                <td>Amazon</td>
+                <td>Облачные сервисы</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Сообщество</h3>
+
+    <p>Сообщество Go постоянно растет и развивается. Разработчики создают новые библиотеки, чтобы работать было комфортно и удобно.</p>
+
+    <hr>
+
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">В каком году Go был представлен публично?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>В <strong>2009 году</strong>. Разработка началась в 2007, публичный релиз - в 2009.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Какие три проблемы решает Go?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>1. <strong>Медленная компиляция</strong> - Go компилируется быстро</p>
+                    <p>2. <strong>Сложные зависимости</strong> - простая система модулей</p>
+                    <p>3. <strong>Неудобный синтаксис</strong> - понятный и лаконичный код</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что такое горутины?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Легковесные потоки, которые позволяют выполнять много задач одновременно. Благодаря им Go идеален для высоконагруженных серверов.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Почему Go работает быстро?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Две причины:</p>
+                    <p>1. <strong>Статическая типизация</strong> - компьютер заранее знает типы данных</p>
+                    <p>2. <strong>Компиляция в нативный код</strong> - программа работает напрямую на процессоре</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Что такое Go</span>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">История</div>
+            <ul class="summary-list">
+                <li>2007 - создан, 2009 - релиз</li>
+            </ul>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">Решает проблемы</div>
+            <ul class="summary-list">
+                <li>Медленная компиляция - быстрая сборка</li>
+                <li>Сложные зависимости - простые модули</li>
+                <li>Неудобный синтаксис - понятный код</li>
+            </ul>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">Преимущества</div>
+            <ul class="summary-list">
+                <li>Простой и лаконичный</li>
+                <li>Быстрый (нативный код)</li>
+                <li>Горутины (параллельность)</li>
+            </ul>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">Применение</div>
+            <ul class="summary-list">
+                <li>Компании: Google, Uber, Yandex, Dropbox, Amazon</li>
+                <li>Области: серверы, API, микросервисы, DevOps</li>
+            </ul>
+        </div>
+
+        <div class="summary-mnemonic">
+            <p><strong>ПоБеГ</strong> - три причины выбрать Go: <strong>По</strong>нятный, <strong>Бе</strong>стрый, <strong>Г</strong>орутины.</p>
+            <p>Go - это побег от проблем других языков.</p>
+        </div>
+    </div>
+
+    <nav class="nav-footer">
+        <a href="02-ecosystem.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий урок</div>
+                <div class="nav-title">Экосистема Go</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        // Signal that app is ready
+        tg.ready();
+
+        // Expand to full height
+        tg.expand();
+
+        // Show back button
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    // Highlight.js init
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    // Copy code function
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        // Try clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

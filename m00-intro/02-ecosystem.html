@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Экосистема Go</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            /* Safe area for notch devices */
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Main content - no sidebar, no fixed header */
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        /* Module badge */
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML — details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .answer ol, .answer ul {
+            margin: 8px 0 8px 20px;
+        }
+        .answer li {
+            font-size: 14px;
+        }
+
+        /* Info box - replacement for ASCII diagrams */
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-section {
+            margin-bottom: 16px;
+        }
+        .info-box .info-section:last-child {
+            margin-bottom: 0;
+        }
+        .info-box .info-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .info-box .info-row::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        /* Navigation footer */
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML — navigation link alignment (prev) */
+        .nav-link.prev {
+            text-align: left;
+        }
+        /* Used by HTML — navigation link alignment (next) */
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 0 / Урок 2</div>
+
+    <h1>Экосистема Go</h1>
+    <p class="lead">Go — это не просто язык программирования. Это целая экосистема инструментов и решений, которые делают его популярным в индустрии. Понимание экосистемы показывает, что ты видишь не только синтаксис, но и контекст применения языка.</p>
+
+    <hr>
+
+    <h2 id="ecosystem">Экосистема Go на самом деле</h2>
+
+    <h3>Почему Go так быстро завоевал популярность</h3>
+
+    <p>Go появился в 2009 году и сразу начал набирать популярность. Причина проста: он решает конкретные проблемы разработчиков крупных систем.</p>
+
+    <p>Представь строительную компанию. Одно дело — построить дачу, другое — небоскрёб. Для небоскрёба нужны особые материалы, особые инструменты, особые процессы. Go — это как бетон и сталь для высотных зданий: надёжный, быстрый, предсказуемый.</p>
+
+    <h3>Три кита Go</h3>
+
+    <p>Go стоит на трёх китах, которые делают его идеальным для серьёзной разработки:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Кит</th>
+                <th>Что это значит</th>
+                <th>Практический эффект</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Простота</strong></td>
+                <td>Минимум синтаксиса, всё понятно</td>
+                <td>Быстрый старт, меньше ошибок</td>
+            </tr>
+            <tr>
+                <td><strong>Скорость</strong></td>
+                <td>Нативный код, статическая типизация</td>
+                <td>Миллионы запросов в секунду</td>
+            </tr>
+            <tr>
+                <td><strong>Параллелизм</strong></td>
+                <td>Горутины — легковесные потоки</td>
+                <td>Эффективное использование серверов</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p>Эти три качества — не просто "приятные бонусы". Это фундамент, на котором строится вся экосистема Go.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="applications">Где живёт Go</h2>
+
+    <h3>Сетевые приложения и API</h3>
+
+    <p>Go идеален для программ, которые общаются по сети. Почему?</p>
+
+    <p>Сетевое приложение — это как почтовое отделение: постоянно принимает письма (запросы) и отправляет ответы. Чем больше окошек (горутин), тем больше людей можно обслужить одновременно.</p>
+
+    <p>Go позволяет легко открывать тысячи таких "окошек" без замедления работы.</p>
+
+    <h3>Микросервисы</h3>
+
+    <p>Микросервисы — это архитектура, где большое приложение разбито на независимые части. Каждый микросервис делает что-то одно и делает это хорошо.</p>
+
+    <p>Go стал стандартом для микросервисов по нескольким причинам:</p>
+
+    <ul>
+        <li>Быстрый запуск (важно для контейнеров)</li>
+        <li>Встроенная поддержка параллелизма через горутины</li>
+        <li>Высокая производительность</li>
+    </ul>
+
+    <h3>DevOps и инфраструктура</h3>
+
+    <p>Инструменты, которые управляют современной инфраструктурой, написаны на Go:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Инструмент</th>
+                <th>Для чего используется</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Docker</strong></td>
+                <td>Упаковка приложений в контейнеры</td>
+            </tr>
+            <tr>
+                <td><strong>Kubernetes</strong></td>
+                <td>Управление контейнерами в кластере</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Docker</strong> и <strong>Kubernetes</strong> — это не просто "используют Go". Они <em>написаны</em> на Go. Это говорит о доверии сообщества к языку для критически важных инструментов.</p>
+    </div>
+
+    <h3>Облачные вычисления</h3>
+
+    <p>Go активно используется для разработки приложений, которые работают в облаке — на удалённых серверах. Это естественное продолжение его силы в сетевых приложениях и микросервисах.</p>
+
+    <hr>
+
+    <h2 id="companies">Кто использует Go</h2>
+
+    <h3>Компании</h3>
+
+    <p>Go активно используется в инфраструктуре крупных компаний:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Компания</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Google</td></tr>
+            <tr><td>Dropbox</td></tr>
+            <tr><td>Uber</td></tr>
+            <tr><td>Yandex</td></tr>
+            <tr><td>Amazon</td></tr>
+        </tbody>
+    </table>
+
+    <p>Обрати внимание: это не стартапы, а компании с миллионами пользователей. Они выбрали Go, потому что им нужна надёжность под нагрузкой.</p>
+
+    <h3>Сообщество</h3>
+
+    <p>Сообщество Go постоянно растёт и развивается. Разработчики создают новые библиотеки, чтобы работать было комфортно и удобно.</p>
+
+    <p>Это создаёт "эффект маховика": чем больше библиотек, тем проще начать проект, тем больше разработчиков приходит, тем больше создаётся библиотек.</p>
+
+    <hr>
+
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Почему Go особенно популярен для микросервисов?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Go популярен для микросервисов по трём причинам:</p>
+                    <ol>
+                        <li><strong>Быстрый запуск</strong> — важно для контейнеров</li>
+                        <li><strong>Горутины</strong> — эффективная обработка множества запросов</li>
+                        <li><strong>Высокая производительность</strong> — нативный код работает быстро</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Какие два ключевых инструмента DevOps написаны на Go?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><strong>Docker</strong> — упаковка приложений в контейнеры</p>
+                    <p><strong>Kubernetes</strong> — управление контейнерами в кластере</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Почему крупные компании выбирают Go для высоконагруженных сервисов?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Три причины:</p>
+                    <ol>
+                        <li><strong>Скорость</strong> — компиляция в нативный код, нет интерпретатора</li>
+                        <li><strong>Горутины</strong> — легко обрабатывать много запросов параллельно</li>
+                        <li><strong>Надёжность</strong> — статическая типизация ловит ошибки на этапе компиляции</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2 id="summary">Резюме</h2>
+
+    <div class="info-box">
+        <div class="info-box-title">ЭКОСИСТЕМА GO</div>
+
+        <div class="info-section">
+            <div class="info-section-title">Применение</div>
+            <div class="info-row">Сетевые приложения и API</div>
+            <div class="info-row">Микросервисы</div>
+            <div class="info-row">DevOps инструменты</div>
+            <div class="info-row">Облачные вычисления</div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Инструменты на Go</div>
+            <div class="info-row"><code>Docker</code> (контейнеры)</div>
+            <div class="info-row"><code>Kubernetes</code> (оркестрация)</div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Компании</div>
+            <div class="info-row">Google, Uber, Dropbox, Yandex, Amazon</div>
+        </div>
+    </div>
+
+    <blockquote>
+        <p><strong>Правило DUCK:</strong> Docker, Uber, Cloud, Kubernetes — четыре слова, которые напоминают, где живёт Go.</p>
+    </blockquote>
+
+    <nav class="nav-footer">
+        <a href="01-what-is-go.html" class="nav-link prev">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Что такое Go</div>
+            </div>
+        </a>
+        <a href="03-installation.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий урок</div>
+                <div class="nav-title">Установка Go</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        // Signal that app is ready
+        tg.ready();
+
+        // Expand to full height
+        tg.expand();
+
+        // Show back button
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    // Highlight.js init
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+</script>
+
+</body>
+</html>
