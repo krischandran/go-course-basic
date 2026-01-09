@@ -185,6 +185,7 @@
         .copy-btn:active {
             background: var(--bg-tertiary);
         }
+        /* Used by JS - copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -435,6 +436,7 @@
             font-size: 12px;
             transition: transform 0.2s;
         }
+        /* Used by HTML - details marker rotation when open */
         details[open] summary::before {
             transform: rotate(90deg);
         }
@@ -528,6 +530,7 @@
         .nav-link:active {
             background: var(--bg-tertiary);
         }
+        /* Used by HTML - navigation link alignment (next) */
         .nav-link.next {
             justify-content: flex-end;
             text-align: right;
@@ -1103,6 +1106,8 @@ var - везде, := - только в функциях
     }
 
     // Highlight.js init
+    /* global hljs */
+    // noinspection JSUnresolvedReference
     hljs.highlightAll();
 
     // Copy code function
