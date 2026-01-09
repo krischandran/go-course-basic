@@ -310,13 +310,16 @@
             color: var(--text-muted);
             margin-top: 4px;
         }
+        .memory-cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .memory-pointer {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px solid var(--border-color);
+            margin-top: 8px;
         }
         .memory-pointer .arrow {
             font-size: 18px;
@@ -737,16 +740,17 @@
         <div class="memory-label">Память:</div>
         <div class="memory-cells">
             <div class="memory-cell">...</div>
-            <div class="memory-cell highlight">
-                <span class="value">42</span>
-                <span class="size">(8b)</span>
+            <div class="memory-cell-wrapper">
+                <div class="memory-cell highlight">
+                    <span class="value">42</span>
+                    <span class="size">(8b)</span>
+                </div>
+                <div class="memory-pointer">
+                    <span class="arrow">^</span>
+                    <span class="name">имя "x"</span>
+                </div>
             </div>
             <div class="memory-cell">...</div>
-            <div class="memory-cell"></div>
-        </div>
-        <div class="memory-pointer">
-            <span class="arrow">^</span>
-            <span class="name">имя "x"</span>
         </div>
     </div>
 
