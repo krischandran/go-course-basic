@@ -2,8 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Условный оператор if-else — Вводный курс Go</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Условный оператор if-else</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,253 +51,100 @@
             background-color: var(--bg-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            z-index: 100;
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
         }
 
-        .logo {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-        .logo span { color: var(--accent-green); }
-
-        .nav-menu {
-            display: flex;
-            gap: 32px;
-        }
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-menu a:hover,
-        .nav-menu a.current { color: var(--text-primary); }
-
-        .header-right { display: flex; align-items: center; gap: 20px; }
-
-        .progress-pill {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 6px 14px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-        }
-        .progress-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .progress-track {
-            width: 80px;
-            height: 4px;
-            background: var(--border-color);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            width: 0;
-            background: var(--accent-green);
-            border-radius: 2px;
-            transition: width 0.3s;
-        }
-
-        .layout {
-            display: flex;
-            padding-top: 56px;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            position: sticky;
-            top: 56px;
-            height: calc(100vh - 56px);
-            overflow-y: auto;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 24px;
-            flex-shrink: 0;
-        }
-
-        .course-info {
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .course-tag {
+        .module-badge {
+            display: inline-block;
             font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-green);
-            margin-bottom: 8px;
-        }
-        .course-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-        .course-progress {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .toc-section { margin-bottom: 24px; }
-        .toc-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
             margin-bottom: 12px;
         }
-        .toc-list {
-            list-style: none;
-        }
-        .toc-list li { margin-bottom: 4px; }
-        .toc-list a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .toc-list a:hover {
-            background: rgba(255,255,255,0.03);
-            color: var(--text-primary);
-        }
-        /* Used by JS — TOC active state on scroll */
-        .toc-list a.active {
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.06);
-        }
-        .toc-num {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        /* Used by JS — TOC number active state */
-        .toc-list a.active .toc-num {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-
-        main {
-            flex: 1;
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 48px 40px 80px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            font-size: 13px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-        .breadcrumb a:hover { color: var(--text-primary); }
-        .breadcrumb-sep { color: var(--border-light); }
-        .breadcrumb-current { color: var(--text-secondary); }
 
         h1 {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
 
         .lead {
-            font-size: 19px;
-            line-height: 1.7;
+            font-size: 16px;
+            line-height: 1.6;
             color: var(--text-secondary);
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         h2 {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 13px;
+            gap: 10px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--text-muted);
-            margin: 56px 0 24px;
-            scroll-margin-top: 80px;
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
         }
         h2::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: var(--accent-green);
             border-radius: 2px;
+            flex-shrink: 0;
         }
 
         h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: -0.01em;
             color: var(--text-primary);
-            margin: 32px 0 16px;
-            scroll-margin-top: 80px;
+            margin: 24px 0 12px;
         }
 
         p {
-            font-size: 17px;
-            line-height: 1.75;
+            font-size: 15px;
+            line-height: 1.7;
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         ul, ol {
-            margin: 0 0 20px 24px;
+            margin: 0 0 16px 20px;
             color: var(--text-secondary);
         }
         li {
-            margin-bottom: 8px;
-            line-height: 1.7;
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
         }
 
         .code-block {
-            margin: 24px 0;
+            margin: 20px 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -304,7 +154,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 16px;
+            padding: 8px 12px;
             background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-color);
         }
@@ -319,17 +169,16 @@
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .copy-btn:hover {
-            border-color: var(--border-light);
-            color: var(--text-primary);
+        .copy-btn:active {
+            background: var(--bg-tertiary);
         }
-        /* Used by JS — copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -337,18 +186,22 @@
         }
         .code-block pre {
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .code-block code {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
         }
 
         .alert {
-            margin: 28px 0;
-            padding: 20px 24px 20px 48px;
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
             background: var(--bg-secondary);
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -356,15 +209,15 @@
         }
         .alert-icon {
             position: absolute;
-            left: 16px;
-            top: 20px;
-            width: 20px;
-            height: 20px;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
         }
         .alert-important .alert-icon {
@@ -377,14 +230,22 @@
         }
         .alert p {
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 24px 0;
-            font-size: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
         th {
             font-size: 10px;
@@ -392,62 +253,54 @@
             letter-spacing: 0.1em;
             color: var(--text-muted);
             background: var(--bg-secondary);
-            padding: 12px 16px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
         td {
-            padding: 14px 16px;
+            padding: 12px;
             color: var(--text-secondary);
             border-bottom: 1px solid var(--border-color);
         }
         td code {
             background: var(--bg-secondary);
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--accent-green);
+            font-size: 12px;
         }
 
         .info-box {
-            margin: 24px 0;
-            padding: 20px 24px;
+            margin: 20px 0;
+            padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             border-left: 3px solid var(--accent-green);
         }
         .info-box .info-row {
-            padding: 8px 0;
+            padding: 6px 0;
             color: var(--text-secondary);
-            font-size: 16px;
+            font-size: 14px;
         }
         .info-box .info-row:not(:last-child) {
             border-bottom: 1px solid var(--border-color);
         }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
-        }
 
         .flow-diagram {
-            margin: 24px 0;
-            padding: 24px;
+            margin: 20px 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--text-secondary);
-            white-space: pre;
-            overflow-x: auto;
+            overflow: hidden;
+        }
+        .flow-diagram svg {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .card {
-            margin: 20px 0;
+            margin: 16px 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -456,16 +309,16 @@
         .card-head {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
+            gap: 12px;
+            padding: 12px 16px;
             background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-color);
         }
         .card-num {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 4px;
         }
         .question-card .card-num {
@@ -477,55 +330,55 @@
             color: var(--accent-orange);
         }
         .card-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
         }
         .card-body {
-            padding: 20px;
+            padding: 16px;
         }
-        .card-body p { margin-bottom: 12px; }
+        .card-body p { margin-bottom: 10px; }
         .card-body p:last-child { margin-bottom: 0; }
 
         details {
-            margin-top: 16px;
+            margin-top: 12px;
         }
         details summary {
             cursor: pointer;
             color: var(--accent-green);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             padding: 8px 0;
             list-style: none;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
         }
         details summary::before {
-            content: '▶';
-            font-size: 10px;
+            content: '>';
+            font-size: 12px;
             transition: transform 0.2s;
         }
-        /* Used by HTML — details open state */
         details[open] summary::before {
             transform: rotate(90deg);
         }
         details summary::-webkit-details-marker { display: none; }
         .answer {
-            margin-top: 12px;
-            padding: 16px;
+            margin-top: 10px;
+            padding: 12px;
             background: rgba(42, 241, 107, 0.03);
             border-radius: 6px;
             border-left: 2px solid var(--accent-green);
         }
         .answer p {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
         }
 
         .summary-box {
-            margin: 32px 0;
-            padding: 24px;
+            margin: 28px 0;
+            padding: 20px;
             background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
             border: 1px solid rgba(42, 241, 107, 0.2);
             border-radius: 12px;
@@ -533,42 +386,43 @@
         .summary-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 12px;
         }
         .summary-badge {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            padding: 4px 10px;
+            padding: 3px 8px;
             background: var(--accent-green);
             color: var(--bg-primary);
             border-radius: 4px;
         }
         .summary-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
         }
         .summary-list {
             margin: 0;
-            padding-left: 20px;
+            padding-left: 18px;
         }
         .summary-list li {
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
         blockquote {
-            margin: 24px 0;
-            padding: 20px 24px;
+            margin: 20px 0;
+            padding: 16px;
             background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
             border-left: 2px solid var(--accent-green);
             border-radius: 0 6px 6px 0;
         }
         blockquote p {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
             margin: 0;
@@ -576,167 +430,103 @@
 
         .nav-footer {
             display: flex;
-            justify-content: space-between;
-            margin-top: 64px;
-            padding-top: 32px;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
             border-top: 1px solid var(--border-color);
-            gap: 20px;
         }
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
+            gap: 12px;
+            padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             text-decoration: none;
-            transition: all 0.2s;
-            flex: 1;
-            max-width: 48%;
+            -webkit-tap-highlight-color: transparent;
         }
-        .nav-link:hover {
-            border-color: var(--border-light);
+        .nav-link:active {
             background: var(--bg-tertiary);
         }
-        /* Used by HTML — navigation link alignment (prev) */
-        .nav-link.prev { text-align: left; }
-        /* Used by HTML — navigation link alignment (next) */
-        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
         .nav-arrow {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--accent-green);
         }
         .nav-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .nav-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
-        }
-
-        @media (max-width: 1100px) {
-            .sidebar { display: none; }
-            main { max-width: 100%; padding: 40px 32px; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu { display: none; }
-            h1 { font-size: 28px; }
-            main { padding: 32px 20px; }
-            .nav-footer { flex-direction: column; }
-            .nav-link { max-width: 100%; }
-        }
-
-        @media print {
-            .sidebar, .header { display: none; }
-            body { background: white; color: black; }
         }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="#" class="logo">course<span>.</span>go</a>
-    <nav class="nav-menu">
-        <a href="#">Курсы</a>
-        <a href="#" class="current">Вводный курс Go</a>
-        <a href="#">О проекте</a>
-    </nav>
-    <div class="header-right">
-        <div class="progress-pill">
-            <span class="progress-label">Прогресс</span>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress"></div>
-            </div>
-        </div>
+<main>
+    <div class="module-badge">Модуль 3 / Урок 1</div>
+
+    <h1>Условный оператор if-else</h1>
+    <p class="lead">Учимся создавать развилки в программе - выполнять разный код в зависимости от условий.</p>
+
+    <h2 id="intro">IF-ELSE НА САМОМ ДЕЛЕ</h2>
+
+    <p>До сих пор все наши программы выполнялись <strong>последовательно</strong> - команда за командой, сверху вниз. Каждая строка кода выполнялась <strong>всегда</strong>, независимо от входных данных.</p>
+
+    <p>Но в реальных программах нужна <strong>логика принятия решений</strong>. Представь программу покупки хлеба:</p>
+
+    <div class="info-box">
+        <div class="info-row">Выйти из дома</div>
+        <div class="info-row">Дойти до магазина</div>
+        <div class="info-row">Купить хлеб - <em>А если хлеба нет?</em></div>
+        <div class="info-row">Дойти до дома</div>
     </div>
-</header>
 
-<div class="layout">
-    <aside class="sidebar">
-        <div class="course-info">
-            <div class="course-tag">Модуль 3</div>
-            <div class="course-name">Условия</div>
-            <div class="course-progress">Урок 1 из 7</div>
+    <p>Команда "Купить хлеб" не может выполниться, если хлеба в магазине нет. Нужен способ <strong>проверить условие</strong> перед выполнением действия.</p>
+
+    <h3>Как работает условный оператор</h3>
+
+    <p>Условный оператор <code>if</code> создает <strong>развилку</strong> в программе:</p>
+
+    <div class="flow-diagram">
+        <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M160 20 L220 60 L160 100 L100 60 Z" fill="none" stroke="#2AF16B" stroke-width="2"/>
+            <text x="160" y="64" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="12" font-weight="500">Условие?</text>
+            <path d="M100 60 L60 60 L60 130" stroke="white" stroke-opacity="0.5" stroke-width="1.5" fill="none"/>
+            <polygon points="60,140 55,130 65,130" fill="white" fill-opacity="0.5"/>
+            <text x="75" y="56" fill="white" fill-opacity="0.7" font-family="Inter, sans-serif" font-size="11" font-weight="500">ДА</text>
+            <path d="M220 60 L260 60 L260 130" stroke="white" stroke-opacity="0.5" stroke-width="1.5" fill="none"/>
+            <polygon points="260,140 255,130 265,130" fill="white" fill-opacity="0.5"/>
+            <text x="235" y="56" fill="white" fill-opacity="0.7" font-family="Inter, sans-serif" font-size="11" font-weight="500">НЕТ</text>
+            <rect x="20" y="145" width="80" height="40" fill="#2AF16B"/>
+            <text x="60" y="169" text-anchor="middle" fill="#070709" font-family="Inter, sans-serif" font-size="12" font-weight="600">Блок if</text>
+            <rect x="220" y="145" width="80" height="40" fill="none" stroke="white" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="4 2"/>
+            <text x="260" y="163" text-anchor="middle" fill="white" fill-opacity="0.5" font-family="Inter, sans-serif" font-size="10">(ничего</text>
+            <text x="260" y="176" text-anchor="middle" fill="white" fill-opacity="0.5" font-family="Inter, sans-serif" font-size="10">или else)</text>
+        </svg>
+    </div>
+
+    <p>Условие - это выражение, результат которого <strong>логический тип</strong> (<code>bool</code>). Значение <code>true</code> означает "условие выполнено", <code>false</code> - "условие не выполнено".</p>
+
+    <h2 id="if">ОПЕРАТОР IF</h2>
+
+    <p>В Go проверка условия выполняется с помощью ключевого слова <code>if</code> ("если"):</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Содержание</div>
-            <ul class="toc-list">
-                <li><a href="#intro"><span class="toc-num">01</span>Введение</a></li>
-                <li><a href="#if"><span class="toc-num">02</span>Оператор if</a></li>
-                <li><a href="#comparison"><span class="toc-num">03</span>Операторы сравнения</a></li>
-                <li><a href="#else"><span class="toc-num">04</span>Оператор else</a></li>
-                <li><a href="#scope"><span class="toc-num">05</span>Область видимости</a></li>
-                <li><a href="#short-decl"><span class="toc-num">06</span>Короткое объявление</a></li>
-                <li><a href="#check"><span class="toc-num">07</span>Проверь себя</a></li>
-                <li><a href="#summary"><span class="toc-num">08</span>Резюме</a></li>
-            </ul>
-        </div>
-    </aside>
-
-    <main>
-        <nav class="breadcrumb">
-            <a href="#">Курсы</a>
-            <span class="breadcrumb-sep">/</span>
-            <a href="#">Вводный курс Go</a>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current">if-else</span>
-        </nav>
-
-        <h1>Условный оператор if-else</h1>
-        <p class="lead">Учимся создавать развилки в программе — выполнять разный код в зависимости от условий.</p>
-
-        <h2 id="intro">IF-ELSE НА САМОМ ДЕЛЕ</h2>
-
-        <p>До сих пор все наши программы выполнялись <strong>последовательно</strong> — команда за командой, сверху вниз. Каждая строка кода выполнялась <strong>всегда</strong>, независимо от входных данных.</p>
-
-        <p>Но в реальных программах нужна <strong>логика принятия решений</strong>. Представь программу покупки хлеба:</p>
-
-        <div class="info-box">
-            <div class="info-row">Выйти из дома</div>
-            <div class="info-row">Дойти до магазина</div>
-            <div class="info-row">Купить хлеб ← <em>А если хлеба нет?</em></div>
-            <div class="info-row">Дойти до дома</div>
-        </div>
-
-        <p>Команда "Купить хлеб" не может выполниться, если хлеба в магазине нет. Нужен способ <strong>проверить условие</strong> перед выполнением действия.</p>
-
-        <h3>Как работает условный оператор</h3>
-
-        <p>Условный оператор <code>if</code> создаёт <strong>развилку</strong> в программе:</p>
-
-        <div class="flow-diagram">        ┌─────────────┐
-        │  Условие?   │
-        └──────┬──────┘
-               │
-        ┌──────┴──────┐
-        │             │
-       ДА            НЕТ
-        │             │
-        ▼             ▼
-   ┌─────────┐   ┌─────────┐
-   │ Блок if │   │  (ничего │
-   │         │   │   или    │
-   └─────────┘   │  else)   │
-                 └─────────┘</div>
-
-        <p>Условие — это выражение, результат которого <strong>логический тип</strong> (<code>bool</code>). Значение <code>true</code> означает "условие выполнено", <code>false</code> — "условие не выполнено".</p>
-
-        <h2 id="if">ОПЕРАТОР IF</h2>
-
-        <p>В Go проверка условия выполняется с помощью ключевого слова <code>if</code> ("если"):</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
+        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -748,142 +538,100 @@ func main() {
         fmt.Println(x)
     }
 }</code></pre>
+    </div>
+
+    <p><strong>Как это работает:</strong></p>
+    <ol>
+        <li>Читаем число <code>x</code> с клавиатуры</li>
+        <li>Проверяем условие <code>x > 10</code></li>
+        <li>Если условие истинно (<code>true</code>) - выполняем код в фигурных скобках</li>
+        <li>Если условие ложно (<code>false</code>) - пропускаем блок</li>
+    </ol>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>В Go фигурные скобки <code>{}</code> обязательны, даже если внутри одна строка.</p>
+    </div>
+
+    <h2 id="comparison">ОПЕРАТОРЫ СРАВНЕНИЯ</h2>
+
+    <p>Для построения условий используются <strong>операторы сравнения</strong>. Они всегда возвращают <code>bool</code>.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Оператор</th>
+                <th>Описание</th>
+                <th>Пример</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&gt;</code></td>
+                <td>больше</td>
+                <td><code>x > 5</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;</code></td>
+                <td>меньше</td>
+                <td><code>x < 5</code></td>
+            </tr>
+            <tr>
+                <td><code>&gt;=</code></td>
+                <td>больше или равно</td>
+                <td><code>x >= 5</code></td>
+            </tr>
+            <tr>
+                <td><code>&lt;=</code></td>
+                <td>меньше или равно</td>
+                <td><code>x <= 5</code></td>
+            </tr>
+            <tr>
+                <td><code>==</code></td>
+                <td>равно</td>
+                <td><code>x == 5</code></td>
+            </tr>
+            <tr>
+                <td><code>!=</code></td>
+                <td>не равно</td>
+                <td><code>x != 5</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Ловушка: = vs ==</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>Как это работает:</strong></p>
-        <ol>
-            <li>Читаем число <code>x</code> с клавиатуры</li>
-            <li>Проверяем условие <code>x > 10</code></li>
-            <li>Если условие истинно (<code>true</code>) — выполняем код в фигурных скобках</li>
-            <li>Если условие ложно (<code>false</code>) — пропускаем блок</li>
-        </ol>
-
-        <p>Общий вид:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">if условие {
-    // код выполняется только если условие = true
-}</code></pre>
-        </div>
-
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <p>В Go фигурные скобки <code>{}</code> обязательны, даже если внутри одна строка.</p>
-        </div>
-
-        <h2 id="comparison">ОПЕРАТОРЫ СРАВНЕНИЯ</h2>
-
-        <p>Для построения условий используются <strong>операторы сравнения</strong>. Они всегда возвращают <code>bool</code> — либо <code>true</code>, либо <code>false</code>.</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Оператор</th>
-                    <th>Описание</th>
-                    <th>Пример</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>&gt;</code></td>
-                    <td>больше</td>
-                    <td><code>x > 5</code></td>
-                </tr>
-                <tr>
-                    <td><code>&lt;</code></td>
-                    <td>меньше</td>
-                    <td><code>x < 5</code></td>
-                </tr>
-                <tr>
-                    <td><code>&gt;=</code></td>
-                    <td>больше или равно</td>
-                    <td><code>x >= 5</code></td>
-                </tr>
-                <tr>
-                    <td><code>&lt;=</code></td>
-                    <td>меньше или равно</td>
-                    <td><code>x <= 5</code></td>
-                </tr>
-                <tr>
-                    <td><code>==</code></td>
-                    <td>равно</td>
-                    <td><code>x == 5</code></td>
-                </tr>
-                <tr>
-                    <td><code>!=</code></td>
-                    <td>не равно</td>
-                    <td><code>x != 5</code></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    a := 2
-    b := 3
-    c := 2
-
-    fmt.Println(a > b)   // false
-    fmt.Println(a < b)   // true
-    fmt.Println(a >= b)  // false
-    fmt.Println(a >= c)  // true
-    fmt.Println(a == b)  // false
-    fmt.Println(a == c)  // true
-    fmt.Println(a != b)  // true
-}</code></pre>
-        </div>
-
-        <h3>Ловушка: = vs ==</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// ❌ ОШИБКА: присваивание вместо сравнения
+        <pre><code class="language-go">// ОШИБКА: присваивание вместо сравнения
 if x = 5 {  // Не скомпилируется!
     fmt.Println("x равно 5")
 }
 
-// ✅ Правильно: сравнение
+// Правильно: сравнение
 if x == 5 {
     fmt.Println("x равно 5")
 }</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">i</div>
+        <p>Путаница <code>=</code> и <code>==</code> - одна из самых частых ошибок. Go защищает от нее: присваивание внутри <code>if</code> вызовет ошибку компиляции.</p>
+    </div>
+
+    <h2 id="else">ОПЕРАТОР ELSE</h2>
+
+    <p>Часто нужно выполнить <strong>альтернативное действие</strong>, когда условие ложно. Для этого используется <code>else</code> ("иначе"):</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>Запомни:</strong></p>
-        <ul>
-            <li><code>=</code> — оператор <strong>присваивания</strong> (записать значение в переменную)</li>
-            <li><code>==</code> — оператор <strong>сравнения</strong> (проверить равенство)</li>
-        </ul>
-
-        <div class="alert alert-tip">
-            <div class="alert-icon">✓</div>
-            <p>Путаница <code>=</code> и <code>==</code> — одна из самых частых ошибок начинающих. Go защищает от неё: присваивание внутри <code>if</code> без объявления переменной вызовет ошибку компиляции.</p>
-        </div>
-
-        <h2 id="else">ОПЕРАТОР ELSE</h2>
-
-        <p>Часто нужно выполнить <strong>альтернативное действие</strong>, когда условие ложно. Для этого используется <code>else</code> ("иначе"):</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
+        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -897,440 +645,169 @@ func main() {
         fmt.Println("Отрицательное или ноль")
     }
 }</code></pre>
-        </div>
+    </div>
 
-        <p>Конструкция <code>if-else</code> гарантирует, что <strong>ровно один</strong> из двух блоков выполнится:</p>
-        <ul>
-            <li>Если условие <code>true</code> — выполняется блок <code>if</code></li>
-            <li>Если условие <code>false</code> — выполняется блок <code>else</code></li>
+    <p>Конструкция <code>if-else</code> гарантирует, что <strong>ровно один</strong> из двух блоков выполнится.</p>
+
+    <h2 id="check">ПРОВЕРЬ СЕБЯ</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Чем отличается = от == в Go?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>=</code> - оператор <strong>присваивания</strong>, записывает значение в переменную: <code>x = 5</code></p>
+                    <p><code>==</code> - оператор <strong>сравнения</strong>, проверяет равенство и возвращает <code>bool</code>: <code>x == 5</code></p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Можно ли использовать else без if?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Нет. <code>else</code> всегда должен следовать сразу после закрывающей скобки блока <code>if</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">x := 10
+fmt.Print(1)
+if x != 5 {
+    fmt.Print(2)
+}
+fmt.Print(3)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>123</code></p>
+                    <p>Условие <code>10 != 5</code> истинно, поэтому выполняется блок if.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h2 id="summary">РЕЗЮМЕ</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ключевые идеи</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>if</code> проверяет условие и выполняет блок кода только если условие истинно</li>
+            <li><code>else</code> задает альтернативный блок при ложном условии</li>
+            <li>Операторы сравнения возвращают <code>bool</code></li>
+            <li>Переменные внутри <code>{}</code> существуют только в этом блоке</li>
         </ul>
+    </div>
 
-        <div class="flow-diagram">        ┌─────────────┐
-        │   x > 0?    │
-        └──────┬──────┘
-               │
-        ┌──────┴──────┐
-        │             │
-       ДА            НЕТ
-        │             │
-        ▼             ▼
-  "Положительное"  "Отрицательное
-                    или ноль"</div>
+    <blockquote>
+        <p><strong>Правило:</strong> Если нужно проверить равенство - используй два знака равно <code>==</code></p>
+    </blockquote>
 
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <p><code>else</code> не может существовать без <code>if</code>. Он должен идти сразу после закрывающей скобки <code>if</code>.</p>
-        </div>
-
-        <h2 id="scope">ОБЛАСТЬ ВИДИМОСТИ В БЛОКАХ</h2>
-
-        <p>Переменная, объявленная внутри блока <code>{}</code>, существует <strong>только внутри этого блока</strong>:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <nav class="nav-footer">
+        <a href="#" class="nav-link prev">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий</div>
+                <div class="nav-title">Ввод-вывод</div>
             </div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var x int
-    fmt.Scan(&x)
-
-    if x > 0 {
-        a := 5  // a существует только здесь
-        fmt.Println(a + 2)  // 7
-    } else {
-        b := 10  // b существует только здесь
-        fmt.Println(b + 1)  // 11
-    }
-
-    // fmt.Println(a)  // ❌ Ошибка: a не существует
-    // fmt.Println(b)  // ❌ Ошибка: b не существует
-}</code></pre>
-        </div>
-
-        <p><strong>Почему так устроено:</strong> каждый блок <code>{}</code> создаёт свою <strong>область видимости</strong>. Переменные "рождаются" при входе в блок и "умирают" при выходе из него. Это помогает избежать конфликтов имён и делает код предсказуемым.</p>
-
-        <h2 id="short-decl">КОРОТКОЕ ОБЪЯВЛЕНИЕ В IF</h2>
-
-        <p>Go позволяет объявить переменную прямо в условии <code>if</code>. Такая переменная существует только внутри <code>if</code> и связанного <code>else</code>:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </a>
+        <a href="02-logical-operators.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий</div>
+                <div class="nav-title">Логические операторы</div>
             </div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    if age := 25; age >= 18 {
-        fmt.Println("Совершеннолетний")
-    } else {
-        fmt.Println("Несовершеннолетний")
-    }
-
-    // fmt.Println(age)  // ❌ Ошибка: age не существует
-}</code></pre>
-        </div>
-
-        <p><strong>Синтаксис:</strong> <code>if объявление; условие { }</code></p>
-
-        <p>Это часто используется для проверки результатов операций, которые нужны только внутри условия.</p>
-
-        <h3>Сравнение строк</h3>
-
-        <p>Операторы сравнения работают и со строками:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var password1, password2 string
-    fmt.Scan(&password1)
-    fmt.Scan(&password2)
-
-    if password1 == password2 {
-        fmt.Println("Пароль принят")
-    } else {
-        fmt.Println("Пароль не принят")
-    }
-}</code></pre>
-        </div>
-
-        <div class="alert alert-tip">
-            <div class="alert-icon">✓</div>
-            <p>При сравнении строк важен регистр: <code>"Go"</code> и <code>"go"</code> — разные строки.</p>
-        </div>
-
-        <h2 id="check">ПРОВЕРЬ СЕБЯ</h2>
-
-        <h3>Вопросы</h3>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Чем отличается = от == в Go?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p><code>=</code> — оператор <strong>присваивания</strong>, записывает значение в переменную: <code>x = 5</code></p>
-                        <p><code>==</code> — оператор <strong>сравнения</strong>, проверяет равенство и возвращает <code>bool</code>: <code>x == 5</code></p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Можно ли использовать else без if?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Нет. <code>else</code> всегда должен следовать сразу после закрывающей скобки блока <code>if</code>. Отдельно <code>else</code> использовать нельзя.</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Переменная объявлена внутри блока if. Можно ли использовать её после if?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Нет. Переменная, объявленная внутри блока <code>{}</code>, существует только внутри этого блока. После выхода из блока она перестаёт существовать.</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Что произойдёт при выполнении if x = 5 { ... }?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Ошибка компиляции. В Go нельзя использовать присваивание (<code>=</code>) как условие. Для сравнения нужен оператор <code>==</code>.</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <h3>Задачи</h3>
-
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Что выведет?</span>
-            </div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header">
-                        <span class="code-lang">Go</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var x int
-    x = 10
-
-    fmt.Print(1)
-
-    if x != 5 {
-        fmt.Print(2)
-    }
-
-    fmt.Print(3)
-}</code></pre>
-                </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вывод:</strong> <code>123</code></p>
-                        <p><strong>Почему:</strong></p>
-                        <ol>
-                            <li><code>x = 10</code></li>
-                            <li>Выводим <code>1</code></li>
-                            <li>Проверяем <code>x != 5</code> → <code>10 != 5</code> → <code>true</code></li>
-                            <li>Условие истинно, выводим <code>2</code></li>
-                            <li>Выводим <code>3</code></li>
-                        </ol>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Что выведет при вводе 5?</span>
-            </div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header">
-                        <span class="code-lang">Go</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var x int
-    fmt.Scan(&x)
-
-    fmt.Print(1)
-
-    if x != 5 {
-        fmt.Print(2)
-    }
-
-    fmt.Print(3)
-}</code></pre>
-                </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вывод:</strong> <code>13</code></p>
-                        <p><strong>Почему:</strong></p>
-                        <ol>
-                            <li>Вводим <code>x = 5</code></li>
-                            <li>Выводим <code>1</code></li>
-                            <li>Проверяем <code>x != 5</code> → <code>5 != 5</code> → <code>false</code></li>
-                            <li>Условие ложно, блок <code>if</code> пропускается</li>
-                            <li>Выводим <code>3</code></li>
-                        </ol>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Что выведет при вводе 917?</span>
-            </div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header">
-                        <span class="code-lang">Go</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var x int
-    fmt.Scan(&x)
-
-    fmt.Print(1)
-
-    if x%10 <= 7 {
-        fmt.Print(2)
-    } else {
-        fmt.Print(3)
-    }
-
-    fmt.Print(4)
-}</code></pre>
-                </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вывод:</strong> <code>124</code></p>
-                        <p><strong>Почему:</strong></p>
-                        <ol>
-                            <li>Вводим <code>x = 917</code></li>
-                            <li>Выводим <code>1</code></li>
-                            <li>Вычисляем <code>x % 10</code> → <code>917 % 10</code> → <code>7</code></li>
-                            <li>Проверяем <code>7 <= 7</code> → <code>true</code></li>
-                            <li>Выводим <code>2</code> (блок <code>else</code> пропускается)</li>
-                            <li>Выводим <code>4</code></li>
-                        </ol>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Чему равны s и a после выполнения?</span>
-            </div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header">
-                        <span class="code-lang">Go</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-go">s := 1
-a := 5
-
-if s > 1 {
-    a = a + s
-} else {
-    s = s + a*2
-}</code></pre>
-                </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>s = 11, a = 5</strong></p>
-                        <p><strong>Почему:</strong></p>
-                        <ol>
-                            <li><code>s = 1</code>, <code>a = 5</code></li>
-                            <li>Проверяем <code>s > 1</code> → <code>1 > 1</code> → <code>false</code></li>
-                            <li>Выполняется блок <code>else</code>: <code>s = s + a*2</code> → <code>s = 1 + 5*2</code> → <code>s = 11</code></li>
-                            <li>Переменная <code>a</code> не изменилась, осталась равна <code>5</code></li>
-                        </ol>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <h2 id="summary">РЕЗЮМЕ</h2>
-
-        <div class="summary-box">
-            <div class="summary-header">
-                <span class="summary-badge">Key</span>
-                <span class="summary-title">Ключевые идеи</span>
-            </div>
-            <ul class="summary-list">
-                <li><code>if</code> проверяет условие и выполняет блок кода только если условие истинно</li>
-                <li><code>else</code> задаёт альтернативный блок, который выполняется при ложном условии</li>
-                <li>Операторы сравнения (<code>></code>, <code><</code>, <code>>=</code>, <code><=</code>, <code>==</code>, <code>!=</code>) возвращают <code>bool</code></li>
-                <li>Переменные внутри <code>{}</code> существуют только в этом блоке</li>
-            </ul>
-        </div>
-
-        <p><strong>Главная ловушка:</strong> путаница <code>=</code> (присваивание) и <code>==</code> (сравнение)</p>
-
-        <blockquote>
-            <p><strong>Правило:</strong> Если нужно проверить равенство — используй два знака равно <code>==</code></p>
-        </blockquote>
-
-        <nav class="nav-footer">
-            <!-- TODO: Update href when previous lesson is created -->
-            <a href="#" class="nav-link prev" aria-label="Предыдущий урок (скоро)">
-                <span class="nav-arrow">←</span>
-                <div>
-                    <div class="nav-label">Предыдущий модуль</div>
-                    <div class="nav-title">Ввод-вывод</div>
-                </div>
-            </a>
-            <a href="02-logical-operators.html" class="nav-link next">
-                <div>
-                    <div class="nav-label">Следующий урок</div>
-                    <div class="nav-title">Логические операторы</div>
-                </div>
-                <span class="nav-arrow">→</span>
-            </a>
-        </nav>
-    </main>
-</div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
 
 <script>
-    /* global hljs */
-    // noinspection JSUnresolvedReference
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+
     hljs.highlightAll();
 
     function copyCode(btn) {
         const code = btn.closest('.code-block').querySelector('code');
-        navigator.clipboard.writeText(code.textContent).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = 'Copy';
-                btn.classList.remove('copied');
-            }, 2000);
-        });
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
     }
 
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-        document.getElementById('progress').style.width = p + '%';
-    });
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
 
-    const links = document.querySelectorAll('.toc-list a');
-    const sections = document.querySelectorAll('h2[id], h3[id]');
-
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(s => {
-            if (scrollY >= s.offsetTop - 100) current = s.id;
-        });
-        links.forEach(l => {
-            l.classList.remove('active');
-            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
-        });
-    });
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
 </script>
 
 </body>

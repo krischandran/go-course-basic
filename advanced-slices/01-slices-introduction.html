@@ -2,17 +2,29 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Слайсы в Go — Введение</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- highlight.js for code syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
 
     <style>
         :root {
@@ -26,6 +38,7 @@
             --border-light: #363636;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
+
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,286 +52,105 @@
             background-color: var(--bg-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            /* Safe area for notch devices */
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            padding: 0 40px;
+        /* Main content - no sidebar, no fixed header */
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
         }
 
-        .logo {
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-        .logo span { color: var(--accent-green); }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 32px;
-            margin-left: 48px;
-        }
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 400;
-            transition: color 0.2s;
-        }
-        .nav-menu a:hover { color: var(--text-primary); }
-        .nav-menu a.current { color: var(--text-secondary); }
-
-        .header-right {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-        .progress-pill {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background: var(--bg-secondary);
-            border-radius: 100px;
-        }
-        .progress-label {
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-        }
-        .progress-track {
-            width: 80px;
-            height: 2px;
-            background: var(--border-color);
-            border-radius: 1px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            width: 0;
-            background: var(--accent-green);
-            transition: width 0.15s;
-        }
-        .progress-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--accent-orange);
-            border-radius: 50%;
-        }
-
-        /* Layout */
-        .layout {
-            display: flex;
-            max-width: 1440px;
-            margin: 0 auto;
-            padding-top: 56px;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            height: calc(100vh - 56px);
-            position: sticky;
-            top: 56px;
-            padding: 32px 24px;
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .course-info {
-            padding-bottom: 24px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .course-tag {
+        /* Module badge */
+        .module-badge {
             display: inline-block;
-            padding: 4px 10px;
-            background: rgba(42, 241, 107, 0.1);
-            border-radius: 100px;
             font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
             margin-bottom: 12px;
         }
-        .course-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-        .course-progress {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
 
-        .toc-section {
-            margin-bottom: 24px;
-        }
-        .toc-title {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-        .toc-list {
-            list-style: none;
-        }
-        .toc-list li {
-            margin-bottom: 2px;
-        }
-        .toc-list a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 6px;
-            transition: all 0.15s;
-        }
-        .toc-list a:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.03);
-        }
-        /* Used by JS — TOC active state on scroll */
-        .toc-list a.active {
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.06);
-        }
-        .toc-num {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        /* Used by JS — TOC number active state */
-        .toc-list a.active .toc-num {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            max-width: 760px;
-            padding: 48px 56px 120px;
-            min-height: calc(100vh - 56px);
-        }
-
-        /* Breadcrumb */
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            margin-bottom: 32px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-        .breadcrumb a:hover { color: var(--accent-green); }
-        .breadcrumb-sep { color: var(--border-light); }
-        .breadcrumb-current { color: var(--text-secondary); }
-
-        /* Typography */
         h1 {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
+
         .lead {
-            font-size: 19px;
+            font-size: 16px;
+            line-height: 1.6;
             color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         h2 {
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--text-muted);
-            margin-top: 64px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-            scroll-margin-top: 80px;
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
         }
         h2::before {
             content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: var(--accent-green);
             border-radius: 2px;
-            margin-right: 12px;
-            vertical-align: middle;
+            flex-shrink: 0;
         }
 
         h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: -0.01em;
-            margin-top: 40px;
-            margin-bottom: 16px;
-            scroll-margin-top: 80px;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
         }
 
         p {
-            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.7;
             color: var(--text-secondary);
-            font-size: 17px;
-            line-height: 1.75;
+            margin-bottom: 16px;
         }
+
         p strong { color: var(--text-primary); font-weight: 600; }
 
-        /* Inline code */
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
         code {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.06);
-            padding: 2px 7px;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
             border-radius: 4px;
+            font-size: 13px;
             color: var(--accent-green);
         }
 
-        /* Code blocks */
         .code-block {
-            margin: 24px 0;
+            margin: 20px 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -326,9 +158,9 @@
         }
         .code-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
+            align-items: center;
+            padding: 8px 12px;
             background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-color);
         }
@@ -340,88 +172,42 @@
             color: var(--text-muted);
         }
         .copy-btn {
-            padding: 5px 10px;
             background: transparent;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
             color: var(--text-muted);
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .copy-btn:hover {
-            border-color: var(--accent-green);
-            color: var(--accent-green);
+        .copy-btn:active {
+            background: var(--bg-tertiary);
         }
-        /* Used by JS — copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
             color: var(--accent-green);
         }
-
         .code-block pre {
             margin: 0;
-            background: none;
-            border: none;
-        }
-        .code-block pre code {
-            display: block;
-            padding: 16px 20px;
-            background: none;
-            color: #d4d4d4;
-            font-size: 14px;
-            line-height: 1.6;
+            padding: 16px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
         }
 
-        /* Quote */
-        blockquote {
-            margin: 28px 0;
-            padding: 20px 24px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            margin: 0;
-            color: var(--text-primary);
-            font-size: 18px;
-            font-weight: 500;
-            font-style: italic;
-        }
-
-        /* Table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 24px 0;
-            font-size: 16px;
-        }
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        th {
-            font-weight: 600;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            background: var(--bg-secondary);
-        }
-        td { color: var(--text-secondary); }
-        tr:hover td { background: rgba(255, 255, 255, 0.01); }
-
-        /* Alerts */
         .alert {
-            margin: 28px 0;
-            padding: 20px 24px 20px 48px;
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
             background: var(--bg-secondary);
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -429,15 +215,16 @@
         }
         .alert-icon {
             position: absolute;
-            left: 16px;
-            top: 20px;
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
         }
         .alert-important .alert-icon {
             background: rgba(241, 161, 42, 0.15);
@@ -447,412 +234,386 @@
             background: rgba(42, 241, 107, 0.15);
             color: var(--accent-green);
         }
-        .alert-label {
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
             font-size: 10px;
-            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            margin-bottom: 8px;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
-        .alert-important .alert-label { color: var(--accent-orange); }
-        .alert-tip .alert-label { color: var(--accent-green); }
-        .alert p { margin: 0; font-size: 16px; }
-
-        /* Divider */
-        hr {
-            border: none;
-            height: 1px;
-            background: var(--border-color);
-            margin: 48px 0;
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
-        /* Cards */
+        .info-box {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .flow-diagram {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .flow-diagram svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
         .cards {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
-        .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: border-color 0.15s;
-        }
-        .card:hover { border-color: var(--border-light); }
-        .card-head {
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .card-num {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 6px;
-        }
-        .question-card .card-num {
-            background: linear-gradient(135deg, var(--accent-green), rgba(42, 241, 107, 0.5));
-            color: var(--bg-primary);
-        }
-        .task-card .card-num {
-            background: linear-gradient(135deg, var(--accent-orange), rgba(241, 161, 42, 0.5));
-            color: var(--bg-primary);
-        }
-        .card-title {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--text-primary);
-        }
-        .card-body { padding: 16px 20px; }
 
-        /* Details/Summary */
-        details { margin-top: 12px; }
-        summary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 12px;
-            color: var(--text-muted);
-            transition: all 0.15s;
-            list-style: none;
-        }
-        summary::-webkit-details-marker { display: none; }
-        summary::before {
-            content: '→';
-            font-size: 12px;
-            transition: transform 0.15s;
-        }
-        details[open] summary::before { transform: rotate(90deg); }
-        summary:hover {
-            background: rgba(42, 241, 107, 0.05);
-            border-color: rgba(42, 241, 107, 0.2);
-            color: var(--accent-green);
-        }
-
-        .answer, .solution {
+        details {
             margin-top: 12px;
-            padding: 16px 20px;
-            background: rgba(42, 241, 107, 0.04);
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
             border-radius: 6px;
             border-left: 2px solid var(--accent-green);
         }
-        .answer p:last-child, .solution p:last-child { margin-bottom: 0; }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
         .solution {
             background: rgba(241, 161, 42, 0.04);
             border-left-color: var(--accent-orange);
         }
 
-        /* Summary Box */
         .summary-box {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 28px;
-            margin: 40px 0;
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
         }
         .summary-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+            margin-bottom: 12px;
         }
         .summary-badge {
-            padding: 4px 10px;
-            background: rgba(42, 241, 107, 0.1);
-            border-radius: 100px;
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: var(--accent-green);
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
         }
         .summary-title {
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
+            color: var(--text-primary);
         }
         .summary-formula {
             background: var(--bg-primary);
-            padding: 16px 20px;
+            padding: 12px 16px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border-radius: 6px;
             border-left: 2px solid var(--accent-green);
         }
         .summary-list {
-            list-style: none;
+            margin: 0;
+            padding-left: 18px;
         }
         .summary-list li {
-            padding: 12px 0 12px 24px;
-            position: relative;
-            color: var(--text-primary);
-            font-size: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .summary-list li:last-child { border-bottom: none; }
-        .summary-list li::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            color: var(--accent-green);
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
-        /* Navigation */
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        /* Navigation footer */
         .nav-footer {
             display: flex;
-            gap: 16px;
-            margin-top: 64px;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
             padding-top: 24px;
             border-top: 1px solid var(--border-color);
         }
         .nav-link {
-            flex: 1;
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 20px;
+            gap: 12px;
+            padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             text-decoration: none;
-            transition: all 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .nav-link:hover {
-            border-color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.02);
+        .nav-link:active {
+            background: var(--bg-tertiary);
         }
-        /* Used by HTML — navigation link alignment (next) */
-        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
         .nav-arrow {
             font-size: 18px;
             color: var(--accent-green);
         }
         .nav-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .nav-title {
-            font-weight: 600;
-            color: var(--text-primary);
             font-size: 14px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1100px) {
-            .sidebar { display: none; }
-            main { padding: 40px 32px 100px; max-width: 100%; }
-        }
-        @media (max-width: 768px) {
-            .header { padding: 0 20px; }
-            .nav-menu { display: none; }
-            main { padding: 32px 20px 80px; }
-            h1 { font-size: 28px; }
-            .nav-footer { flex-direction: column; }
-        }
-        @media print {
-            .sidebar, .header { display: none; }
-            body { background: white; color: black; }
-            main { padding: 0; max-width: 100%; }
+            font-weight: 500;
+            color: var(--text-primary);
         }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="#" class="logo">course<span>.</span>go</a>
-    <nav class="nav-menu">
-        <a href="#">Курсы</a>
-        <a href="#" class="current">Слайсы</a>
-        <a href="#">О проекте</a>
-    </nav>
-    <div class="header-right">
-        <div class="progress-pill">
-            <span class="progress-label">Прогресс</span>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress"></div>
-            </div>
-            <div class="progress-dot"></div>
+<main>
+    <div class="module-badge">Слайсы / Урок 1</div>
+
+    <h1>Слайсы в Go: Введение</h1>
+    <p class="lead">Разберём внутреннее устройство слайсов, типичные ловушки на собеседованиях и научимся избегать утечек памяти.</p>
+
+    <h2 id="interviews">Что спрашивают на собеседованиях</h2>
+    <p>На собеседованиях по слайсам <strong>дают задачи, а не теорию</strong>. Единственный теоретический вопрос:</p>
+    <blockquote><p>"Что такое слайс?"</p></blockquote>
+    <p>Но чтобы решать задачи, нужно глубоко понимать <strong>как слайс устроен изнутри</strong>.</p>
+
+    <hr>
+
+    <h2 id="array-vs-slice">Массив vs Слайс</h2>
+
+    <h3>Массив: фиксированный блок памяти</h3>
+    <p>Массив в Go — это <strong>непрерывная область памяти фиксированного размера</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
+        <pre><code class="language-go">var arr [5]int  // Ровно 5 элементов, ни больше, ни меньше</code></pre>
     </div>
-</header>
 
-<div class="layout">
-    <aside class="sidebar">
-        <div class="course-info">
-            <div class="course-tag">Go Basics</div>
-            <div class="course-name">Слайсы</div>
-            <div class="course-progress">Урок 1 из 3</div>
-        </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Основы</div>
-            <ul class="toc-list">
-                <li><a href="#interviews"><span class="toc-num">01</span>Собеседования</a></li>
-                <li><a href="#array-vs-slice"><span class="toc-num">02</span>Массив vs Слайс</a></li>
-                <li><a href="#structure"><span class="toc-num">03</span>Структура</a></li>
-                <li><a href="#reference-type"><span class="toc-num">04</span>Ссылочный тип</a></li>
-            </ul>
-        </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Ловушки</div>
-            <ul class="toc-list">
-                <li><a href="#trap-1"><span class="toc-num">05</span>Передача</a></li>
-                <li><a href="#trap-2"><span class="toc-num">06</span>Реаллокация</a></li>
-                <li><a href="#trap-3"><span class="toc-num">07</span>Утечки</a></li>
-                <li><a href="#trap-4"><span class="toc-num">08</span>Reslicing</a></li>
-            </ul>
-        </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Практика</div>
-            <ul class="toc-list">
-                <li><a href="#mechanics"><span class="toc-num">09</span>Механики</a></li>
-                <li><a href="#quiz"><span class="toc-num">10</span>Вопросы</a></li>
-                <li><a href="#practice"><span class="toc-num">11</span>Задачи</a></li>
-                <li><a href="#summary"><span class="toc-num">12</span>Резюме</a></li>
-            </ul>
-        </div>
-    </aside>
-
-    <main>
-        <nav class="breadcrumb">
-            <a href="#">Курсы</a>
-            <span class="breadcrumb-sep">/</span>
-            <a href="#">Слайсы</a>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current">Введение</span>
-        </nav>
-
-        <h1>Слайсы в Go: Введение</h1>
-        <p class="lead">Разберём внутреннее устройство слайсов, типичные ловушки на собеседованиях и научимся избегать утечек памяти. Глубокое понимание — ключ к решению задач.</p>
-
-        <h2 id="interviews">Что спрашивают на собеседованиях</h2>
-        <p>На собеседованиях по слайсам <strong>дают задачи, а не теорию</strong>. Единственный теоретический вопрос:</p>
-        <blockquote><p>"Что такое слайс?"</p></blockquote>
-        <p>Но чтобы решать задачи, нужно глубоко понимать <strong>как слайс устроен изнутри</strong>.</p>
-
-        <hr>
-
-        <h2 id="array-vs-slice">Массив vs Слайс: в чём разница?</h2>
-
-        <h3>Массив: фиксированный блок памяти</h3>
-        <p>Массив в Go — это <strong>непрерывная область памяти фиксированного размера</strong>:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">var arr [5]int  // Ровно 5 элементов, ни больше, ни меньше</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>Массив [5]int в памяти:
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>Массив [5]int в памяти:
 ┌─────┬─────┬─────┬─────┬─────┐
 │  0  │  0  │  0  │  0  │  0  │  ← 5 * 8 = 40 байт (int = 8 байт)
 └─────┴─────┴─────┴─────┴─────┘
   [0]   [1]   [2]   [3]   [4]</code></pre>
+    </div>
+
+    <h3>Проблема массивов</h3>
+    <p><strong>1. Размер — часть типа.</strong> <code>[3]int</code> и <code>[5]int</code> — это <strong>разные типы</strong>!</p>
+    <p><strong>2. Нельзя изменить размер.</strong> Массив из 5 элементов всегда будет из 5 элементов.</p>
+    <p><strong>3. Передача по значению.</strong> Когда передаёшь массив в функцию — копируются <strong>все данные</strong>.</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3>Проблема массивов</h3>
-        <p><strong>1. Размер — часть типа.</strong> <code>[3]int</code> и <code>[5]int</code> — это <strong>разные типы</strong>!</p>
-        <p><strong>2. Нельзя изменить размер.</strong> Массив из 5 элементов всегда будет из 5 элементов.</p>
-        <p><strong>3. Передача по значению.</strong> Когда передаёшь массив в функцию — копируются <strong>все данные</strong>.</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func processArray(arr [1000000]int) {  // Копируется 8MB каждый вызов!
+        <pre><code class="language-go">func processArray(arr [1000000]int) {  // Копируется 8MB каждый вызов!
     // ...
 }
 
 // Не скомпилируется — разные типы!
 var a [3]int
 var b [5]int
-a = b  // ❌ cannot use b (variable of type [5]int) as [3]int</code></pre>
+a = b  // cannot use b (variable of type [5]int) as [3]int</code></pre>
+    </div>
+
+    <h3>Слайс: гибкая обёртка над массивом</h3>
+    <p>Слайс решает все эти проблемы. Это <strong>структура-обёртка</strong>, которая указывает на массив:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3>Слайс: гибкая обёртка над массивом</h3>
-        <p>Слайс решает все эти проблемы. Это <strong>структура-обёртка</strong>, которая указывает на массив:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">var s []int  // Слайс — размер не указан
+        <pre><code class="language-go">var s []int  // Слайс — размер не указан
 s = append(s, 1, 2, 3)  // Может расти
 s = append(s, 4, 5)     // И ещё расти</code></pre>
+    </div>
+
+    <table>
+        <thead><tr><th>Критерий</th><th>Массив</th><th>Слайс</th></tr></thead>
+        <tbody>
+            <tr><td>Размер</td><td>Фиксированный</td><td>Динамический</td></tr>
+            <tr><td>Синтаксис</td><td><code>[5]int</code></td><td><code>[]int</code></td></tr>
+            <tr><td>Передача</td><td>Копируется целиком</td><td>24 байта</td></tr>
+            <tr><td>Расширение</td><td>Нет</td><td><code>append</code></td></tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>В реальном коде ты почти всегда будешь использовать слайсы. Массивы — низкоуровневая деталь.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="structure">Структура слайса: 3 поля</h2>
+
+    <p>Слайс — это структура из <strong>трёх полей</strong>. Понимание этого — ключ ко всем задачам на собеседованиях.</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <table>
-            <thead><tr><th>Критерий</th><th>Массив</th><th>Слайс</th></tr></thead>
-            <tbody>
-                <tr><td>Размер</td><td>Фиксированный, часть типа</td><td>Динамический</td></tr>
-                <tr><td>Синтаксис</td><td><code>[5]int</code></td><td><code>[]int</code></td></tr>
-                <tr><td>При передаче</td><td>Копируется целиком</td><td>Копируется header (24 байта)</td></tr>
-                <tr><td>Расширение</td><td>Нет</td><td>Да, через <code>append</code></td></tr>
-            </tbody>
-        </table>
-
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <div class="alert-label">Important</div>
-            <p>В реальном коде ты почти всегда будешь использовать слайсы. Массивы — низкоуровневая деталь.</p>
-        </div>
-
-        <hr>
-
-        <h2 id="structure">Структура слайса: 3 поля</h2>
-
-        <p>Слайс — это структура из <strong>трёх полей</strong>. Понимание этого — ключ ко всем задачам на собеседованиях.</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// Внутренняя структура слайса (псевдокод)
+        <pre><code class="language-go">// Внутренняя структура слайса (псевдокод)
 type slice struct {
     ptr *array  // указатель на underlying array
     len int     // текущая длина
     cap int     // вместимость (capacity)
 }</code></pre>
-        </div>
+    </div>
 
-        <h3>Memory Layout</h3>
+    <h3>Memory Layout</h3>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>Slice Header (24 байта):       Underlying Array:
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>Slice Header (24 байта):       Underlying Array:
 ┌─────────────────────────┐    ┌─────┬─────┬─────┐
 │ ptr ────────────────────┼───►│  1  │  2  │  3  │
 ├─────────────────────────┤    └─────┴─────┴─────┘
@@ -860,59 +621,58 @@ type slice struct {
 ├─────────────────────────┤
 │ cap = 3                 │
 └─────────────────────────┘</code></pre>
+    </div>
+
+    <table>
+        <thead><tr><th>Поле</th><th>Размер</th><th>Описание</th></tr></thead>
+        <tbody>
+            <tr><td><strong>ptr</strong></td><td>8 байт</td><td>Указатель на первый элемент</td></tr>
+            <tr><td><strong>len</strong></td><td>8 байт</td><td>Текущая длина</td></tr>
+            <tr><td><strong>cap</strong></td><td>8 байт</td><td>Вместимость без реаллокации</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Почему cap важен?</h3>
+
+    <p>Capacity определяет, когда нужна <strong>реаллокация</strong> (выделение нового массива):</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <table>
-            <thead><tr><th>Поле</th><th>Размер</th><th>Описание</th></tr></thead>
-            <tbody>
-                <tr><td><strong>ptr</strong></td><td>8 байт</td><td>Указатель на первый элемент</td></tr>
-                <tr><td><strong>len</strong></td><td>8 байт</td><td>Текущая длина</td></tr>
-                <tr><td><strong>cap</strong></td><td>8 байт</td><td>Вместимость без реаллокации</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Почему cap важен?</h3>
-
-        <p>Capacity определяет, когда нужна <strong>реаллокация</strong> (выделение нового массива):</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">s := make([]int, 3, 3)  // len=3, cap=3
+        <pre><code class="language-go">s := make([]int, 3, 3)  // len=3, cap=3
 s = append(s, 4)        // len станет 4, но cap=3!
 // Go выделит НОВЫЙ массив, скопирует данные</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">i</div>
+        <p>Если знаешь примерный размер — <strong>pre-allocate</strong> с помощью <code>make([]T, 0, expectedSize)</code>. Это избежит множества реаллокаций.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="reference-type">Почему слайс "ссылочный тип"</h2>
+
+    <p>Это <strong>самая важная</strong> концепция для понимания слайсов. Разберём детально.</p>
+
+    <h3>Что копируется при присваивании?</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <div class="alert alert-tip">
-            <div class="alert-icon">✓</div>
-            <div class="alert-label">Tip</div>
-            <p>Если знаешь примерный размер — <strong>pre-allocate</strong> с помощью <code>make([]T, 0, expectedSize)</code>. Это избежит множества реаллокаций.</p>
-        </div>
-
-        <hr>
-
-        <h2 id="reference-type">Почему слайс "ссылочный тип"</h2>
-
-        <p>Это <strong>самая важная</strong> концепция для понимания слайсов. Разберём детально.</p>
-
-        <h3>Что копируется при присваивании?</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">a := []int{1, 2, 3}
+        <pre><code class="language-go">a := []int{1, 2, 3}
 b := a  // Что скопировалось?</code></pre>
-        </div>
+    </div>
 
-        <p><strong>Копируется только header (24 байта):</strong></p>
+    <p><strong>Копируется только header (24 байта):</strong></p>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>a (header):                   Underlying Array:
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>a (header):                   Underlying Array:
 ┌─────────────────┐           ┌─────┬─────┬─────┐
 │ ptr ────────────┼──────────►│  1  │  2  │  3  │
 │ len = 3         │           └─────┴─────┴─────┘
@@ -925,59 +685,58 @@ b (header):                            │
 │ len = 3         │   ← НОВЫЙ header, но ТОТ ЖЕ массив!
 │ cap = 3         │
 └─────────────────┘</code></pre>
+    </div>
+
+    <p><strong>a и b указывают на ОДИН массив в памяти!</strong></p>
+
+    <h3>Что это означает на практике?</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>a и b указывают на ОДИН массив в памяти!</strong></p>
-
-        <h3>Что это означает на практике?</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">a := []int{1, 2, 3}
+        <pre><code class="language-go">a := []int{1, 2, 3}
 b := a
 b[0] = 999
 
 fmt.Println(a)  // [999 2 3] — изменился!
 fmt.Println(b)  // [999 2 3]</code></pre>
+    </div>
+
+    <h3>Сравни с массивом (по значению)</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3>Сравни с массивом (по значению)</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">a := [3]int{1, 2, 3}  // массив, не слайс!
+        <pre><code class="language-go">a := [3]int{1, 2, 3}  // массив, не слайс!
 b := a                 // копируются ВСЕ данные
 b[0] = 999
 
 fmt.Println(a)  // [1 2 3] — НЕ изменился
 fmt.Println(b)  // [999 2 3]</code></pre>
+    </div>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>Слайс — это <strong>"окно" в массив</strong>. Несколько слайсов могут смотреть в один массив. Изменения через любой из них видны всем.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="traps">Типичные ловушки</h2>
+
+    <h3 id="trap-1">Ловушка 1: Передача слайса в функцию</h3>
+    <p>Функция получает <strong>копию header</strong>, но ptr указывает на тот же массив:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <div class="alert-label">Important</div>
-            <p>Слайс — это <strong>"окно" в массив</strong>. Несколько слайсов могут смотреть в один массив. Изменения через любой из них видны всем.</p>
-        </div>
-
-        <hr>
-
-        <h2>Типичные ловушки</h2>
-
-        <h3 id="trap-1">Ловушка 1: Передача слайса в функцию</h3>
-        <p>Функция получает <strong>копию header</strong>, но ptr указывает на тот же массив:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func modify(s []int) {
+        <pre><code class="language-go">func modify(s []int) {
     s[0] = 999  // меняем общий массив!
 }
 
@@ -986,11 +745,11 @@ func main() {
     modify(a)
     fmt.Println(a)  // [999 2 3] — изменился!
 }</code></pre>
-        </div>
+    </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>main():                          modify() получает копию header:
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>main():                          modify() получает копию header:
 ┌─────────────────┐             ┌─────────────────┐
 │ ptr ────────────┼────────┐    │ ptr ────────────┼──────┐
 │ len = 3         │        │    │ len = 3         │      │
@@ -1000,16 +759,16 @@ func main() {
                     ┌─────┬─────┬─────┐
                     │  1  │  2  │  3  │  ← ОДИН массив!
                     └─────┴─────┴─────┘</code></pre>
+    </div>
+
+    <h3 id="trap-2">Ловушка 2: append может создать НОВЫЙ массив</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3 id="trap-2">Ловушка 2: append может создать НОВЫЙ массив</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func addElement(s []int) {
+        <pre><code class="language-go">func addElement(s []int) {
     s = append(s, 4)  // что произойдёт?
     s[0] = 999
 }
@@ -1019,78 +778,77 @@ func main() {
     addElement(a)
     fmt.Println(a)  // [1 2 3] — НЕ изменился!
 }</code></pre>
+    </div>
+
+    <p><strong>Что произошло?</strong></p>
+    <p>1. <code>a</code> имеет len=3, cap=3 (нет места для нового элемента)</p>
+    <p>2. <code>append</code> выделил <strong>новый массив</strong> с большей capacity</p>
+    <p>3. <code>s</code> теперь указывает на новый массив</p>
+    <p>4. <code>s[0] = 999</code> меняет новый массив, не <code>a</code></p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">i</div>
+        <p>Если функция делает <code>append</code> и вы хотите видеть изменения — <strong>возвращайте новый слайс</strong> или передавайте <code>*[]int</code>.</p>
+    </div>
+
+    <h3 id="trap-3">Ловушка 3: Утечка памяти</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>Что произошло?</strong></p>
-        <p>1. <code>a</code> имеет len=3, cap=3 (нет места для нового элемента)</p>
-        <p>2. <code>append</code> выделил <strong>новый массив</strong> с большей capacity</p>
-        <p>3. <code>s</code> теперь указывает на новый массив</p>
-        <p>4. <code>s[0] = 999</code> меняет новый массив, не <code>a</code></p>
-
-        <div class="alert alert-tip">
-            <div class="alert-icon">✓</div>
-            <div class="alert-label">Tip</div>
-            <p>Если функция делает <code>append</code> и вы хотите видеть изменения — <strong>возвращайте новый слайс</strong> или передавайте <code>*[]int</code>.</p>
-        </div>
-
-        <h3 id="trap-3">Ловушка 3: Утечка памяти</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// ❌ Плохо: весь массив остаётся в памяти
+        <pre><code class="language-go">// Плохо: весь массив остаётся в памяти
 func getFirst10(filename string) []byte {
     data, _ := os.ReadFile(filename)  // читает файл 100MB
     return data[:10]  // возвращаем "окно" в 100MB массив
 }</code></pre>
-        </div>
+    </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>Возвращённый слайс:          Underlying Array (100MB):
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>Возвращённый слайс:          Underlying Array (100MB):
 ┌─────────────────┐          ┌─────┬─────┬──...──┬─────┐
 │ ptr ────────────┼─────────►│ ... │ ... │  ...  │ ... │
 │ len = 10        │          └─────┴─────┴──...──┴─────┘
 │ cap = 100000000 │          ↑                         ↑
 └─────────────────┘          используется     не используется,
                              10 байт          но живёт в памяти!</code></pre>
+    </div>
+
+    <p><strong>Исправление — явное копирование:</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>Исправление — явное копирование:</strong></p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// ✅ Хорошо: копируем только нужные данные
+        <pre><code class="language-go">// Хорошо: копируем только нужные данные
 func getFirst10(filename string) []byte {
     data, _ := os.ReadFile(filename)
     result := make([]byte, 10)
     copy(result, data[:10])
     return result  // новый массив на 10 байт
 }</code></pre>
+    </div>
+
+    <h3 id="trap-4">Ловушка 4: Reslicing создаёт alias</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3 id="trap-4">Ловушка 4: Reslicing создаёт alias</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">a := []int{1, 2, 3, 4, 5}
+        <pre><code class="language-go">a := []int{1, 2, 3, 4, 5}
 b := a[1:3]  // b = [2, 3]
 b[0] = 999
 
 fmt.Println(a)  // [1 999 3 4 5] — a изменился!</code></pre>
-        </div>
+    </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Schema</span></div>
-            <pre><code>a:                              Underlying Array:
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Schema</span></div>
+        <pre><code>a:                              Underlying Array:
 ┌─────────────────┐            ┌─────┬─────┬─────┬─────┬─────┐
 │ ptr ────────────┼───────────►│  1  │  2  │  3  │  4  │  5  │
 │ len = 5         │            └─────┴──▲──┴─────┴─────┴─────┘
@@ -1103,270 +861,269 @@ b (a[1:3]):                             │
 │ len = 2         │   b[0] это a[1]!
 │ cap = 4         │   (cap = 5-1 = 4, от индекса 1 до конца)
 └─────────────────┘</code></pre>
+    </div>
+
+    <p><strong>Как избежать?</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p><strong>Как избежать?</strong></p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// Явное копирование
+        <pre><code class="language-go">// Явное копирование
 a := []int{1, 2, 3, 4, 5}
 b := make([]int, 2)
 copy(b, a[1:3])
 b[0] = 999
 fmt.Println(a)  // [1 2 3 4 5] — a НЕ изменился</code></pre>
-        </div>
+    </div>
 
-        <hr>
+    <hr>
 
-        <h2 id="mechanics">3 механики для решения задач</h2>
+    <h2 id="mechanics">3 механики для решения задач</h2>
 
-        <div class="alert alert-tip">
-            <div class="alert-icon">✓</div>
-            <div class="alert-label">Tip</div>
-            <p>Запомни <strong>LCA</strong>: <strong>L</strong>en/cap, <strong>C</strong>opy-on-append, <strong>A</strong>lias</p>
-        </div>
+    <div class="alert alert-tip">
+        <div class="alert-icon">i</div>
+        <p>Запомни <strong>LCA</strong>: <strong>L</strong>en/cap, <strong>C</strong>opy-on-append, <strong>A</strong>lias</p>
+    </div>
 
-        <table>
-            <thead><tr><th>Механика</th><th>Ключевой вопрос</th><th>Урок</th></tr></thead>
-            <tbody>
-                <tr><td><strong>Len/Cap</strong></td><td>Когда cap достаточно, а когда нет?</td><td>→ Урок 2: append</td></tr>
-                <tr><td><strong>Copy-on-append</strong></td><td>Когда append создаёт новый массив?</td><td>→ Урок 2: append</td></tr>
-                <tr><td><strong>Alias</strong></td><td>Какие слайсы делят один массив?</td><td>Этот урок</td></tr>
-            </tbody>
-        </table>
+    <table>
+        <thead><tr><th>Механика</th><th>Ключевой вопрос</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Len/Cap</strong></td><td>Когда cap достаточно?</td></tr>
+            <tr><td><strong>Copy-on-append</strong></td><td>Когда append создаёт новый массив?</td></tr>
+            <tr><td><strong>Alias</strong></td><td>Какие слайсы делят один массив?</td></tr>
+        </tbody>
+    </table>
 
-        <hr>
+    <hr>
 
-        <h2 id="quiz">Проверь себя</h2>
+    <h2 id="quiz">Проверь себя</h2>
 
-        <div class="cards">
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">01</span>
-                    <span class="card-title">Что такое слайс? Чем он отличается от массива?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Слайс — это <strong>структура-обёртка</strong> над массивом, содержащая указатель, длину и вместимость.</p>
-                            <p><strong>Отличия от массива:</strong></p>
-                            <p>• Массив имеет фиксированный размер (часть типа), слайс — динамический</p>
-                            <p>• Массив копируется целиком, слайс — только header (24 байта)</p>
-                            <p>• Массив <code>[3]int</code> и <code>[5]int</code> — разные типы, <code>[]int</code> — один тип</p>
-                        </div>
-                    </details>
-                </div>
+    <div class="cards">
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что такое слайс? Чем он отличается от массива?</span>
             </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">02</span>
-                    <span class="card-title">Из каких трёх компонентов состоит слайс?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p><strong>1. ptr</strong> — указатель на underlying array (адрес первого элемента)</p>
-                            <p><strong>2. len</strong> — текущая длина (количество используемых элементов)</p>
-                            <p><strong>3. cap</strong> — вместимость (максимальное количество без реаллокации)</p>
-                            <p>Всего <strong>24 байта</strong> на 64-bit системе (8 + 8 + 8).</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">03</span>
-                    <span class="card-title">Почему слайс называют "ссылочным типом"?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>При копировании слайса копируется <strong>только header</strong>, а не данные. Оба слайса будут указывать на <strong>один и тот же underlying array</strong>.</p>
-                            <p>Это значит:</p>
-                            <p>• Изменения через один слайс видны через другой</p>
-                            <p>• Передача слайса в функцию — дешёвая операция (24 байта)</p>
-                            <p>• Нужно быть осторожным с alias'ами</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">04</span>
-                    <span class="card-title">Что такое underlying array?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Underlying array — это <strong>обычный массив фиксированного размера в памяти</strong>, на который указывает слайс.</p>
-                            <p>Особенности:</p>
-                            <p>• Несколько слайсов могут указывать на один underlying array</p>
-                            <p>• Когда capacity исчерпана, создаётся новый underlying array</p>
-                            <p>• GC освобождает underlying array только когда на него никто не указывает</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">05</span>
-                    <span class="card-title">Чем отличается len от cap?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p><strong>len</strong> — сколько элементов <strong>используется</strong> сейчас</p>
-                            <p><strong>cap</strong> — сколько элементов <strong>может вместить</strong> underlying array</p>
-                            <p>Всегда выполняется: <code>0 <= len <= cap</code></p>
-                            <p>Когда <code>len == cap</code> и нужно добавить элемент — происходит <strong>реаллокация</strong>.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">06</span>
-                    <span class="card-title">Что скопируется при <code>b := a</code> где <code>a</code> — слайс из 1 миллиона элементов?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Скопируется <strong>только header</strong> — 24 байта (ptr, len, cap).</p>
-                            <p>Данные (1 миллион элементов) <strong>НЕ копируются</strong>. И <code>a</code>, и <code>b</code> будут указывать на один underlying array.</p>
-                            <p>Это эффективно, но опасно: изменения через <code>b</code> будут видны через <code>a</code>.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">07</span>
-                    <span class="card-title">Почему <code>return data[:10]</code> может вызвать утечку памяти?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Потому что <code>data[:10]</code> создаёт слайс, который <strong>указывает на тот же underlying array</strong> что и <code>data</code>.</p>
-                            <p>Даже если <code>data</code> был 100MB, а мы возвращаем "только 10 байт" — весь 100MB массив останется в памяти.</p>
-                            <p><strong>Решение:</strong> <code>copy()</code> в новый слайс нужного размера.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">08</span>
-                    <span class="card-title">Что произойдёт с <code>a</code> после: <code>b := a[1:3]; b[0] = 999</code>?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p><code>a[1]</code> станет равен 999.</p>
-                            <p>Потому что <code>b</code> — это "окно" в тот же underlying array. <code>b[0]</code> и <code>a[1]</code> — это <strong>одна и та же ячейка памяти</strong>.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">09</span>
-                    <span class="card-title">Как правильно создать независимую копию части слайса?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Использовать <code>copy()</code>:</p>
-                            <p><code>b := make([]int, 2)</code> — создаём новый underlying array</p>
-                            <p><code>copy(b, a[1:3])</code> — копируем данные</p>
-                            <p>Теперь <code>b</code> независим от <code>a</code>.</p>
-                        </div>
-                    </details>
-                </div>
-            </div>
-
-            <div class="card question-card">
-                <div class="card-head">
-                    <span class="card-num">10</span>
-                    <span class="card-title">Когда append создаёт новый underlying array?</span>
-                </div>
-                <div class="card-body">
-                    <details>
-                        <summary>Показать ответ</summary>
-                        <div class="answer">
-                            <p>Когда <code>len == cap</code> (нет свободного места) и нужно добавить элемент.</p>
-                            <p>Go создаёт новый массив (обычно cap*2), копирует данные, добавляет новый элемент.</p>
-                            <p>После реаллокации слайс указывает на <strong>новый</strong> массив.</p>
-                        </div>
-                    </details>
-                </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Слайс — это <strong>структура-обёртка</strong> над массивом, содержащая указатель, длину и вместимость.</p>
+                        <p><strong>Отличия от массива:</strong></p>
+                        <p>- Массив имеет фиксированный размер (часть типа), слайс — динамический</p>
+                        <p>- Массив копируется целиком, слайс — только header (24 байта)</p>
+                        <p>- Массив <code>[3]int</code> и <code>[5]int</code> — разные типы, <code>[]int</code> — один тип</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <hr>
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Из каких трёх компонентов состоит слайс?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>1. ptr</strong> — указатель на underlying array (адрес первого элемента)</p>
+                        <p><strong>2. len</strong> — текущая длина (количество используемых элементов)</p>
+                        <p><strong>3. cap</strong> — вместимость (максимальное количество без реаллокации)</p>
+                        <p>Всего <strong>24 байта</strong> на 64-bit системе (8 + 8 + 8).</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-        <h2 id="practice">Практика</h2>
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Почему слайс называют "ссылочным типом"?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>При копировании слайса копируется <strong>только header</strong>, а не данные. Оба слайса будут указывать на <strong>один и тот же underlying array</strong>.</p>
+                        <p>Это значит:</p>
+                        <p>- Изменения через один слайс видны через другой</p>
+                        <p>- Передача слайса в функцию — дешёвая операция (24 байта)</p>
+                        <p>- Нужно быть осторожным с alias'ами</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-        <div class="cards">
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">01</span>
-                    <span class="card-title">Что выведет?</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">a := []int{1, 2, 3}
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">04</span>
+                <span class="card-title">Что такое underlying array?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Underlying array — это <strong>обычный массив фиксированного размера в памяти</strong>, на который указывает слайс.</p>
+                        <p>Особенности:</p>
+                        <p>- Несколько слайсов могут указывать на один underlying array</p>
+                        <p>- Когда capacity исчерпана, создаётся новый underlying array</p>
+                        <p>- GC освобождает underlying array только когда на него никто не указывает</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">05</span>
+                <span class="card-title">Чем отличается len от cap?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>len</strong> — сколько элементов <strong>используется</strong> сейчас</p>
+                        <p><strong>cap</strong> — сколько элементов <strong>может вместить</strong> underlying array</p>
+                        <p>Всегда выполняется: <code>0 &lt;= len &lt;= cap</code></p>
+                        <p>Когда <code>len == cap</code> и нужно добавить элемент — происходит <strong>реаллокация</strong>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">06</span>
+                <span class="card-title">Что скопируется при <code>b := a</code> где <code>a</code> — слайс из 1 миллиона элементов?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Скопируется <strong>только header</strong> — 24 байта (ptr, len, cap).</p>
+                        <p>Данные (1 миллион элементов) <strong>НЕ копируются</strong>. И <code>a</code>, и <code>b</code> будут указывать на один underlying array.</p>
+                        <p>Это эффективно, но опасно: изменения через <code>b</code> будут видны через <code>a</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">07</span>
+                <span class="card-title">Почему <code>return data[:10]</code> может вызвать утечку памяти?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Потому что <code>data[:10]</code> создаёт слайс, который <strong>указывает на тот же underlying array</strong> что и <code>data</code>.</p>
+                        <p>Даже если <code>data</code> был 100MB, а мы возвращаем "только 10 байт" — весь 100MB массив останется в памяти.</p>
+                        <p><strong>Решение:</strong> <code>copy()</code> в новый слайс нужного размера.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">08</span>
+                <span class="card-title">Что произойдёт с <code>a</code> после: <code>b := a[1:3]; b[0] = 999</code>?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><code>a[1]</code> станет равен 999.</p>
+                        <p>Потому что <code>b</code> — это "окно" в тот же underlying array. <code>b[0]</code> и <code>a[1]</code> — это <strong>одна и та же ячейка памяти</strong>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">09</span>
+                <span class="card-title">Как правильно создать независимую копию части слайса?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Использовать <code>copy()</code>:</p>
+                        <p><code>b := make([]int, 2)</code> — создаём новый underlying array</p>
+                        <p><code>copy(b, a[1:3])</code> — копируем данные</p>
+                        <p>Теперь <code>b</code> независим от <code>a</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">10</span>
+                <span class="card-title">Когда append создаёт новый underlying array?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Когда <code>len == cap</code> (нет свободного места) и нужно добавить элемент.</p>
+                        <p>Go создаёт новый массив (обычно cap*2), копирует данные, добавляет новый элемент.</p>
+                        <p>После реаллокации слайс указывает на <strong>новый</strong> массив.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2 id="practice">Практика</h2>
+
+    <div class="cards">
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">01</span>
+                <span class="card-title">Что выведет?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">a := []int{1, 2, 3}
 b := a
 b[0] = 999
 fmt.Println(a[0])</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Вывод: 999</strong></p>
+                        <p><code>b := a</code> копирует header. <code>b.ptr</code> указывает на тот же массив.</p>
+                        <p><strong>Ключевой момент:</strong> <code>a</code> и <code>b</code> — alias'ы одного массива.</p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Вывод: 999</strong></p>
-                            <p><code>b := a</code> копирует header. <code>b.ptr</code> указывает на тот же массив.</p>
-                            <p><strong>Ключевой момент:</strong> <code>a</code> и <code>b</code> — alias'ы одного массива.</p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
+        </div>
 
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">02</span>
-                    <span class="card-title">Что выведет?</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">func change(s []int) {
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">02</span>
+                <span class="card-title">Что выведет?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">func change(s []int) {
     s = append(s, 4)
     s[0] = 999
 }
@@ -1374,97 +1131,97 @@ fmt.Println(a[0])</code></pre>
 a := []int{1, 2, 3}
 change(a)
 fmt.Println(a)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Вывод: [1 2 3]</strong></p>
+                        <p>1. <code>a</code> имеет len=3, cap=3 (нет места для 4-го элемента)</p>
+                        <p>2. <code>change(a)</code> — передаётся <strong>копия header</strong></p>
+                        <p>3. <code>s = append(s, 4)</code> — cap исчерпан, <strong>реаллокация!</strong></p>
+                        <p>4. <code>s</code> теперь указывает на <strong>новый</strong> массив</p>
+                        <p>5. <code>s[0] = 999</code> — меняет новый массив</p>
+                        <p>6. <code>a</code> по-прежнему указывает на старый [1, 2, 3]</p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Вывод: [1 2 3]</strong></p>
-                            <p>1. <code>a</code> имеет len=3, cap=3 (нет места для 4-го элемента)</p>
-                            <p>2. <code>change(a)</code> — передаётся <strong>копия header</strong></p>
-                            <p>3. <code>s = append(s, 4)</code> — cap исчерпан → <strong>реаллокация!</strong></p>
-                            <p>4. <code>s</code> теперь указывает на <strong>новый</strong> массив</p>
-                            <p>5. <code>s[0] = 999</code> — меняет новый массив</p>
-                            <p>6. <code>a</code> по-прежнему указывает на старый [1, 2, 3]</p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
+        </div>
 
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">03</span>
-                    <span class="card-title">Найди утечку памяти</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">func getFirstTen(filename string) []byte {
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">03</span>
+                <span class="card-title">Найди утечку памяти</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">func getFirstTen(filename string) []byte {
     data, _ := os.ReadFile(filename)  // файл 100MB
     return data[:10]
 }</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Проблема:</strong> <code>data[:10]</code> создаёт слайс с <code>cap = 100MB</code>.</p>
+                        <p>GC не может освободить 100MB массив, пока на него есть хоть одна ссылка.</p>
+                        <p><strong>Исправление:</strong></p>
+                        <p><code>result := make([]byte, 10)</code></p>
+                        <p><code>copy(result, data[:10])</code></p>
+                        <p><code>return result</code></p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Проблема:</strong> <code>data[:10]</code> создаёт слайс с <code>cap = 100MB</code>.</p>
-                            <p>GC не может освободить 100MB массив, пока на него есть хоть одна ссылка.</p>
-                            <p><strong>Исправление:</strong></p>
-                            <p><code>result := make([]byte, 10)</code></p>
-                            <p><code>copy(result, data[:10])</code></p>
-                            <p><code>return result</code></p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
+        </div>
 
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">04</span>
-                    <span class="card-title">Что выведет?</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">a := make([]int, 3, 5)
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">04</span>
+                <span class="card-title">Что выведет?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">a := make([]int, 3, 5)
 a[0], a[1], a[2] = 1, 2, 3
 
 b := a[1:3]
 fmt.Println(len(b), cap(b))</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Вывод: 2 4</strong></p>
+                        <p>1. <code>a := make([]int, 3, 5)</code> - underlying array [1,2,3,_,_], len=3, cap=5</p>
+                        <p>2. <code>b := a[1:3]</code> - b "смотрит" на элементы a[1] и a[2]</p>
+                        <p>3. <code>len(b) = 3 - 1 = 2</code> (два элемента: a[1] и a[2])</p>
+                        <p>4. <code>cap(b) = cap(a) - 1 = 5 - 1 = 4</code> (от a[1] до конца)</p>
+                        <p><strong>Формула:</strong> при <code>b := a[low:high]</code>:</p>
+                        <p>- <code>len(b) = high - low</code></p>
+                        <p>- <code>cap(b) = cap(a) - low</code></p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Вывод: 2 4</strong></p>
-                            <p>1. <code>a := make([]int, 3, 5)</code> → underlying array [1,2,3,_,_], len=3, cap=5</p>
-                            <p>2. <code>b := a[1:3]</code> → b "смотрит" на элементы a[1] и a[2]</p>
-                            <p>3. <code>len(b) = 3 - 1 = 2</code> (два элемента: a[1] и a[2])</p>
-                            <p>4. <code>cap(b) = cap(a) - 1 = 5 - 1 = 4</code> (от a[1] до конца)</p>
-                            <p><strong>Формула:</strong> при <code>b := a[low:high]</code>:</p>
-                            <p>• <code>len(b) = high - low</code></p>
-                            <p>• <code>cap(b) = cap(a) - low</code></p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
+        </div>
 
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">05</span>
-                    <span class="card-title">Оптимизируй код</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">func collectEven(n int) []int {
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">05</span>
+                <span class="card-title">Оптимизируй код</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">func collectEven(n int) []int {
     var result []int
     for i := 0; i <= n; i++ {
         if i%2 == 0 {
@@ -1473,33 +1230,33 @@ fmt.Println(len(b), cap(b))</code></pre>
     }
     return result
 }</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Проблема:</strong> Множественные реаллокации при росте слайса.</p>
+                        <p>Если n=1000, слайс будет расти: 1-2-4-8-16-...-512 — около 10 реаллокаций!</p>
+                        <p><strong>Оптимизация — pre-allocate:</strong></p>
+                        <p><code>count := n/2 + 1</code></p>
+                        <p><code>result := make([]int, 0, count)</code></p>
+                        <p>Теперь <strong>0 реаллокаций</strong> — память выделена сразу.</p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Проблема:</strong> Множественные реаллокации при росте слайса.</p>
-                            <p>Если n=1000, слайс будет расти: 1→2→4→8→16→...→512 — около 10 реаллокаций!</p>
-                            <p><strong>Оптимизация — pre-allocate:</strong></p>
-                            <p><code>count := n/2 + 1</code></p>
-                            <p><code>result := make([]int, 0, count)</code></p>
-                            <p>Теперь <strong>0 реаллокаций</strong> — память выделена сразу.</p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
+        </div>
 
-            <div class="card task-card">
-                <div class="card-head">
-                    <span class="card-num">06</span>
-                    <span class="card-title">Что выведет?</span>
-                </div>
-                <div class="card-body">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-lang">Go</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        <pre><code class="language-go">a := make([]int, 3, 6)
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">06</span>
+                <span class="card-title">Что выведет?</span>
+            </div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code class="language-go">a := make([]int, 3, 6)
 a[0], a[1], a[2] = 1, 2, 3
 
 b := a[1:3]
@@ -1507,96 +1264,125 @@ b = append(b, 4)
 
 fmt.Println(a)
 fmt.Println(b)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="solution">
+                        <p><strong>Вывод:</strong></p>
+                        <p><code>[1 2 3]</code></p>
+                        <p><code>[2 3 4]</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <p>1. <code>a</code> = [1, 2, 3, _, _, _] (len=3, cap=6)</p>
+                        <p>2. <code>b := a[1:3]</code> = [2, 3] (len=2, cap=5) — указывает на a[1]</p>
+                        <p>3. <code>b = append(b, 4)</code> — cap(b)=5, есть место! Реаллокации нет.</p>
+                        <p>4. Элемент 4 записывается в <code>a[3]</code> (следующая позиция)</p>
+                        <p>5. Но <code>len(a)</code> всё ещё 3, поэтому <code>a</code> выводит [1, 2, 3]</p>
+                        <p><strong>Ключевой момент:</strong> append записал 4 в a[3], но a.len не изменился!</p>
                     </div>
-                    <details>
-                        <summary>Показать решение</summary>
-                        <div class="solution">
-                            <p><strong>Вывод:</strong></p>
-                            <p><code>[1 2 3]</code></p>
-                            <p><code>[2 3 4]</code></p>
-                            <p><strong>Разбор:</strong></p>
-                            <p>1. <code>a</code> = [1, 2, 3, _, _, _] (len=3, cap=6)</p>
-                            <p>2. <code>b := a[1:3]</code> = [2, 3] (len=2, cap=5) — указывает на a[1]</p>
-                            <p>3. <code>b = append(b, 4)</code> — cap(b)=5, есть место! Реаллокации нет.</p>
-                            <p>4. Элемент 4 записывается в <code>a[3]</code> (следующая позиция)</p>
-                            <p>5. Но <code>len(a)</code> всё ещё 3, поэтому <code>a</code> выводит [1, 2, 3]</p>
-                            <p><strong>Ключевой момент:</strong> append записал 4 в a[3], но a.len не изменился!</p>
-                        </div>
-                    </details>
-                </div>
+                </details>
             </div>
         </div>
+    </div>
 
-        <hr>
+    <hr>
 
-        <h2 id="summary">Резюме</h2>
+    <h2 id="summary">Резюме</h2>
 
-        <div class="summary-box">
-            <div class="summary-header">
-                <span class="summary-badge">Key</span>
-                <span class="summary-title">Ключевое правило</span>
-            </div>
-            <div class="summary-formula">СЛАЙС = ptr + len + cap (24 байта)</div>
-            <ul class="summary-list">
-                <li>Слайс — "окно" в underlying array</li>
-                <li>При копировании копируется header, <strong>НЕ</strong> данные</li>
-                <li>Изменения через копию видны в оригинале (alias!)</li>
-                <li>Reslicing <code>a[i:j]</code> создаёт alias на тот же массив</li>
-                <li>append может создать <strong>НОВЫЙ</strong> массив (реаллокация)</li>
-                <li>Для изоляции используй <code>copy()</code></li>
-                <li>Pre-allocate с <code>make([]T, 0, size)</code> для производительности</li>
-            </ul>
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ключевое правило</span>
         </div>
+        <div class="summary-formula">СЛАЙС = ptr + len + cap (24 байта)</div>
+        <ul class="summary-list">
+            <li>Слайс — "окно" в underlying array</li>
+            <li>При копировании копируется header, <strong>НЕ</strong> данные</li>
+            <li>Изменения через копию видны в оригинале (alias!)</li>
+            <li>Reslicing <code>a[i:j]</code> создаёт alias на тот же массив</li>
+            <li>append может создать <strong>НОВЫЙ</strong> массив (реаллокация)</li>
+            <li>Для изоляции используй <code>copy()</code></li>
+            <li>Pre-allocate с <code>make([]T, 0, size)</code> для производительности</li>
+        </ul>
+    </div>
 
-        <nav class="nav-footer">
-            <div style="flex:1"></div>
-            <a href="#" class="nav-link next" aria-label="Следующий урок: Как работает append">
-                <div>
-                    <div class="nav-label">Следующий урок</div>
-                    <div class="nav-title">Как работает append</div>
-                </div>
-                <span class="nav-arrow">→</span>
-            </a>
-        </nav>
-    </main>
-</div>
+    <nav class="nav-footer">
+        <a href="#" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий</div>
+                <div class="nav-title">Как работает append</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
 
 <script>
-    /* global hljs */
-    // noinspection JSUnresolvedReference
-    hljs.highlightAll();
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
 
-    function copyCode(btn) {
-        const code = btn.closest('.code-block').querySelector('code');
-        navigator.clipboard.writeText(code.textContent).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = 'Copy';
-                btn.classList.remove('copied');
-            }, 2000);
+    if (tg) {
+        // Signal that app is ready
+        tg.ready();
+
+        // Expand to full height
+        tg.expand();
+
+        // Force dark theme - ignore Telegram theme
+
+        // Show back button (would navigate to lesson list in full app)
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            // In demo - just show alert
+            tg.showAlert('В полной версии здесь будет список уроков');
         });
     }
 
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-        document.getElementById('progress').style.width = p + '%';
-    });
+    // Highlight.js init
+    hljs.highlightAll();
 
-    const links = document.querySelectorAll('.toc-list a');
-    const sections = document.querySelectorAll('h2[id], h3[id]');
+    // Copy code function
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
 
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(s => {
-            if (scrollY >= s.offsetTop - 100) current = s.id;
-        });
-        links.forEach(l => {
-            l.classList.remove('active');
-            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
-        });
-    });
+        // Try clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
 </script>
 
 </body>

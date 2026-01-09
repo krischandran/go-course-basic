@@ -2,8 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Объявление функций — Вводный курс Go</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Объявление функций</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +38,7 @@
             --border-light: #363636;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
+
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,246 +52,103 @@
             background-color: var(--bg-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            /* Safe area for notch devices */
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            z-index: 100;
+        /* Main content - no sidebar, no fixed header */
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
         }
 
-        .logo {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-        .logo span { color: var(--accent-green); }
-
-        .nav-menu {
-            display: flex;
-            gap: 32px;
-        }
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-menu a:hover,
-        .nav-menu a.current { color: var(--text-primary); }
-
-        .header-right { display: flex; align-items: center; gap: 16px; }
-
-        .progress-pill {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--bg-tertiary);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-        .progress-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .progress-track {
-            width: 100px;
-            height: 4px;
-            background: var(--bg-primary);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-green);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-        }
-
-        .layout {
-            display: flex;
-            padding-top: 56px;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            padding: 32px 20px;
-            position: sticky;
-            top: 56px;
-            height: calc(100vh - 56px);
-            overflow-y: auto;
-        }
-
-        .course-info {
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 24px;
-        }
-        .course-tag {
+        /* Module badge */
+        .module-badge {
+            display: inline-block;
             font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-green);
-            margin-bottom: 8px;
-        }
-        .course-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-        .course-progress {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .toc-section { margin-bottom: 24px; }
-        .toc-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
             margin-bottom: 12px;
         }
-        .toc-list {
-            list-style: none;
-        }
-        .toc-list li { margin-bottom: 4px; }
-        .toc-list a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .toc-list a:hover {
-            background: rgba(255,255,255,0.04);
-            color: var(--text-primary);
-        }
-        /* Used by JS — TOC active state on scroll */
-        .toc-list a.active {
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.06);
-        }
-        .toc-num {
-            font-size: 11px;
-            font-weight: 600;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            color: var(--text-muted);
-        }
-        /* Used by JS — TOC number active state */
-        .toc-list a.active .toc-num {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-
-        main {
-            flex: 1;
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 48px 40px 80px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 32px;
-            font-size: 14px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-        .breadcrumb a:hover { color: var(--accent-green); }
-        .breadcrumb-sep { color: var(--border-light); }
-        .breadcrumb-current { color: var(--text-secondary); }
 
         h1 {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
         }
 
         .lead {
-            font-size: 19px;
-            line-height: 1.7;
+            font-size: 16px;
+            line-height: 1.6;
             color: var(--text-secondary);
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
 
         h2 {
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--text-muted);
-            margin: 56px 0 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
         }
         h2::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background: var(--accent-green);
             border-radius: 2px;
+            flex-shrink: 0;
         }
 
         h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: -0.01em;
-            margin: 32px 0 16px;
             color: var(--text-primary);
+            margin: 24px 0 12px;
         }
 
         p {
-            font-size: 17px;
-            line-height: 1.75;
+            font-size: 15px;
+            line-height: 1.7;
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
         }
 
         .code-block {
-            margin: 24px 0;
+            margin: 20px 0;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -297,7 +158,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 16px;
+            padding: 8px 12px;
             background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-color);
         }
@@ -309,21 +170,19 @@
             color: var(--text-muted);
         }
         .copy-btn {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
             background: transparent;
             border: 1px solid var(--border-color);
-            padding: 4px 12px;
+            color: var(--text-muted);
+            padding: 4px 10px;
             border-radius: 4px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .copy-btn:hover {
-            border-color: var(--border-light);
-            color: var(--text-primary);
+        .copy-btn:active {
+            background: var(--bg-tertiary);
         }
-        /* Used by JS — copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -331,13 +190,17 @@
         }
         .code-block pre {
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .code-block code {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
         }
 
         .output-block {
@@ -350,58 +213,9 @@
             color: var(--text-secondary);
         }
 
-        .info-box {
-            margin: 24px 0;
-            padding: 20px 24px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-        .info-box .info-row {
-            padding: 8px 0;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 24px 0;
-            font-size: 15px;
-        }
-        th {
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        td {
-            padding: 14px 16px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        td code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            color: var(--accent-green);
-            background: var(--bg-secondary);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
         .alert {
-            margin: 28px 0;
-            padding: 20px 24px 20px 48px;
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
             background: var(--bg-secondary);
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -409,15 +223,15 @@
         }
         .alert-icon {
             position: absolute;
-            left: 16px;
-            top: 20px;
-            width: 20px;
-            height: 20px;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
         }
         .alert-important .alert-icon {
@@ -428,10 +242,67 @@
             background: rgba(42, 241, 107, 0.15);
             color: var(--accent-green);
         }
-        .alert p { margin-bottom: 0; }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .info-box {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
 
         .card {
-            margin: 20px 0;
+            margin: 16px 0;
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
@@ -439,20 +310,17 @@
         .card-head {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 16px 20px;
-            background: var(--bg-secondary);
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
             border-bottom: 1px solid var(--border-color);
         }
         .card-num {
-            font-size: 14px;
-            font-weight: 700;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
         }
         .question-card .card-num {
             background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
@@ -463,13 +331,15 @@
             color: var(--accent-orange);
         }
         .card-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
         }
         .card-body {
-            padding: 20px;
+            padding: 16px;
         }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
         .card-body pre {
             margin: 0 0 16px;
             padding: 16px;
@@ -483,225 +353,154 @@
         }
 
         details {
-            margin-top: 16px;
+            margin-top: 12px;
         }
         details summary {
             cursor: pointer;
             color: var(--accent-green);
+            font-size: 13px;
             font-weight: 500;
-            font-size: 14px;
+            padding: 8px 0;
+            list-style: none;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
         }
         details summary::before {
             content: '>';
-            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
             transition: transform 0.2s;
         }
-        /* Used by HTML — details open state */
         details[open] summary::before {
             transform: rotate(90deg);
         }
+        details summary::-webkit-details-marker { display: none; }
         .answer {
-            margin-top: 16px;
-            padding: 16px 20px;
-            background: var(--bg-tertiary);
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
             border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
         }
-        .answer p { margin-bottom: 12px; }
-        .answer p:last-child { margin-bottom: 0; }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
 
         blockquote {
-            margin: 28px 0;
-            padding: 20px 24px;
+            margin: 20px 0;
+            padding: 16px;
             background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
             border-left: 2px solid var(--accent-green);
             border-radius: 0 6px 6px 0;
         }
         blockquote p {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
-            margin-bottom: 0;
+            margin: 0;
         }
 
-        .summary-box {
-            margin: 32px 0;
-            padding: 24px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-        .summary-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .summary-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 4px 10px;
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-            border-radius: 4px;
-        }
-        .summary-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .summary-list {
-            list-style: none;
-            margin-top: 12px;
-        }
-        .summary-list li {
-            padding: 8px 0;
-            padding-left: 20px;
-            position: relative;
-            color: var(--text-secondary);
-            font-size: 15px;
-        }
-        .summary-list li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 14px;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-        }
-
+        /* Navigation footer */
         .nav-footer {
             display: flex;
-            justify-content: space-between;
-            margin-top: 64px;
-            padding-top: 32px;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
             border-top: 1px solid var(--border-color);
         }
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
+            gap: 12px;
+            padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             text-decoration: none;
-            transition: all 0.2s;
-            max-width: 45%;
+            -webkit-tap-highlight-color: transparent;
         }
-        .nav-link:hover {
-            border-color: var(--border-light);
+        .nav-link:active {
             background: var(--bg-tertiary);
         }
-        /* Used by HTML — navigation link alignment (prev) */
-        .nav-link.prev { text-align: left; }
-        /* Used by HTML — navigation link alignment (next) */
-        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
         .nav-arrow {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--accent-green);
         }
         .nav-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .nav-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
-        }
-
-        @media (max-width: 1100px) {
-            .sidebar { display: none; }
-            main { max-width: 100%; padding: 40px 32px; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu { display: none; }
-            h1 { font-size: 28px; }
-            main { padding: 32px 20px; }
-            .nav-footer { flex-direction: column; gap: 12px; }
-            .nav-link { max-width: 100%; }
-        }
-
-        @media print {
-            .sidebar, .header { display: none; }
-            body { background: white; color: black; }
         }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="#" class="logo">course<span>.</span>go</a>
-    <nav class="nav-menu">
-        <a href="#">Курсы</a>
-        <a href="#" class="current">Вводный курс Go</a>
-        <a href="#">О проекте</a>
-    </nav>
-    <div class="header-right">
-        <div class="progress-pill">
-            <span class="progress-label">Прогресс</span>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress"></div>
-            </div>
-            <div class="progress-dot"></div>
+<main>
+    <div class="module-badge">Модуль 5 / Урок 1</div>
+
+    <h1>Объявление функций</h1>
+    <p class="lead">Функции позволяют избежать дублирования кода и разбить программу на логические части. Это основной инструмент структурирования программ в Go.</p>
+
+    <h2 id="zachem">Зачем нужны функции</h2>
+
+    <p>Представь, что нужно поприветствовать каждого пользователя курса:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-    </div>
-</header>
-
-<div class="layout">
-    <aside class="sidebar">
-        <div class="course-info">
-            <div class="course-tag">Модуль 5</div>
-            <div class="course-name">Функции</div>
-            <div class="course-progress">Урок 1 из 12</div>
-        </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Содержание</div>
-            <ul class="toc-list">
-                <li><a href="#zachem"><span class="toc-num">01</span>Зачем нужны функции</a></li>
-                <li><a href="#kak-rabotayut"><span class="toc-num">02</span>Функции на самом деле</a></li>
-                <li><a href="#sintaksis"><span class="toc-num">03</span>Синтаксис объявления</a></li>
-                <li><a href="#raspolozhenie"><span class="toc-num">04</span>Расположение функций</a></li>
-                <li><a href="#imenovaniye"><span class="toc-num">05</span>Правила именования</a></li>
-                <li><a href="#vyzov"><span class="toc-num">06</span>Вызов функции</a></li>
-                <li><a href="#vidy"><span class="toc-num">07</span>Четыре вида функций</a></li>
-                <li><a href="#proverka"><span class="toc-num">08</span>Проверь себя</a></li>
-            </ul>
-        </div>
-    </aside>
-
-    <main>
-        <nav class="breadcrumb">
-            <a href="#">Курсы</a>
-            <span class="breadcrumb-sep">/</span>
-            <a href="#">Вводный курс Go</a>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current">Объявление функций</span>
-        </nav>
-
-        <h1>Объявление функций</h1>
-        <p class="lead">Функции позволяют избежать дублирования кода и разбить программу на логические части. Это основной инструмент структурирования программ в Go.</p>
-
-        <h2 id="zachem">Зачем нужны функции</h2>
-
-        <p>Представь, что нужно поприветствовать каждого пользователя курса:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
+        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -721,100 +520,100 @@ func main() {
     fmt.Println("Уважаемый", name3, ", добро пожаловать на курс Go!")
     fmt.Println("После курса ты будешь знать основы языка.")
 }</code></pre>
+    </div>
+
+    <p>Проблемы очевидны:</p>
+    <ul>
+        <li><strong>Дублирование кода</strong> — один и тот же блок повторяется трижды</li>
+        <li><strong>Сложность изменений</strong> — если нужно изменить текст, придётся править в нескольких местах</li>
+    </ul>
+
+    <p><strong>Функция</strong> — это именованный блок кода, который можно вызывать многократно. Вместо копирования кода, мы выносим его в функцию и вызываем по имени.</p>
+
+    <h2 id="kak-rabotayut">Функции на самом деле</h2>
+
+    <h3>Как Go выполняет программу</h3>
+
+    <p>Когда Go запускает программу, он начинает с функции <code>main</code>. Это <strong>точка входа</strong> — место, откуда начинается выполнение.</p>
+
+    <div class="info-box">
+        <div class="info-row">1. Go находит func main()</div>
+        <div class="info-row">2. Выполняет код внутри main построчно</div>
+        <div class="info-row">3. Когда встречает вызов функции — переходит в неё</div>
+        <div class="info-row">4. Выполняет её код и возвращается обратно</div>
+        <div class="info-row">5. Продолжает выполнение main</div>
+    </div>
+
+    <h3>Функция — это именованный блок</h3>
+
+    <p>Каждая функция имеет:</p>
+    <ul>
+        <li><strong>Имя</strong> — по нему функцию вызывают</li>
+        <li><strong>Тело</strong> — код, который выполняется при вызове</li>
+        <li><strong>Круглые скобки</strong> — обязательны даже если пустые</li>
+    </ul>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p>Проблемы очевидны:</p>
-        <ul style="color: var(--text-secondary); margin-bottom: 20px; padding-left: 24px;">
-            <li><strong>Дублирование кода</strong> — один и тот же блок повторяется трижды</li>
-            <li><strong>Сложность изменений</strong> — если нужно изменить текст, придётся править в нескольких местах</li>
-        </ul>
-
-        <p><strong>Функция</strong> — это именованный блок кода, который можно вызывать многократно. Вместо копирования кода, мы выносим его в функцию и вызываем по имени.</p>
-
-        <h2 id="kak-rabotayut">Функции на самом деле</h2>
-
-        <h3>Как Go выполняет программу</h3>
-
-        <p>Когда Go запускает программу, он начинает с функции <code>main</code>. Это <strong>точка входа</strong> — место, откуда начинается выполнение.</p>
-
-        <div class="info-box">
-            <div class="info-row">1. Go находит func main()</div>
-            <div class="info-row">2. Выполняет код внутри main построчно</div>
-            <div class="info-row">3. Когда встречает вызов функции — переходит в неё</div>
-            <div class="info-row">4. Выполняет её код и возвращается обратно</div>
-            <div class="info-row">5. Продолжает выполнение main</div>
-        </div>
-
-        <h3>Функция — это именованный блок</h3>
-
-        <p>Каждая функция имеет:</p>
-        <ul style="color: var(--text-secondary); margin-bottom: 20px; padding-left: 24px;">
-            <li><strong>Имя</strong> — по нему функцию вызывают</li>
-            <li><strong>Тело</strong> — код, который выполняется при вызове</li>
-            <li><strong>Круглые скобки</strong> — обязательны даже если пустые</li>
-        </ul>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func printHello() {
+        <pre><code class="language-go">func printHello() {
     fmt.Println("Привет!")
 }</code></pre>
+    </div>
+
+    <p>Здесь <code>printHello</code> — имя функции, <code>fmt.Println("Привет!")</code> — тело функции.</p>
+
+    <h2 id="sintaksis">Синтаксис объявления функции</h2>
+
+    <p>Простейшая функция, которая ничего не принимает и ничего не возвращает:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p>Здесь <code>printHello</code> — имя функции, <code>fmt.Println("Привет!")</code> — тело функции.</p>
-
-        <h2 id="sintaksis">Синтаксис объявления функции</h2>
-
-        <p>Простейшая функция, которая ничего не принимает и ничего не возвращает:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func имяФункции() {
+        <pre><code class="language-go">func имяФункции() {
     // тело функции
 }</code></pre>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Элемент</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>func</code></td>
+                <td>Ключевое слово для объявления функции</td>
+            </tr>
+            <tr>
+                <td><code>имяФункции</code></td>
+                <td>Имя, по которому функцию вызывают</td>
+            </tr>
+            <tr>
+                <td><code>()</code></td>
+                <td>Круглые скобки (пустые = ничего не принимает)</td>
+            </tr>
+            <tr>
+                <td><code>{}</code></td>
+                <td>Фигурные скобки ограничивают тело функции</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Пример</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Элемент</th>
-                    <th>Описание</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>func</code></td>
-                    <td>Ключевое слово для объявления функции</td>
-                </tr>
-                <tr>
-                    <td><code>имяФункции</code></td>
-                    <td>Имя, по которому функцию вызывают</td>
-                </tr>
-                <tr>
-                    <td><code>()</code></td>
-                    <td>Круглые скобки (пустые = ничего не принимает)</td>
-                </tr>
-                <tr>
-                    <td><code>{}</code></td>
-                    <td>Фигурные скобки ограничивают тело функции</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>Пример</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
+        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -826,20 +625,20 @@ func main() {
 func printMessage() {
     fmt.Println("Привет, ученики курса Go!")
 }</code></pre>
+    </div>
+
+    <div class="output-block">Привет, ученики курса Go!<br>Привет, ученики курса Go!</div>
+
+    <h2 id="raspolozhenie">Расположение функций</h2>
+
+    <p>Функции объявляются <strong>вне</strong> <code>main</code>, обычно после неё:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <div class="output-block">Привет, ученики курса Go!<br>Привет, ученики курса Go!</div>
-
-        <h2 id="raspolozhenie">Расположение функций</h2>
-
-        <p>Функции объявляются <strong>вне</strong> <code>main</code>, обычно после неё:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">package main
+        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -852,36 +651,36 @@ func main() {
 func printMessage() {
     fmt.Println("Привет!")
 }</code></pre>
+    </div>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>Функции нельзя объявлять внутри других функций. Каждая функция — на верхнем уровне файла.</p>
+    </div>
+
+    <h3>Почему можно вызвать функцию до её объявления?</h3>
+
+    <p>Go сначала <strong>читает весь файл</strong>, находит все функции, и только потом начинает выполнение с <code>main</code>. Поэтому порядок объявления функций в файле не важен.</p>
+
+    <h2 id="imenovaniye">Правила именования функций</h2>
+
+    <p><strong>1. Начинается с глагола</strong> — функция выполняет действие:</p>
+    <ul>
+        <li><code>printMessage</code> — выводит сообщение</li>
+        <li><code>calculateSum</code> — вычисляет сумму</li>
+        <li><code>getUserInput</code> — получает ввод пользователя</li>
+    </ul>
+
+    <p><strong>2. Начинается с маленькой буквы</strong> — для функций внутри пакета</p>
+
+    <p><strong>3. camelCase</strong> — каждое следующее слово с большой буквы:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <p>Функции нельзя объявлять внутри других функций. Каждая функция — на верхнем уровне файла.</p>
-        </div>
-
-        <h3>Почему можно вызвать функцию до её объявления?</h3>
-
-        <p>Go сначала <strong>читает весь файл</strong>, находит все функции, и только потом начинает выполнение с <code>main</code>. Поэтому порядок объявления функций в файле не важен.</p>
-
-        <h2 id="imenovaniye">Правила именования функций</h2>
-
-        <p><strong>1. Начинается с глагола</strong> — функция выполняет действие:</p>
-        <ul style="color: var(--text-secondary); margin-bottom: 16px; padding-left: 24px;">
-            <li><code>printMessage</code> — выводит сообщение</li>
-            <li><code>calculateSum</code> — вычисляет сумму</li>
-            <li><code>getUserInput</code> — получает ввод пользователя</li>
-        </ul>
-
-        <p><strong>2. Начинается с маленькой буквы</strong> — для функций внутри пакета</p>
-
-        <p><strong>3. camelCase</strong> — каждое следующее слово с большой буквы:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">// Хорошие имена
+        <pre><code class="language-go">// Хорошие имена
 func printGreeting() { ... }
 func calculateArea() { ... }
 func readUserName() { ... }
@@ -890,138 +689,138 @@ func readUserName() { ... }
 func message() { ... }        // нет глагола
 func Print_Message() { ... }  // подчёркивание, большая буква
 func pm() { ... }             // непонятно что делает</code></pre>
+    </div>
+
+    <h2 id="vyzov">Вызов функции</h2>
+
+    <p>Чтобы выполнить код функции, её нужно <strong>вызвать</strong>. Вызов — это имя функции с круглыми скобками:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
+        <pre><code class="language-go">printMessage()  // вызов функции</code></pre>
+    </div>
 
-        <h2 id="vyzov">Вызов функции</h2>
+    <h3>Ловушка: забыли скобки</h3>
 
-        <p>Чтобы выполнить код функции, её нужно <strong>вызвать</strong>. Вызов — это имя функции с круглыми скобками:</p>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">printMessage()  // вызов функции</code></pre>
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <h3>Ловушка: забыли скобки</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func main() {
+        <pre><code class="language-go">func main() {
     printMessage   // Это НЕ вызов! Просто имя функции
 }</code></pre>
+    </div>
+
+    <p>Без скобок функция не выполнится.</p>
+
+    <h3>Ловушка: объявили, но не вызвали</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
-
-        <p>Без скобок функция не выполнится.</p>
-
-        <h3>Ловушка: объявили, но не вызвали</h3>
-
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">Go</span>
-                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-            </div>
-            <pre><code class="language-go">func main() {
+        <pre><code class="language-go">func main() {
     // Забыли вызвать printMessage()
 }
 
 func printMessage() {
     fmt.Println("Привет!")  // Никогда не выполнится
 }</code></pre>
+    </div>
+
+    <p>Функция существует, но без вызова её код не выполняется.</p>
+
+    <h2 id="vidy">Четыре вида функций</h2>
+
+    <p>В Go функции делятся на 4 типа в зависимости от того, принимают ли они данные и возвращают ли результат:</p>
+
+    <div class="info-box">
+        <div class="info-row"><strong>1.</strong> Ничего не принимает, ничего не возвращает: <code>func doSomething() { }</code></div>
+        <div class="info-row"><strong>2.</strong> Принимает данные, ничего не возвращает: <code>func printName(name string) { }</code></div>
+        <div class="info-row"><strong>3.</strong> Ничего не принимает, возвращает результат: <code>func getMessage() string { }</code></div>
+        <div class="info-row"><strong>4.</strong> Принимает данные, возвращает результат: <code>func add(a, b int) int { }</code></div>
+    </div>
+
+    <p>В этом уроке мы рассмотрели первый вид. Остальные — в следующих уроках.</p>
+
+    <h2 id="proverka">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что такое функция в Go?</span>
         </div>
-
-        <p>Функция существует, но без вызова её код не выполняется.</p>
-
-        <h2 id="vidy">Четыре вида функций</h2>
-
-        <p>В Go функции делятся на 4 типа в зависимости от того, принимают ли они данные и возвращают ли результат:</p>
-
-        <div class="info-box">
-            <div class="info-row"><strong>1.</strong> Ничего не принимает, ничего не возвращает: <code>func doSomething() { }</code></div>
-            <div class="info-row"><strong>2.</strong> Принимает данные, ничего не возвращает: <code>func printName(name string) { }</code></div>
-            <div class="info-row"><strong>3.</strong> Ничего не принимает, возвращает результат: <code>func getMessage() string { }</code></div>
-            <div class="info-row"><strong>4.</strong> Принимает данные, возвращает результат: <code>func add(a, b int) int { }</code></div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><strong>Функция</strong> — это именованный блок кода, который можно вызывать по имени. Функции позволяют избежать дублирования кода и разбить программу на логические части.</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <p>В этом уроке мы рассмотрели первый вид. Остальные — в следующих уроках.</p>
-
-        <h2 id="proverka">Проверь себя</h2>
-
-        <h3>Вопросы</h3>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Что такое функция в Go?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p><strong>Функция</strong> — это именованный блок кода, который можно вызывать по имени. Функции позволяют избежать дублирования кода и разбить программу на логические части.</p>
-                    </div>
-                </details>
-            </div>
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Какая функция является точкой входа в программу Go?</span>
         </div>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Какая функция является точкой входа в программу Go?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Функция <code>main</code> в пакете <code>main</code>. С неё начинается выполнение любой Go-программы.</p>
-                    </div>
-                </details>
-            </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Функция <code>main</code> в пакете <code>main</code>. С неё начинается выполнение любой Go-программы.</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Можно ли объявить функцию внутри другой функции?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Нет, в Go функции объявляются только на верхнем уровне файла. Нельзя объявить функцию внутри <code>main</code> или другой функции.</p>
-                    </div>
-                </details>
-            </div>
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Можно ли объявить функцию внутри другой функции?</span>
         </div>
-
-        <div class="card question-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Почему имя функции должно начинаться с глагола?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Функция выполняет <strong>действие</strong>. Глагол в начале имени сразу говорит, что делает функция: <code>printMessage</code> — выводит сообщение, <code>calculateSum</code> — вычисляет сумму.</p>
-                    </div>
-                </details>
-            </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Нет, в Go функции объявляются только на верхнем уровне файла. Нельзя объявить функцию внутри <code>main</code> или другой функции.</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <h3>Задачи</h3>
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Почему имя функции должно начинаться с глагола?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Функция выполняет <strong>действие</strong>. Глагол в начале имени сразу говорит, что делает функция: <code>printMessage</code> — выводит сообщение, <code>calculateSum</code> — вычисляет сумму.</p>
+                </div>
+            </details>
+        </div>
+    </div>
 
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Что выведет код?</span>
-            </div>
-            <div class="card-body">
-                <pre><code class="language-go">package main
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1034,26 +833,26 @@ func main() {
 func printHello() {
     fmt.Println("Привет!")
 }</code></pre>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вывод:</strong></p>
-                        <pre>Начало
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong></p>
+                    <pre>Начало
 Привет!
 Конец</pre>
-                        <p><strong>Разбор:</strong> Выполняется main, выводится "Начало", вызывается printHello() — выводится "Привет!", возвращаемся в main — выводится "Конец".</p>
-                    </div>
-                </details>
-            </div>
+                    <p><strong>Разбор:</strong> Выполняется main, выводится "Начало", вызывается printHello() — выводится "Привет!", возвращаемся в main — выводится "Конец".</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Что выведет код?</span>
-            </div>
-            <div class="card-body">
-                <pre><code class="language-go">package main
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1070,23 +869,23 @@ func printA() {
 func printB() {
     fmt.Print("B")
 }</code></pre>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вывод:</strong> <code>AAB</code></p>
-                        <p><strong>Разбор:</strong> Первый вызов printA() выводит "A", второй — "A", вызов printB() выводит "B".</p>
-                    </div>
-                </details>
-            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>AAB</code></p>
+                    <p><strong>Разбор:</strong> Первый вызов printA() выводит "A", второй — "A", вызов printB() выводит "B".</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Найди ошибки</span>
-            </div>
-            <div class="card-body">
-                <pre><code class="language-go">package main
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Найди ошибки</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1101,27 +900,27 @@ func main() {
 func PrintMessage() {
     fmt.Println("Привет!")
 }</code></pre>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Ошибки:</strong></p>
-                        <ol style="padding-left: 20px; margin-bottom: 12px;">
-                            <li><code>PrintMessage</code> вызывается без скобок — нужно <code>PrintMessage()</code></li>
-                            <li>Функция <code>printAnother</code> объявлена внутри main — нужно вынести наружу</li>
-                            <li><code>PrintMessage</code> начинается с большой буквы — для внутренних функций используют маленькую</li>
-                        </ol>
-                    </div>
-                </details>
-            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Ошибки:</strong></p>
+                    <ol>
+                        <li><code>PrintMessage</code> вызывается без скобок — нужно <code>PrintMessage()</code></li>
+                        <li>Функция <code>printAnother</code> объявлена внутри main — нужно вынести наружу</li>
+                        <li><code>PrintMessage</code> начинается с большой буквы — для внутренних функций используют маленькую</li>
+                    </ol>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="card task-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Сколько раз выполнится тело функции?</span>
-            </div>
-            <div class="card-body">
-                <pre><code class="language-go">package main
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Сколько раз выполнится тело функции?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1134,88 +933,108 @@ func main() {
 func printHello() {
     fmt.Println("Привет!")
 }</code></pre>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Ответ:</strong> 3 раза</p>
-                        <p><strong>Разбор:</strong> Цикл выполняется 3 итерации (i = 0, 1, 2). На каждой итерации вызывается printHello(), поэтому тело функции выполнится 3 раза.</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="summary-box">
-            <div class="summary-header">
-                <span class="summary-badge">Резюме</span>
-                <span class="summary-title">Ключевые идеи</span>
-            </div>
-            <ul class="summary-list">
-                <li>Функция — именованный блок кода для повторного использования</li>
-                <li>Объявление: <code>func имя() { тело }</code></li>
-                <li>Вызов: <code>имя()</code> — обязательно со скобками</li>
-                <li>Функции объявляются вне main, обычно после неё</li>
-            </ul>
-        </div>
-
-        <blockquote>
-            <p><strong>Правило:</strong> Функция выполняется только когда её вызывают. Без вызова код функции не работает.</p>
-        </blockquote>
-
-        <nav class="nav-footer">
-            <a href="#" class="nav-link prev" style="visibility: hidden;">
-                <span class="nav-arrow">←</span>
-                <div>
-                    <div class="nav-label">Предыдущий урок</div>
-                    <div class="nav-title">—</div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Ответ:</strong> 3 раза</p>
+                    <p><strong>Разбор:</strong> Цикл выполняется 3 итерации (i = 0, 1, 2). На каждой итерации вызывается printHello(), поэтому тело функции выполнится 3 раза.</p>
                 </div>
-            </a>
-            <a href="02-parameters-arguments.html" class="nav-link next">
-                <div>
-                    <div class="nav-label">Следующий урок</div>
-                    <div class="nav-title">Параметры и аргументы</div>
-                </div>
-                <span class="nav-arrow">→</span>
-            </a>
-        </nav>
-    </main>
-</div>
+            </details>
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ключевые идеи</span>
+        </div>
+        <ul class="summary-list">
+            <li>Функция — именованный блок кода для повторного использования</li>
+            <li>Объявление: <code>func имя() { тело }</code></li>
+            <li>Вызов: <code>имя()</code> — обязательно со скобками</li>
+            <li>Функции объявляются вне main, обычно после неё</li>
+        </ul>
+    </div>
+
+    <blockquote>
+        <p><strong>Правило:</strong> Функция выполняется только когда её вызывают. Без вызова код функции не работает.</p>
+    </blockquote>
+
+    <nav class="nav-footer">
+        <a href="02-parameters-arguments.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий</div>
+                <div class="nav-title">Параметры и аргументы</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
 
 <script>
-    /* global hljs */
-    // noinspection JSUnresolvedReference
-    hljs.highlightAll();
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
 
-    function copyCode(btn) {
-        const code = btn.closest('.code-block').querySelector('code');
-        navigator.clipboard.writeText(code.textContent).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => {
-                btn.textContent = 'Copy';
-                btn.classList.remove('copied');
-            }, 2000);
+    if (tg) {
+        // Signal that app is ready
+        tg.ready();
+
+        // Expand to full height
+        tg.expand();
+
+        // Show back button
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
         });
     }
 
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-        document.getElementById('progress').style.width = p + '%';
-    });
+    // Highlight.js init
+    hljs.highlightAll();
 
-    const links = document.querySelectorAll('.toc-list a');
-    const sections = document.querySelectorAll('h2[id], h3[id]');
+    // Copy code function
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
 
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(s => {
-            if (scrollY >= s.offsetTop - 100) current = s.id;
-        });
-        links.forEach(l => {
-            l.classList.remove('active');
-            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
-        });
-    });
+        // Try clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
 </script>
 
 </body>

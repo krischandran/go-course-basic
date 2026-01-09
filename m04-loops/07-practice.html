@@ -2,26 +2,18 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Практика: задачи на циклы — Вводный курс по Go</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Практика: задачи на циклы - Вводный курс по Go</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
-          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
-            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
-            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
         :root {
@@ -48,702 +40,176 @@
             background-color: var(--bg-primary);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-        .logo span { color: var(--accent-green); }
-
-        .nav-menu {
-            display: flex;
-            gap: 32px;
-        }
-        .nav-menu a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-menu a:hover { color: var(--text-primary); }
-        /* Used by HTML — current navigation item */
-        .nav-menu a.current { color: var(--text-primary); }
-
-        .header-right { display: flex; align-items: center; gap: 16px; }
-
-        .progress-pill {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 6px 16px;
-        }
-        .progress-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .progress-track {
-            width: 80px;
-            height: 4px;
-            background: var(--border-color);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-green);
-            width: 0%;
-            transition: width 0.3s;
-        }
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent-green);
-            border-radius: 50%;
-        }
-
-        .layout {
-            display: flex;
-            padding-top: 56px;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 56px;
-            width: 280px;
-            height: calc(100vh - 56px);
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        .course-info {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .course-tag {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-green);
-            margin-bottom: 8px;
-        }
-        .course-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-        .course-progress {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .toc-section { padding: 20px 16px; }
-        .toc-title {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding-left: 8px;
-        }
-        .toc-list { list-style: none; }
-        .toc-list li { margin-bottom: 4px; }
-        .toc-list a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .toc-list a:hover { background: rgba(255,255,255,0.03); }
-        /* Used by JS — TOC active state on scroll */
-        .toc-list a.active {
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.06);
-        }
-        .toc-num {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        /* Used by JS — TOC number active state */
-        .toc-list a.active .toc-num {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
         main {
-            flex: 1;
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 48px 40px 80px;
+            max-width: 100%;
+            padding: 16px;
         }
 
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 32px;
-            font-size: 14px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-        .breadcrumb a:hover { color: var(--text-primary); }
-        .breadcrumb-sep { color: var(--border-light); }
-        .breadcrumb-current { color: var(--text-secondary); }
-
-        h1 {
-            font-size: 36px;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
+        .module-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
             margin-bottom: 16px;
         }
 
-        .lead {
-            font-size: 19px;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            margin-bottom: 48px;
-        }
+        h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+        .lead { font-size: 17px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 32px; }
 
-        h2 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin: 56px 0 24px;
-        }
-        h2::before {
-            content: '';
-            width: 20px;
-            height: 20px;
-            background: var(--accent-green);
-            border-radius: 4px;
-        }
+        h2 { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 40px 0 20px; }
+        h2::before { content: ''; width: 8px; height: 8px; background: var(--accent-green); border-radius: 2px; }
 
-        h3 {
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            margin: 40px 0 16px;
-            color: var(--text-primary);
-        }
+        h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin: 28px 0 14px; color: var(--text-primary); }
 
-        p {
-            font-size: 17px;
-            line-height: 1.75;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
+        p { font-size: 16px; line-height: 1.75; color: var(--text-secondary); margin-bottom: 16px; }
+        strong { color: var(--text-primary); font-weight: 600; }
+        a { color: var(--accent-green); text-decoration: none; }
+        a:hover { text-decoration: underline; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 24px 0;
-            font-size: 16px;
-        }
-        th {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            background: var(--bg-secondary);
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-        }
-        td {
-            padding: 14px 16px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: top;
-        }
-        td code {
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th { text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); }
+        td { padding: 10px 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+        td code { color: var(--accent-green); }
 
-        .code-block {
-            margin: 24px 0;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 16px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .code-lang {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .copy-btn:hover {
-            border-color: var(--border-light);
-            color: var(--text-primary);
-        }
-        /* Used by JS — copy button state after click */
-        .copy-btn.copied {
-            border-color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.1);
-            color: var(--accent-green);
-        }
-        .code-block pre {
-            margin: 0;
-            padding: 20px;
-            overflow-x: auto;
-        }
-        .code-block code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+        .code-block { margin: 20px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 16px; overflow-x: auto; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
 
-        .example-block {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin: 16px 0 24px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        .example-block strong {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
+        code:not(.hljs) { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; color: var(--accent-green); }
 
-        .task-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin: 24px 0;
-            overflow: hidden;
-        }
-        .task-card .card-head {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .task-card .card-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-orange);
-            background: linear-gradient(135deg, rgba(241, 161, 42, 0.15) 0%, rgba(241, 161, 42, 0.05) 100%);
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-        .task-card .card-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .task-card .card-body {
-            padding: 20px 24px;
-        }
-        .task-card .card-body p {
-            margin-bottom: 16px;
-        }
-        .task-card details summary {
-            cursor: pointer;
-            color: var(--accent-green);
-            font-weight: 500;
-            font-size: 15px;
-            padding: 12px 0;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .task-card details summary::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-right: 2px solid var(--accent-green);
-            border-bottom: 2px solid var(--accent-green);
-            transform: rotate(-45deg);
-            transition: transform 0.2s;
-        }
-        /* Used by HTML — details open state */
-        .task-card details[open] summary::before {
-            transform: rotate(45deg);
-        }
-        .task-card .answer {
-            padding: 16px 0 8px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 8px;
-        }
-        .task-card .answer p {
-            margin-bottom: 12px;
-        }
+        .example-block { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 18px; margin: 14px 0 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-secondary); }
+        .example-block strong { color: var(--text-primary); font-weight: 500; }
 
-        .question-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin: 24px 0;
-            overflow: hidden;
-        }
-        .question-card .card-head {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .question-card .card-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-green);
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.15) 0%, rgba(42, 241, 107, 0.05) 100%);
-            padding: 6px 12px;
-            border-radius: 6px;
-        }
-        .question-card .card-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .question-card .card-body {
-            padding: 20px 24px;
-        }
-        .question-card details summary {
-            cursor: pointer;
-            color: var(--accent-green);
-            font-weight: 500;
-            font-size: 15px;
-            padding: 12px 0;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .question-card details summary::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-right: 2px solid var(--accent-green);
-            border-bottom: 2px solid var(--accent-green);
-            transform: rotate(-45deg);
-            transition: transform 0.2s;
-        }
-        /* Used by HTML — details open state for question */
-        .question-card details[open] summary::before {
-            transform: rotate(45deg);
-        }
-        .question-card .answer {
-            padding: 16px 0 8px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 8px;
-        }
+        .task-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .task-card .card-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .task-card .card-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--accent-orange); background: linear-gradient(135deg, rgba(241, 161, 42, 0.15) 0%, rgba(241, 161, 42, 0.05) 100%); padding: 4px 10px; border-radius: 6px; }
+        .task-card .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .task-card .card-body { padding: 16px; }
+        .task-card .card-body p { margin-bottom: 12px; font-size: 15px; }
+        .task-card details summary { cursor: pointer; color: var(--accent-green); font-weight: 500; font-size: 14px; padding: 10px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        .task-card details summary::before { content: ''; display: inline-block; width: 6px; height: 6px; border-right: 2px solid var(--accent-green); border-bottom: 2px solid var(--accent-green); transform: rotate(-45deg); transition: transform 0.2s; }
+        .task-card details[open] summary::before { transform: rotate(45deg); }
+        .task-card .answer { padding: 14px 0 6px; border-top: 1px solid var(--border-color); margin-top: 8px; }
+        .task-card .answer p { margin-bottom: 10px; font-size: 14px; }
 
-        .summary-box {
-            margin: 48px 0;
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
-            border: 1px solid rgba(42, 241, 107, 0.2);
-            border-radius: 12px;
-            padding: 28px;
-        }
-        .summary-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .summary-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.15);
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-        .summary-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .summary-list {
-            list-style: none;
-            padding: 0;
-        }
-        .summary-list li {
-            position: relative;
-            padding-left: 20px;
-            margin-bottom: 12px;
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        .summary-list li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 10px;
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-        }
-        .summary-list li strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
+        .question-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; margin: 20px 0; overflow: hidden; }
+        .question-card .card-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .question-card .card-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--accent-green); background: linear-gradient(135deg, rgba(42, 241, 107, 0.15) 0%, rgba(42, 241, 107, 0.05) 100%); padding: 4px 10px; border-radius: 6px; }
+        .question-card .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .question-card .card-body { padding: 16px; }
+        .question-card details summary { cursor: pointer; color: var(--accent-green); font-weight: 500; font-size: 14px; padding: 10px 0; list-style: none; display: flex; align-items: center; gap: 8px; }
+        .question-card details summary::before { content: ''; display: inline-block; width: 6px; height: 6px; border-right: 2px solid var(--accent-green); border-bottom: 2px solid var(--accent-green); transform: rotate(-45deg); transition: transform 0.2s; }
+        .question-card details[open] summary::before { transform: rotate(45deg); }
+        .question-card .answer { padding: 14px 0 6px; border-top: 1px solid var(--border-color); margin-top: 8px; }
 
-        .nav-footer {
-            display: flex;
-            gap: 24px;
-            margin-top: 64px;
-            padding-top: 32px;
-            border-top: 1px solid var(--border-color);
-        }
-        .nav-link {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .nav-link:hover {
-            border-color: var(--border-light);
-            background: var(--bg-tertiary);
-        }
-        /* Used by HTML — navigation link alignment (prev) */
+        .summary-box { margin: 32px 0; padding: 20px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 10px; }
+        .summary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .summary-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-green); background: rgba(42, 241, 107, 0.15); padding: 4px 8px; border-radius: 4px; }
+        .summary-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { list-style: none; padding: 0; }
+        .summary-list li { position: relative; padding-left: 18px; margin-bottom: 10px; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .summary-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; }
+        .summary-list li strong { color: var(--text-primary); font-weight: 600; }
+
+        ul, ol { margin: 14px 0; padding-left: 20px; color: var(--text-secondary); }
+        li { margin: 6px 0; font-size: 15px; line-height: 1.6; }
+
+        .nav-footer { display: flex; flex-direction: column; gap: 12px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        .nav-link { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; transition: all 0.2s; }
+        .nav-link:hover { border-color: var(--border-light); background: var(--bg-tertiary); text-decoration: none; }
         .nav-link.prev { text-align: left; }
-        /* Used by HTML — navigation link alignment (next) */
         .nav-link.next { justify-content: flex-end; text-align: right; }
-        .nav-arrow {
-            font-size: 20px;
-            color: var(--accent-green);
-        }
-        .nav-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .nav-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        @media (max-width: 1100px) {
-            .sidebar { display: none; }
-            main { max-width: 100%; padding: 40px 32px; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu { display: none; }
-            h1 { font-size: 28px; }
-            main { padding: 32px 20px; }
-            .nav-footer { flex-direction: column; }
-        }
-
-        @media print {
-            .sidebar, .header { display: none; }
-            body { background: white; color: black; }
-        }
+        .nav-arrow { font-size: 18px; color: var(--accent-green); }
+        .nav-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 3px; }
+        .nav-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="#" class="logo">course<span>.</span>go</a>
-    <nav class="nav-menu">
-        <a href="#">Курсы</a>
-        <a href="#" class="current">Вводный курс по Go</a>
-        <a href="#">О проекте</a>
-    </nav>
-    <div class="header-right">
-        <div class="progress-pill">
-            <span class="progress-label">Прогресс</span>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress"></div>
+<main>
+    <div class="module-badge">Модуль 4 / Урок 7</div>
+
+    <h1>Практика: задачи на циклы</h1>
+    <p class="lead">Закрепляем все изученные концепции циклов: классический for, for с условием, бесконечный цикл, break, continue, вложенные циклы и метки.</p>
+
+    <h2 id="overview">Обзор модуля</h2>
+
+    <p>В этом модуле мы изучили:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Ключевая идея</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Классический for</td>
+                <td><code>for i := 0; i &lt; n; i++</code></td>
+            </tr>
+            <tr>
+                <td>for с условием</td>
+                <td><code>for условие</code></td>
+            </tr>
+            <tr>
+                <td>Бесконечный цикл</td>
+                <td><code>for { }</code></td>
+            </tr>
+            <tr>
+                <td>break</td>
+                <td>Выход из цикла</td>
+            </tr>
+            <tr>
+                <td>continue</td>
+                <td>Пропуск итерации</td>
+            </tr>
+            <tr>
+                <td>Вложенные циклы</td>
+                <td>Цикл внутри цикла</td>
+            </tr>
+            <tr>
+                <td>Метки</td>
+                <td>Выход из нескольких циклов</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="tasks">Задачи для закрепления</h2>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Сумма чисел от 1 до N</span>
+        </div>
+        <div class="card-body">
+            <p>Напиши программу, которая читает число N и выводит сумму всех чисел от 1 до N.</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 5<br>
+                <strong>Вывод:</strong> 15
             </div>
-            <div class="progress-dot"></div>
-        </div>
-    </div>
-</header>
-
-<div class="layout">
-    <aside class="sidebar">
-        <div class="course-info">
-            <div class="course-tag">Модуль 4</div>
-            <div class="course-name">Циклы</div>
-            <div class="course-progress">Урок 7 из 7</div>
-        </div>
-
-        <div class="toc-section">
-            <div class="toc-title">Содержание</div>
-            <ul class="toc-list">
-                <li><a href="#overview"><span class="toc-num">01</span>Обзор модуля</a></li>
-                <li><a href="#tasks"><span class="toc-num">02</span>Задачи</a></li>
-                <li><a href="#test"><span class="toc-num">03</span>Финальный тест</a></li>
-                <li><a href="#summary"><span class="toc-num">04</span>Резюме</a></li>
-            </ul>
-        </div>
-    </aside>
-
-    <main>
-        <nav class="breadcrumb">
-            <a href="#">Курсы</a>
-            <span class="breadcrumb-sep">/</span>
-            <a href="#">Вводный курс по Go</a>
-            <span class="breadcrumb-sep">/</span>
-            <span class="breadcrumb-current">Практика: задачи на циклы</span>
-        </nav>
-
-        <h1>Практика: задачи на циклы</h1>
-        <p class="lead">Закрепляем все изученные концепции циклов: классический for, for с условием, бесконечный цикл, break, continue, вложенные циклы и метки.</p>
-
-        <h2 id="overview">Обзор модуля</h2>
-
-        <p>В этом модуле мы изучили:</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Тема</th>
-                    <th>Ключевая идея</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Классический for</td>
-                    <td><code>for i := 0; i &lt; n; i++</code> — известное число итераций</td>
-                </tr>
-                <tr>
-                    <td>for с условием</td>
-                    <td><code>for условие</code> — неизвестное число итераций</td>
-                </tr>
-                <tr>
-                    <td>Бесконечный цикл</td>
-                    <td><code>for { }</code> — работает до явной остановки</td>
-                </tr>
-                <tr>
-                    <td>break</td>
-                    <td>Выход из цикла</td>
-                </tr>
-                <tr>
-                    <td>continue</td>
-                    <td>Пропуск итерации</td>
-                </tr>
-                <tr>
-                    <td>Вложенные циклы</td>
-                    <td>Цикл внутри цикла</td>
-                </tr>
-                <tr>
-                    <td>Метки</td>
-                    <td>Выход из нескольких циклов</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2 id="tasks">Задачи для закрепления</h2>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Сумма чисел от 1 до N</span>
-            </div>
-            <div class="card-body">
-                <p>Напиши программу, которая читает число N и выводит сумму всех чисел от 1 до N.</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 5<br>
-                    <strong>Вывод:</strong> 15
-                </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -758,33 +224,33 @@ func main() {
 
     fmt.Println(sum)
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong> Классический цикл, накопление суммы в переменной <code>sum</code>.</p>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Факториал</span>
-            </div>
-            <div class="card-body">
-                <p>Напиши программу, которая вычисляет факториал числа N (N! = 1 * 2 * 3 * ... * N).</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 5<br>
-                    <strong>Вывод:</strong> 120
+                    <p><strong>Разбор:</strong> Классический цикл, накопление суммы в переменной <code>sum</code>.</p>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Факториал</span>
+        </div>
+        <div class="card-body">
+            <p>Напиши программу, которая вычисляет факториал числа N (N! = 1 * 2 * 3 * ... * N).</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 5<br>
+                <strong>Вывод:</strong> 120
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -799,34 +265,34 @@ func main() {
 
     fmt.Println(result)
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong> Накопление произведения. Начинаем с 1, умножаем на каждое число от 2 до N.</p>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Четные числа</span>
-            </div>
-            <div class="card-body">
-                <p>Напиши программу, которая выводит все четные числа от 2 до N.</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 10<br>
-                    <strong>Вывод:</strong> 2 4 6 8 10
+                    <p><strong>Разбор:</strong> Накопление произведения. Начинаем с 1, умножаем на каждое число от 2 до N.</p>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Вариант 1: с проверкой</strong></p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Четные числа</span>
+        </div>
+        <div class="card-body">
+            <p>Напиши программу, которая выводит все четные числа от 2 до N.</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 10<br>
+                <strong>Вывод:</strong> 2 4 6 8 10
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вариант 1: с проверкой</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -840,14 +306,14 @@ func main() {
         }
     }
 }</code></pre>
+                    </div>
+                    <p><strong>Вариант 2: с шагом 2 (эффективнее)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                         </div>
-                        <p><strong>Вариант 2: с шагом 2 (эффективнее)</strong></p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -859,33 +325,33 @@ func main() {
         fmt.Print(i, " ")
     }
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Обратный отсчет</span>
-            </div>
-            <div class="card-body">
-                <p>Напиши программу обратного отсчета от N до 1, затем выведи "Пуск!".</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 5<br>
-                    <strong>Вывод:</strong><br>
-                    5<br>4<br>3<br>2<br>1<br>Пуск!
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Обратный отсчет</span>
+        </div>
+        <div class="card-body">
+            <p>Напиши программу обратного отсчета от N до 1, затем выведи "Пуск!".</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 5<br>
+                <strong>Вывод:</strong><br>
+                5<br>4<br>3<br>2<br>1<br>Пуск!
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -899,32 +365,32 @@ func main() {
 
     fmt.Println("Пуск!")
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">05</span>
-                <span class="card-title">Степень двойки</span>
-            </div>
-            <div class="card-body">
-                <p>Найди наименьшую степень двойки, которая больше или равна N.</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 50<br>
-                    <strong>Вывод:</strong> 64
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Степень двойки</span>
+        </div>
+        <div class="card-body">
+            <p>Найди наименьшую степень двойки, которая больше или равна N.</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 50<br>
+                <strong>Вывод:</strong> 64
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -939,33 +405,33 @@ func main() {
 
     fmt.Println(power)
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong> Цикл с условием — удваиваем, пока не достигнем N.</p>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">06</span>
-                <span class="card-title">Сумма цифр</span>
-            </div>
-            <div class="card-body">
-                <p>Найди сумму цифр числа N.</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 12345<br>
-                    <strong>Вывод:</strong> 15
+                    <p><strong>Разбор:</strong> Цикл с условием - удваиваем, пока не достигнем N.</p>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">06</span>
+            <span class="card-title">Сумма цифр</span>
+        </div>
+        <div class="card-body">
+            <p>Найди сумму цифр числа N.</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 12345<br>
+                <strong>Вывод:</strong> 15
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -982,39 +448,39 @@ func main() {
 
     fmt.Println(sum)
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong></p>
-                        <ul style="color: var(--text-secondary); padding-left: 20px; margin: 12px 0;">
-                            <li><code>n % 10</code> дает последнюю цифру</li>
-                            <li><code>n / 10</code> отбрасывает последнюю цифру</li>
-                            <li>Повторяем, пока n > 0</li>
-                        </ul>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">07</span>
-                <span class="card-title">Количество делителей</span>
-            </div>
-            <div class="card-body">
-                <p>Найди количество делителей числа N.</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 12<br>
-                    <strong>Вывод:</strong> 6<br>
-                    <span style="color: var(--text-muted);">(делители 12: 1, 2, 3, 4, 6, 12)</span>
+                    <p><strong>Разбор:</strong></p>
+                    <ul>
+                        <li><code>n % 10</code> дает последнюю цифру</li>
+                        <li><code>n / 10</code> отбрасывает последнюю цифру</li>
+                        <li>Повторяем, пока n > 0</li>
+                    </ul>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">07</span>
+            <span class="card-title">Количество делителей</span>
+        </div>
+        <div class="card-body">
+            <p>Найди количество делителей числа N.</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 12<br>
+                <strong>Вывод:</strong> 6<br>
+                <span style="color: var(--text-muted);">(делители 12: 1, 2, 3, 4, 6, 12)</span>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1031,32 +497,32 @@ func main() {
 
     fmt.Println(count)
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">08</span>
-                <span class="card-title">Простое число</span>
-            </div>
-            <div class="card-body">
-                <p>Определи, является ли число N простым (делится только на 1 и себя).</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 7 → <strong>Вывод:</strong> Простое<br>
-                    <strong>Ввод:</strong> 12 → <strong>Вывод:</strong> Составное
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">08</span>
+            <span class="card-title">Простое число</span>
+        </div>
+        <div class="card-body">
+            <p>Определи, является ли число N простым (делится только на 1 и себя).</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 7 -> <strong>Вывод:</strong> Простое<br>
+                <strong>Ввод:</strong> 12 -> <strong>Вывод:</strong> Составное
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1083,35 +549,35 @@ func main() {
         fmt.Println("Составное")
     }
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong> Проверяем делители от 2 до n-1. Если найден — число составное.</p>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">09</span>
-                <span class="card-title">Таблица умножения</span>
-            </div>
-            <div class="card-body">
-                <p>Выведи таблицу умножения от 1 до N.</p>
-                <div class="example-block">
-                    <strong>Для N=3:</strong><br>
-                    1 2 3<br>
-                    2 4 6<br>
-                    3 6 9
+                    <p><strong>Разбор:</strong> Проверяем делители от 2 до n-1. Если найден - число составное.</p>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">09</span>
+            <span class="card-title">Таблица умножения</span>
+        </div>
+        <div class="card-body">
+            <p>Выведи таблицу умножения от 1 до N.</p>
+            <div class="example-block">
+                <strong>Для N=3:</strong><br>
+                1 2 3<br>
+                2 4 6<br>
+                3 6 9
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1126,35 +592,35 @@ func main() {
         fmt.Println()
     }
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">10</span>
-                <span class="card-title">Пирамида из звездочек</span>
-            </div>
-            <div class="card-body">
-                <p>Выведи пирамиду высотой N.</p>
-                <div class="example-block">
-                    <strong>Для N=4:</strong><br>
-                    *<br>
-                    **<br>
-                    ***<br>
-                    ****
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">10</span>
+            <span class="card-title">Пирамида из звездочек</span>
+        </div>
+        <div class="card-body">
+            <p>Выведи пирамиду высотой N.</p>
+            <div class="example-block">
+                <strong>Для N=4:</strong><br>
+                *<br>
+                **<br>
+                ***<br>
+                ****
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1169,33 +635,33 @@ func main() {
         fmt.Println()
     }
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">11</span>
-                <span class="card-title">Числа Фибоначчи</span>
-            </div>
-            <div class="card-body">
-                <p>Выведи первые N чисел Фибоначчи.</p>
-                <p style="color: var(--text-muted); font-size: 15px;">Числа Фибоначчи: 1, 1, 2, 3, 5, 8, 13, ... (каждое число — сумма двух предыдущих)</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> 7<br>
-                    <strong>Вывод:</strong> 1 1 2 3 5 8 13
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">11</span>
+            <span class="card-title">Числа Фибоначчи</span>
+        </div>
+        <div class="card-body">
+            <p>Выведи первые N чисел Фибоначчи.</p>
+            <p style="color: var(--text-muted); font-size: 14px;">Числа Фибоначчи: 1, 1, 2, 3, 5, 8, 13, ... (каждое число - сумма двух предыдущих)</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> 7<br>
+                <strong>Вывод:</strong> 1 1 2 3 5 8 13
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1213,29 +679,29 @@ func main() {
         b = next
     }
 }</code></pre>
-                        </div>
-                        <p><strong>Разбор:</strong> Храним два последних числа, на каждом шаге вычисляем следующее.</p>
                     </div>
-                </details>
-            </div>
+                    <p><strong>Разбор:</strong> Храним два последних числа, на каждом шаге вычисляем следующее.</p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">12</span>
-                <span class="card-title">Угадай число с подсказками</span>
-            </div>
-            <div class="card-body">
-                <p>Программа загадывает число от 1 до 100. Пользователь угадывает, программа подсказывает "больше" или "меньше".</p>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">12</span>
+            <span class="card-title">Угадай число с подсказками</span>
+        </div>
+        <div class="card-body">
+            <p>Программа загадывает число от 1 до 100. Пользователь угадывает, программа подсказывает "больше" или "меньше".</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1259,33 +725,33 @@ func main() {
         }
     }
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="task-card">
-            <div class="card-head">
-                <span class="card-num">13</span>
-                <span class="card-title">Поиск в матрице*</span>
-            </div>
-            <div class="card-body">
-                <p>Найди позицию первого вхождения числа T в "матрице" (два вложенных цикла до N).</p>
-                <div class="example-block">
-                    <strong>Ввод:</strong> N=5, T=12<br>
-                    <strong>Вывод:</strong> 3 4<br>
-                    <span style="color: var(--text-muted);">(потому что 3 * 4 = 12)</span>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-lang">Go</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <pre><code class="language-go">package main
+            </details>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <div class="card-head">
+            <span class="card-num">13</span>
+            <span class="card-title">Поиск в матрице*</span>
+        </div>
+        <div class="card-body">
+            <p>Найди позицию первого вхождения числа T в "матрице" (два вложенных цикла до N).</p>
+            <div class="example-block">
+                <strong>Ввод:</strong> N=5, T=12<br>
+                <strong>Вывод:</strong> 3 4<br>
+                <span style="color: var(--text-muted);">(потому что 3 * 4 = 12)</span>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
 
 import "fmt"
 
@@ -1310,156 +776,154 @@ outer:
         fmt.Println("Не найдено")
     }
 }</code></pre>
-                        </div>
                     </div>
-                </details>
-            </div>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <h2 id="test">Финальный тест</h2>
+    <h2 id="test">Финальный тест</h2>
 
-        <div class="question-card">
-            <div class="card-head">
-                <span class="card-num">01</span>
-                <span class="card-title">Какой цикл использовать, если известно количество итераций?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Классический <code>for i := 0; i &lt; n; i++</code></p>
-                    </div>
-                </details>
-            </div>
+    <div class="question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Какой цикл использовать, если известно количество итераций?</span>
         </div>
-
-        <div class="question-card">
-            <div class="card-head">
-                <span class="card-num">02</span>
-                <span class="card-title">Как записать бесконечный цикл?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p><code>for { }</code></p>
-                    </div>
-                </details>
-            </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Классический <code>for i := 0; i &lt; n; i++</code></p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="question-card">
-            <div class="card-head">
-                <span class="card-num">03</span>
-                <span class="card-title">Что делает break? Что делает continue?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <ul style="color: var(--text-secondary); padding-left: 20px;">
-                            <li><code>break</code> — выходит из цикла полностью</li>
-                            <li><code>continue</code> — пропускает остаток итерации и переходит к следующей</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
+    <div class="question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Как записать бесконечный цикл?</span>
         </div>
-
-        <div class="question-card">
-            <div class="card-head">
-                <span class="card-num">04</span>
-                <span class="card-title">Как выйти из нескольких вложенных циклов?</span>
-            </div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Использовать метку: <code>break label</code></p>
-                    </div>
-                </details>
-            </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>for { }</code></p>
+                </div>
+            </details>
         </div>
+    </div>
 
-        <div class="question-card">
-            <div class="card-head">
-                <span class="card-num">05</span>
-                <span class="card-title">Сколько итераций выполнится?</span>
-            </div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header">
-                        <span class="code-lang">Go</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    </div>
-                    <pre><code class="language-go">for i := 0; i < 5; i++ {
+    <div class="question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что делает break? Что делает continue?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ul>
+                        <li><code>break</code> - выходит из цикла полностью</li>
+                        <li><code>continue</code> - пропускает остаток итерации и переходит к следующей</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Как выйти из нескольких вложенных циклов?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Использовать метку: <code>break label</code></p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="question-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Сколько итераций выполнится?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">for i := 0; i < 5; i++ {
     for j := 0; j < 3; j++ {
         // ...
     }
 }</code></pre>
-                </div>
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>15 (5 * 3)</p>
-                    </div>
-                </details>
             </div>
-        </div>
-
-        <h2 id="summary">Резюме модуля</h2>
-
-        <div class="summary-box">
-            <div class="summary-header">
-                <span class="summary-badge">Key</span>
-                <span class="summary-title">Что мы изучили</span>
-            </div>
-            <ul class="summary-list">
-                <li><strong>Классический for</strong> — для фиксированного числа повторений</li>
-                <li><strong>for с условием</strong> — когда не знаем сколько итераций</li>
-                <li><strong>Бесконечный цикл</strong> — <code>for { }</code> с обязательным выходом</li>
-                <li><strong>break и continue</strong> — управление потоком цикла</li>
-                <li><strong>Вложенные циклы</strong> — циклы внутри циклов</li>
-                <li><strong>Метки</strong> — для выхода из нескольких циклов</li>
-            </ul>
-        </div>
-
-        <div class="summary-box">
-            <div class="summary-header">
-                <span class="summary-badge">Rules</span>
-                <span class="summary-title">Главные правила</span>
-            </div>
-            <ul class="summary-list">
-                <li>Если знаешь сколько раз — классический <code>for</code></li>
-                <li>Если зависит от условия — <code>for условие</code></li>
-                <li>Бесконечный цикл = обязательный <code>break</code></li>
-                <li><code>break</code> прерывает только ближайший цикл</li>
-                <li>Переменные вложенных циклов должны иметь разные имена</li>
-            </ul>
-        </div>
-
-        <nav class="nav-footer">
-            <a href="06-labels.html" class="nav-link prev">
-                <span class="nav-arrow">←</span>
-                <div>
-                    <div class="nav-label">Предыдущий урок</div>
-                    <div class="nav-title">Метки для циклов</div>
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>15 (5 * 3)</p>
                 </div>
-            </a>
-            <!-- TODO: Update href when m05-functions/01-basics.html is created -->
-            <a href="#" class="nav-link next" aria-label="Следующий модуль (скоро)">
-                <div>
-                    <div class="nav-label">Следующий модуль</div>
-                    <div class="nav-title">Функции</div>
-                </div>
-                <span class="nav-arrow">→</span>
-            </a>
-        </nav>
-    </main>
-</div>
+            </details>
+        </div>
+    </div>
+
+    <h2 id="summary">Резюме модуля</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Что мы изучили</span>
+        </div>
+        <ul class="summary-list">
+            <li><strong>Классический for</strong> - для фиксированного числа повторений</li>
+            <li><strong>for с условием</strong> - когда не знаем сколько итераций</li>
+            <li><strong>Бесконечный цикл</strong> - <code>for { }</code> с обязательным выходом</li>
+            <li><strong>break и continue</strong> - управление потоком цикла</li>
+            <li><strong>Вложенные циклы</strong> - циклы внутри циклов</li>
+            <li><strong>Метки</strong> - для выхода из нескольких циклов</li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Rules</span>
+            <span class="summary-title">Главные правила</span>
+        </div>
+        <ul class="summary-list">
+            <li>Если знаешь сколько раз - классический <code>for</code></li>
+            <li>Если зависит от условия - <code>for условие</code></li>
+            <li>Бесконечный цикл = обязательный <code>break</code></li>
+            <li><code>break</code> прерывает только ближайший цикл</li>
+            <li>Переменные вложенных циклов должны иметь разные имена</li>
+        </ul>
+    </div>
+
+    <nav class="nav-footer">
+        <a href="06-labels.html" class="nav-link prev">
+            <span class="nav-arrow">&#8592;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Метки для циклов</div>
+            </div>
+        </a>
+        <a href="#" class="nav-link next" aria-label="Следующий модуль (скоро)">
+            <div>
+                <div class="nav-label">Следующий модуль</div>
+                <div class="nav-title">Функции</div>
+            </div>
+            <span class="nav-arrow">&#8594;</span>
+        </a>
+    </nav>
+</main>
 
 <script>
-    /* global hljs */
+    /* global hljs, Telegram */
     // noinspection JSUnresolvedReference
     hljs.highlightAll();
 
@@ -1475,25 +939,18 @@ outer:
         });
     }
 
-    window.addEventListener('scroll', () => {
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-        document.getElementById('progress').style.width = p + '%';
-    });
+    // Telegram WebApp initialization
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
 
-    const links = document.querySelectorAll('.toc-list a');
-    const sections = document.querySelectorAll('h2[id]');
-
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(s => {
-            if (scrollY >= s.offsetTop - 100) current = s.id;
+        // Back button
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.history.back();
         });
-        links.forEach(l => {
-            l.classList.remove('active');
-            if (l.getAttribute('href') === '#' + current) l.classList.add('active');
-        });
-    });
+    }
 </script>
 
 </body>
