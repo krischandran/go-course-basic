@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>bufio.Scanner -- чтение строк</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 2 / Урок 4</div>
+
+    <h1>bufio.Scanner -- чтение строк</h1>
+
+    <p class="lead">В прошлом уроке мы познакомились с <code>fmt.Scan</code>. Но у него есть ограничение -- он разделяет ввод по пробелам. Если пользователь введет "Павел Тарасов", <code>fmt.Scan</code> прочитает только "Павел".</p>
+
+    <p><code>bufio.Scanner</code> решает эту проблему -- он читает <strong>всю строку целиком</strong>, включая пробелы.</p>
+
+    <hr>
+
+    <!-- SECTION: Базовое использование -->
+    <h2 id="basic-usage">Базовое использование</h2>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    fmt.Print("Введите полное имя: ")
+    scanner.Scan()
+    fullName := scanner.Text()
+
+    fmt.Println("Привет,", fullName)
+}</code></pre>
+    </div>
+
+    <p><strong>Пример работы:</strong></p>
+    <div class="code-block">
+        <pre><code>Введите полное имя: Павел Тарасов
+Привет, Павел Тарасов</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Как это работает -->
+    <h2 id="how-it-works">Как это работает</h2>
+
+    <div class="info-box">
+        <div class="info-row"><code>scanner := bufio.NewScanner(os.Stdin)</code> -- создает сканер, который читает из стандартного ввода</div>
+        <div class="info-row"><code>scanner.Scan()</code> -- читает одну строку (до нажатия Enter). Возвращает true если успешно, false если конец ввода</div>
+        <div class="info-row"><code>scanner.Text()</code> -- возвращает прочитанную строку (без символа новой строки)</div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Чтение нескольких строк -->
+    <h2 id="multiple-lines">Чтение нескольких строк подряд</h2>
+
+    <p>Каждый вызов <code>scanner.Scan()</code> читает следующую строку:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    fmt.Print("Имя: ")
+    scanner.Scan()
+    name := scanner.Text()
+
+    fmt.Print("Город: ")
+    scanner.Scan()
+    city := scanner.Text()
+
+    fmt.Print("Профессия: ")
+    scanner.Scan()
+    job := scanner.Text()
+
+    fmt.Println("---")
+    fmt.Println("Имя:", name)
+    fmt.Println("Город:", city)
+    fmt.Println("Профессия:", job)
+}</code></pre>
+    </div>
+
+    <p><strong>Пример работы:</strong></p>
+    <div class="code-block">
+        <pre><code>Имя: Анна Петрова
+Город: Санкт-Петербург
+Профессия: Go разработчик
+---
+Имя: Анна Петрова
+Город: Санкт-Петербург
+Профессия: Go разработчик</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Один сканер на всю программу -->
+    <h2 id="one-scanner">Один сканер на всю программу</h2>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p>Создавай сканер <strong>один раз</strong> в начале программы. Не создавай новый сканер для каждого чтения.</p>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Правильно — один сканер
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    scanner.Scan()
+    name := scanner.Text()
+
+    scanner.Scan()
+    city := scanner.Text()
+}
+
+// Неправильно — много сканеров
+func main() {
+    scanner1 := bufio.NewScanner(os.Stdin)
+    scanner1.Scan()
+    name := scanner1.Text()
+
+    scanner2 := bufio.NewScanner(os.Stdin)  // проблема!
+    scanner2.Scan()
+    city := scanner2.Text()
+}</code></pre>
+    </div>
+
+    <p><strong>Почему?</strong> Каждый сканер имеет свой внутренний буфер. Создание нового сканера может "потерять" часть уже прочитанных данных.</p>
+
+    <hr>
+
+    <!-- SECTION: Scan vs bufio.Scanner -->
+    <h2 id="scan-vs-bufio">Scan vs bufio.Scanner</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Задача</th>
+                <th>Инструмент</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Прочитать одно слово</td>
+                <td><code>fmt.Scan</code></td>
+            </tr>
+            <tr>
+                <td>Прочитать число</td>
+                <td><code>fmt.Scan</code></td>
+            </tr>
+            <tr>
+                <td>Прочитать несколько значений через пробел</td>
+                <td><code>fmt.Scan</code></td>
+            </tr>
+            <tr>
+                <td>Прочитать строку <strong>с пробелами</strong></td>
+                <td><code>bufio.Scanner</code></td>
+            </tr>
+            <tr>
+                <td>Прочитать несколько строк подряд</td>
+                <td><code>bufio.Scanner</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <!-- SECTION: Что дальше? -->
+    <h2 id="whats-next">Что дальше?</h2>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>В модуле циклов изучим, как читать строки <strong>в цикле</strong> -- когда количество строк неизвестно заранее. В модуле функций изучим обработку ошибок через <code>scanner.Err()</code>.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Проверь себя -->
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">В чем разница между fmt.Scan и bufio.Scanner?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>fmt.Scan</code> разделяет ввод по пробелам -- каждое слово отдельно. <code>bufio.Scanner</code> читает всю строку целиком, включая пробелы.</p>
+                    <p>Для ввода "Павел Тарасов":</p>
+                    <ul>
+                        <li><code>fmt.Scan</code> прочитает только "Павел"</li>
+                        <li><code>bufio.Scanner</code> прочитает "Павел Тарасов"</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Почему нужно создавать один сканер на всю программу?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Каждый сканер имеет внутренний буфер. При создании нового сканера часть уже прочитанных данных может быть потеряна -- они остались в буфере старого сканера.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что делает метод scanner.Text()?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Возвращает последнюю прочитанную строку (ту, которую прочитал предыдущий вызов <code>scanner.Scan()</code>). Строка возвращается без символа новой строки.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">scanner := bufio.NewScanner(os.Stdin)
+scanner.Scan()
+a := scanner.Text()
+scanner.Scan()
+b := scanner.Text()
+fmt.Println(b, a)</code></pre>
+            </div>
+            <p><strong>Ввод (две строки):</strong></p>
+            <div class="code-block">
+                <pre><code>Привет
+Мир</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Мир Привет</code></p>
+                    <p><strong>Почему:</strong> Первый <code>Scan()</code> читает "Привет" в <code>a</code>, второй читает "Мир" в <code>b</code>. Выводим в обратном порядке: сначала <code>b</code>, потом <code>a</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Анкета</span>
+        </div>
+        <div class="card-body">
+            <p>Напиши программу, которая спрашивает имя, возраст и город, затем выводит анкету.</p>
+            <p><strong>Пример:</strong></p>
+            <div class="code-block">
+                <pre><code>Имя: Иван Иванов
+Возраст: 25
+Город: Москва
+
+=== Анкета ===
+Имя: Иван Иванов
+Возраст: 25
+Город: Москва</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    fmt.Print("Имя: ")
+    scanner.Scan()
+    name := scanner.Text()
+
+    fmt.Print("Возраст: ")
+    scanner.Scan()
+    age := scanner.Text()
+
+    fmt.Print("Город: ")
+    scanner.Scan()
+    city := scanner.Text()
+
+    fmt.Println()
+    fmt.Println("=== Анкета ===")
+    fmt.Println("Имя:", name)
+    fmt.Println("Возраст:", age)
+    fmt.Println("Город:", city)
+}</code></pre>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Найди ошибку</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">scanner1 := bufio.NewScanner(os.Stdin)
+scanner1.Scan()
+line1 := scanner1.Text()
+
+scanner2 := bufio.NewScanner(os.Stdin)
+scanner2.Scan()
+line2 := scanner2.Text()
+
+fmt.Println(line1, line2)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Ошибка:</strong> Создается два сканера для одного источника (<code>os.Stdin</code>).</p>
+                    <p><strong>Проблема:</strong> Данные могут потеряться между сканерами из-за буферизации.</p>
+                    <p><strong>Правильно:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">scanner := bufio.NewScanner(os.Stdin)
+
+scanner.Scan()
+line1 := scanner.Text()
+
+scanner.Scan()
+line2 := scanner.Text()
+
+fmt.Println(line1, line2)</code></pre>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Резюме -->
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">bufio.Scanner</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>bufio.Scanner</code> читает строки целиком, включая пробелы</li>
+            <li><code>scanner.Scan()</code> читает одну строку</li>
+            <li><code>scanner.Text()</code> возвращает прочитанную строку</li>
+            <li>Создавай <strong>один сканер</strong> на всю программу</li>
+            <li>Используй <code>fmt.Scan</code> для отдельных слов/чисел, <code>bufio.Scanner</code> для полных строк</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <nav class="nav-footer">
+        <a href="03-scan-input.html" class="nav-link">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Scan и ввод данных</div>
+            </div>
+        </a>
+        <a href="05-sprintf.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий урок</div>
+                <div class="nav-title">Sprintf и форматирование строк</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

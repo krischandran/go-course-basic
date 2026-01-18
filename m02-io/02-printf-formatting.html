@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Printf и форматирование в Go</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 2 / Урок 2</div>
+
+    <h1>Printf и форматирование в Go</h1>
+
+    <p class="lead">Простой вывод через <code>Println</code> быстро перестает хватать. Когда нужно вывести "Привет, Павел! Тебе 35 лет" -- склеивать строки через запятую неудобно. Для этого есть <code>Printf</code>.</p>
+
+    <hr>
+
+    <!-- SECTION: Printf -->
+    <h2 id="printf">Printf -- форматированный вывод</h2>
+
+    <p><code>fmt.Printf</code> выводит строку по <strong>шаблону</strong>, в который подставляются значения:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">name := "Павел"
+age := 35
+
+fmt.Printf("Меня зовут %s, мне %d лет\n", name, age)</code></pre>
+    </div>
+
+    <p><strong>Вывод:</strong></p>
+    <div class="code-block">
+        <pre><code>Меня зовут Павел, мне 35 лет</code></pre>
+    </div>
+
+    <h3>Как это работает?</h3>
+
+    <div class="info-box">
+        <div class="info-row"><code>Printf("шаблон", значение1, значение2, ...)</code></div>
+        <div class="info-row"><code>%s</code> -- место для строки (string)</div>
+        <div class="info-row"><code>%d</code> -- место для целого числа (decimal)</div>
+    </div>
+
+    <p><strong>Спецификатор</strong> (format verb) -- это метка в строке, которая начинается с <code>%</code>. На её место подставляется значение.</p>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p><code>Printf</code> <strong>не добавляет</strong> перенос строки в конце. Добавляй <code>\n</code> вручную, если нужен перенос.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Базовые спецификаторы -->
+    <h2 id="basic-verbs">Базовые спецификаторы</h2>
+
+    <p>Это минимальный набор, который нужно знать:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Спецификатор</th>
+                <th>Для чего</th>
+                <th>Пример</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>%s</code></td>
+                <td>Строка (string)</td>
+                <td><code>"Павел"</code></td>
+            </tr>
+            <tr>
+                <td><code>%d</code></td>
+                <td>Целое число (int)</td>
+                <td><code>35</code></td>
+            </tr>
+            <tr>
+                <td><code>%f</code></td>
+                <td>Дробное число (float)</td>
+                <td><code>3.14</code></td>
+            </tr>
+            <tr>
+                <td><code>%t</code></td>
+                <td>Булево значение (bool)</td>
+                <td><code>true</code></td>
+            </tr>
+            <tr>
+                <td><code>%v</code></td>
+                <td>Любое значение</td>
+                <td>что угодно</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>%s -- строки</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">name := "Алиса"
+fmt.Printf("Привет, %s!\n", name)  // Привет, Алиса!</code></pre>
+    </div>
+
+    <h3>%d -- целые числа</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">age := 25
+fmt.Printf("Возраст: %d лет\n", age)  // Возраст: 25 лет</code></pre>
+    </div>
+
+    <p>Буква <code>d</code> -- от слова "decimal" (десятичный).</p>
+
+    <h3>%f -- дробные числа</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">price := 19.99
+fmt.Printf("Цена: %f\n", price)  // Цена: 19.990000</code></pre>
+    </div>
+
+    <p>По умолчанию выводится <strong>6 знаков после точки</strong>. Если их меньше -- добьет нулями.</p>
+
+    <h3>%t -- булевы значения</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">active := true
+fmt.Printf("Активен: %t\n", active)  // Активен: true</code></pre>
+    </div>
+
+    <h3>%v -- универсальный</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Printf("Значение: %v\n", 42)       // Значение: 42
+fmt.Printf("Значение: %v\n", "текст")  // Значение: текст
+fmt.Printf("Значение: %v\n", true)     // Значение: true</code></pre>
+    </div>
+
+    <p><code>%v</code> выводит значение в формате "по умолчанию" для его типа.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Когда использовать %v:</strong> Для отладки или когда тип не важен. Для продакшн-кода лучше конкретные спецификаторы -- они делают намерение явным.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Несколько спецификаторов -->
+    <h2 id="multiple-verbs">Несколько спецификаторов</h2>
+
+    <p>Значения подставляются <strong>по порядку</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">name := "Павел"
+surname := "Тарасов"
+fmt.Printf("Привет, %s %s!\n", name, surname)
+// Привет, Павел Тарасов!</code></pre>
+    </div>
+
+    <p>Первый <code>%s</code> получает первое значение (<code>name</code>), второй <code>%s</code> -- второе значение (<code>surname</code>).</p>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p>Количество спецификаторов должно совпадать с количеством аргументов. Иначе -- ошибка или неожиданный результат.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Точность для дробных чисел -->
+    <h2 id="precision">Точность для дробных чисел</h2>
+
+    <p>По умолчанию <code>%f</code> выводит 6 знаков. Часто это слишком много:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">pi := 3.14159265
+fmt.Printf("Пи: %f\n", pi)  // Пи: 3.141593 (6 знаков)</code></pre>
+    </div>
+
+    <p>Чтобы указать количество знаков, используй <strong>точку с числом</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Printf("Пи: %.2f\n", pi)  // Пи: 3.14 (2 знака)
+fmt.Printf("Пи: %.3f\n", pi)  // Пи: 3.142 (3 знака, округлено!)
+fmt.Printf("Пи: %.0f\n", pi)  // Пи: 3 (0 знаков)</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>При указании точности число <strong>округляется</strong> по правилам математики. <code>3.14159</code> с <code>.3f</code> станет <code>3.142</code>, потому что следующая цифра (5) >= 5.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Вывод символа процента -->
+    <h2 id="percent">Вывод символа процента</h2>
+
+    <p>Знак <code>%</code> зарезервирован для спецификаторов. Чтобы вывести сам символ <code>%</code>, используй <code>%%</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">discount := 15
+fmt.Printf("Скидка: %d%%\n", discount)  // Скидка: 15%</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Sprintf -->
+    <h2 id="sprintf">Sprintf -- форматирование в строку</h2>
+
+    <p><code>Printf</code> сразу выводит результат. А если нужно <strong>сохранить</strong> отформатированную строку?</p>
+
+    <p>Для этого есть <code>Sprintf</code> -- он <strong>возвращает</strong> строку, а не выводит:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">name := "Павел"
+age := 35
+
+// Собираем строку
+str := fmt.Sprintf("Меня зовут %s, мне %d лет", name, age)
+
+// Теперь можем использовать str
+fmt.Println(str)  // Меня зовут Павел, мне 35 лет</code></pre>
+    </div>
+
+    <h3>Когда использовать Sprintf?</h3>
+
+    <ul>
+        <li>Нужно сохранить строку в переменную</li>
+        <li>Нужно передать строку в другую функцию</li>
+        <li>Нужно склеить сложную строку для логирования</li>
+    </ul>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Пример: создание сообщения об ошибке
+msg := fmt.Sprintf("пользователь %s не найден", username)</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Системы счисления -->
+    <h2 id="number-systems">Системы счисления (для любознательных)</h2>
+
+    <p>Числа можно выводить в разных системах счисления:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Спецификатор</th>
+                <th>Система</th>
+                <th>Пример для 123</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>%d</code></td>
+                <td>Десятичная</td>
+                <td><code>123</code></td>
+            </tr>
+            <tr>
+                <td><code>%b</code></td>
+                <td>Двоичная</td>
+                <td><code>1111011</code></td>
+            </tr>
+            <tr>
+                <td><code>%o</code></td>
+                <td>Восьмеричная</td>
+                <td><code>173</code></td>
+            </tr>
+            <tr>
+                <td><code>%x</code></td>
+                <td>Шестнадцатеричная</td>
+                <td><code>7b</code></td>
+            </tr>
+            <tr>
+                <td><code>%X</code></td>
+                <td>Шестнадцатеричная (заглавные)</td>
+                <td><code>7B</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">num := 123
+fmt.Printf("Десятичная: %d\n", num)    // 123
+fmt.Printf("Двоичная: %b\n", num)      // 1111011
+fmt.Printf("Шестнадцатеричная: %x\n", num)  // 7b</code></pre>
+    </div>
+
+    <p>С префиксом <code>#</code> добавляется обозначение системы:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Printf("Hex: %#x\n", 123)  // 0x7b</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Где смотреть все спецификаторы? -->
+    <h2 id="docs">Где смотреть все спецификаторы?</h2>
+
+    <p>Спецификаторов много, и <strong>не нужно их зубрить</strong>. Когда понадобится -- смотри документацию:</p>
+
+    <div class="code-block">
+        <pre><code>https://pkg.go.dev/fmt</code></pre>
+    </div>
+
+    <p>Там описаны все спецификаторы: для указателей (<code>%p</code>), типов (<code>%T</code>), и многие другие.</p>
+
+    <hr>
+
+    <!-- SECTION: Проверь себя -->
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Чем отличается Printf от Println?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>Printf</code> выводит по шаблону со спецификаторами (<code>%s</code>, <code>%d</code> и т.д.) и <strong>не добавляет</strong> перенос строки.</p>
+                    <p><code>Println</code> просто выводит значения через пробел и <strong>добавляет</strong> перенос строки.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Какой спецификатор использовать для вывода дробного числа с 2 знаками после точки?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>%.2f</code> -- точка и число указывают количество знаков после запятой.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Чем отличается Printf от Sprintf?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>Printf</code> выводит отформатированную строку в консоль.</p>
+                    <p><code>Sprintf</code> возвращает отформатированную строку (не выводит), её можно сохранить в переменную.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Как вывести символ % в строке форматирования?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Использовать <code>%%</code>. Один <code>%</code> начинает спецификатор, два <code>%%</code> выводят сам символ процента.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">fmt.Printf("Результат: %d", 10+5)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Результат: 15</code></p>
+                    <p><strong>Почему:</strong> Выражение <code>10+5</code> вычисляется до подстановки, получается <code>15</code>. <code>%d</code> для целого числа.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">fmt.Printf("%s + %s = %d\n", "5", "3", 8)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>5 + 3 = 8</code></p>
+                    <p><strong>Почему:</strong> Первые два <code>%s</code> подставляют строки "5" и "3", <code>%d</code> подставляет число 8.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">fmt.Printf("Цена: %.2f руб.\n", 19.5)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Цена: 19.50 руб.</code></p>
+                    <p><strong>Почему:</strong> <code>.2f</code> означает 2 знака после точки. Число <code>19.5</code> дополняется нулем до <code>19.50</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">fmt.Printf("Скидка %d%%\n", 25)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Скидка 25%</code></p>
+                    <p><strong>Почему:</strong> <code>%d</code> подставляет число 25, <code>%%</code> выводит символ процента.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Найди ошибку</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">name := "Алиса"
+age := 30
+fmt.Printf("Имя: %s, возраст: %s\n", name, age)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Ошибка:</strong> Для <code>age</code> (число) использован <code>%s</code> (строка).</p>
+                    <p><strong>Правильно:</strong> <code>fmt.Printf("Имя: %s, возраст: %d\n", name, age)</code></p>
+                    <p>Хотя код может сработать (Go достаточно умен), это логическая ошибка. Для чисел используй <code>%d</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Резюме -->
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Printf и форматирование</span>
+        </div>
+        <ul class="summary-list">
+            <li><strong>Printf</strong> -- форматированный вывод по шаблону со спецификаторами</li>
+            <li><strong>Базовые спецификаторы:</strong> <code>%s</code> -- строка, <code>%d</code> -- целое число, <code>%f</code> -- дробное (6 знаков), <code>%t</code> -- булево, <code>%v</code> -- универсальный</li>
+            <li><strong>Точность:</strong> <code>%.2f</code> -- 2 знака после точки (с округлением)</li>
+            <li><strong>Sprintf</strong> -- как Printf, но возвращает строку вместо вывода</li>
+            <li><strong>%%</strong> -- вывести символ процента</li>
+        </ul>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Не зубри все спецификаторы. Запомни базовые (<code>%s</code>, <code>%d</code>, <code>%f</code>, <code>%v</code>), остальные смотри в документации по мере необходимости.</p>
+    </div>
+
+    <hr>
+
+    <nav class="nav-footer">
+        <a href="01-print-println.html" class="nav-link">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Print и Println</div>
+            </div>
+        </a>
+        <a href="03-scan-input.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий урок</div>
+                <div class="nav-title">Scan и ввод данных</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

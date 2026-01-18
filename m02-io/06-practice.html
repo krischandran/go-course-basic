@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Практика: интерактивная анкета</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Business card preview styling */
+        .business-card-preview {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 2 / Урок 6</div>
+
+    <h1>Практика: интерактивная анкета</h1>
+
+    <p class="lead">Пришло время применить все, что мы изучили про ввод-вывод. Создадим интерактивную программу -- генератор визитной карточки.</p>
+
+    <hr>
+
+    <!-- SECTION: Что мы изучили в этом модуле -->
+    <h2 id="learned">Что мы изучили в этом модуле</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Функция</th>
+                <th>Для чего</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Вывод</td>
+                <td><code>fmt.Print</code></td>
+                <td>Вывод без перевода строки</td>
+            </tr>
+            <tr>
+                <td>Вывод</td>
+                <td><code>fmt.Println</code></td>
+                <td>Вывод с переводом строки</td>
+            </tr>
+            <tr>
+                <td>Форматирование</td>
+                <td><code>fmt.Printf</code></td>
+                <td>Вывод по шаблону</td>
+            </tr>
+            <tr>
+                <td>Ввод</td>
+                <td><code>fmt.Scan</code></td>
+                <td>Чтение слов и чисел</td>
+            </tr>
+            <tr>
+                <td>Ввод строк</td>
+                <td><code>bufio.Scanner</code></td>
+                <td>Чтение строк с пробелами</td>
+            </tr>
+            <tr>
+                <td>Форматирование</td>
+                <td><code>fmt.Sprintf</code></td>
+                <td>Сборка строки по шаблону</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <!-- SECTION: Задание: Генератор визитки -->
+    <h2 id="task">Задание: Генератор визитки</h2>
+
+    <p>Напиши программу, которая:</p>
+    <ol>
+        <li>Спрашивает имя и фамилию</li>
+        <li>Спрашивает должность</li>
+        <li>Спрашивает компанию</li>
+        <li>Спрашивает email и телефон</li>
+        <li>Выводит красиво оформленную визитку</li>
+    </ol>
+
+    <h3>Пример работы</h3>
+
+    <div class="business-card-preview">=== Генератор визитки ===
+
+Введите имя и фамилию: Анна Петрова
+Введите должность: Go разработчик
+Введите компанию: Яндекс
+Введите email: anna@yandex.ru
+Введите телефон: +7-900-123-4567
+
++--------------------------------------+
+|          ВИЗИТНАЯ КАРТОЧКА           |
++--------------------------------------+
+|  Анна Петрова                        |
+|  Go разработчик                      |
+|  Яндекс                              |
++--------------------------------------+
+|  Email: anna@yandex.ru               |
+|  Тел:   +7-900-123-4567              |
++--------------------------------------+</div>
+
+    <hr>
+
+    <!-- SECTION: Подсказки -->
+    <h2 id="hints">Подсказки</h2>
+
+    <h3>Структура программы</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    fmt.Println("=== Генератор визитки ===")
+    fmt.Println()
+
+    // 1. Запросить данные
+    // 2. Вывести визитку
+}</code></pre>
+    </div>
+
+    <h3>Чтение строки с пробелами</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Print("Введите имя и фамилию: ")
+scanner.Scan()
+fullName := scanner.Text()</code></pre>
+    </div>
+
+    <h3>Чтение email (без пробелов)</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Print("Введите email: ")
+var email string
+fmt.Scan(&email)</code></pre>
+    </div>
+
+    <h3>Форматирование с выравниванием</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// %-20s -- строка шириной 20 символов, выравнивание влево
+fmt.Printf("|  %-36s|\n", fullName)</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Решение -->
+    <h2 id="solution">Решение</h2>
+
+    <details>
+        <summary>Полный код</summary>
+        <div class="solution">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    scanner := bufio.NewScanner(os.Stdin)
+
+    fmt.Println("=== Генератор визитки ===")
+    fmt.Println()
+
+    // Запрашиваем данные
+    fmt.Print("Введите имя и фамилию: ")
+    scanner.Scan()
+    fullName := scanner.Text()
+
+    fmt.Print("Введите должность: ")
+    scanner.Scan()
+    position := scanner.Text()
+
+    fmt.Print("Введите компанию: ")
+    scanner.Scan()
+    company := scanner.Text()
+
+    fmt.Print("Введите email: ")
+    scanner.Scan()
+    email := scanner.Text()
+
+    fmt.Print("Введите телефон: ")
+    scanner.Scan()
+    phone := scanner.Text()
+
+    // Выводим визитку
+    fmt.Println()
+    fmt.Println("+--------------------------------------+")
+    fmt.Println("|          ВИЗИТНАЯ КАРТОЧКА           |")
+    fmt.Println("+--------------------------------------+")
+    fmt.Printf("|  %-36s|\n", fullName)
+    fmt.Printf("|  %-36s|\n", position)
+    fmt.Printf("|  %-36s|\n", company)
+    fmt.Println("+--------------------------------------+")
+
+    emailLine := fmt.Sprintf("Email: %s", email)
+    phoneLine := fmt.Sprintf("Тел:   %s", phone)
+
+    fmt.Printf("|  %-36s|\n", emailLine)
+    fmt.Printf("|  %-36s|\n", phoneLine)
+    fmt.Println("+--------------------------------------+")
+}</code></pre>
+            </div>
+        </div>
+    </details>
+
+    <hr>
+
+    <!-- SECTION: Разбор решения -->
+    <h2 id="explanation">Разбор решения</h2>
+
+    <h3>Почему везде Scanner?</h3>
+
+    <p>В этой программе мы используем <code>bufio.Scanner</code> для всех полей, потому что:</p>
+    <ul>
+        <li>Имя и фамилия содержат пробел</li>
+        <li>Должность может содержать пробел ("Go разработчик")</li>
+        <li>Компания может содержать пробел ("Яндекс Практикум")</li>
+    </ul>
+
+    <p>Можно было бы использовать <code>fmt.Scan</code> для email и телефона (они без пробелов), но проще использовать один подход для всего.</p>
+
+    <h3>Форматирование визитки</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Printf("|  %-36s|\n", fullName)</code></pre>
+    </div>
+
+    <ul>
+        <li><code>%-36s</code> -- строка шириной 36 символов, выравнивание влево</li>
+        <li>Минус <code>-</code> означает выравнивание влево</li>
+        <li><code>36</code> -- ширина поля (чтобы визитка была ровной)</li>
+        <li>Пробелы справа заполняют до нужной ширины</li>
+    </ul>
+
+    <h3>Комбинирование Sprintf и Printf</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">emailLine := fmt.Sprintf("Email: %s", email)
+fmt.Printf("|  %-36s|\n", emailLine)</code></pre>
+    </div>
+
+    <p>Сначала собираем строку через <code>Sprintf</code>, потом выводим ее с форматированием через <code>Printf</code>. Это удобно, когда нужно сложное форматирование.</p>
+
+    <hr>
+
+    <!-- SECTION: Дополнительные задания -->
+    <h2 id="extra-tasks">Дополнительные задания</h2>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Добавь дату</span>
+        </div>
+        <div class="card-body">
+            <p>Добавь в визитку текущую дату. Для простоты -- пусть пользователь вводит ее сам.</p>
+            <div class="code-block">
+                <pre><code>Введите сегодняшнюю дату: 15.01.2024
+
+...
+|  Дата: 15.01.2024                    |
+...</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">fmt.Print("Введите сегодняшнюю дату: ")
+scanner.Scan()
+date := scanner.Text()
+
+// В выводе визитки:
+dateLine := fmt.Sprintf("Дата: %s", date)
+fmt.Printf("|  %-36s|\n", dateLine)</code></pre>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Выбор формата</span>
+        </div>
+        <div class="card-body">
+            <p>Создай два варианта вывода: короткий и полный. Спроси пользователя, какой формат он хочет (1 или 2).</p>
+            <p><strong>Короткий:</strong></p>
+            <div class="code-block">
+                <pre><code>Анна Петрова | Go разработчик | anna@yandex.ru</code></pre>
+            </div>
+            <p><strong>Полный:</strong> (как в основном задании)</p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">fmt.Print("Выберите формат (1-короткий, 2-полный): ")
+var format int
+fmt.Scan(&format)
+
+// Короткий формат (format == 1)
+shortCard := fmt.Sprintf("%s | %s | %s", fullName, position, email)
+fmt.Println(shortCard)
+
+// Полный формат (format == 2) -- как в основном решении</code></pre>
+                    </div>
+                    <div class="alert alert-tip">
+                        <div class="alert-icon">*</div>
+                        <div class="alert-label">Tip</div>
+                        <p>Как выбирать между вариантами (конструкция <code>if</code>) -- изучим в следующем модуле про условия. Пока можно просто вывести оба формата.</p>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Номер визитки</span>
+        </div>
+        <div class="card-body">
+            <p>Добавь порядковый номер визитки с ведущими нулями (например, #00042).</p>
+            <div class="code-block">
+                <pre><code>+--------------------------------------+
+|  ВИЗИТКА #00042                      |
+...</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">Go</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <pre><code class="language-go">fmt.Print("Введите номер визитки: ")
+var cardNumber int
+fmt.Scan(&cardNumber)
+
+// В выводе:
+header := fmt.Sprintf("ВИЗИТКА #%05d", cardNumber)
+fmt.Printf("|  %-36s|\n", header)</code></pre>
+                    </div>
+                    <p><code>%05d</code> -- число с ведущими нулями, ширина 5 символов.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Что дальше? -->
+    <h2 id="whats-next">Что дальше?</h2>
+
+    <p>Поздравляем! Ты освоил базовый ввод-вывод в Go:</p>
+    <ul>
+        <li>Вывод данных (<code>Print</code>, <code>Println</code>, <code>Printf</code>)</li>
+        <li>Ввод данных (<code>Scan</code>, <code>bufio.Scanner</code>)</li>
+        <li>Форматирование строк (<code>Sprintf</code>)</li>
+    </ul>
+
+    <p>В следующем модуле изучим <strong>условные конструкции</strong> -- <code>if</code>, <code>else</code>, <code>switch</code>. Это позволит писать программы, которые принимают решения на основе данных.</p>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>После изучения условий и циклов ты сможешь создавать интерактивные программы с меню выбора, повторным вводом и проверкой ошибок.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Резюме модуля -->
+    <h2 id="module-summary">Резюме модуля</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Вывод</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>Print</code> -- без перевода строки</li>
+            <li><code>Println</code> -- с переводом строки, пробелы между аргументами</li>
+            <li><code>Printf</code> -- по шаблону со спецификаторами</li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ввод</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>Scan</code> -- для слов и чисел (разделяет по пробелам)</li>
+            <li><code>bufio.Scanner</code> -- для строк целиком</li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Форматирование</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>Sprintf</code> -- собрать строку по шаблону</li>
+            <li><code>Errorf</code> -- создать ошибку по шаблону</li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Основные спецификаторы</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>%s</code> -- строка</li>
+            <li><code>%d</code> -- целое число</li>
+            <li><code>%f</code> -- дробное число (<code>.2f</code> -- 2 знака)</li>
+            <li><code>%v</code> -- любое значение</li>
+            <li><code>%-10s</code> -- строка шириной 10, влево</li>
+            <li><code>%05d</code> -- число шириной 5, ведущие нули</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <nav class="nav-footer">
+        <a href="05-sprintf.html" class="nav-link">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Sprintf и форматирование строк</div>
+            </div>
+        </a>
+        <a href="../m03-conditions/01-if-else.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий модуль</div>
+                <div class="nav-title">Условные конструкции</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>

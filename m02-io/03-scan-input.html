@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scan и ввод данных</title>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .info-box {
+            margin: 24px 0;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: var(--border-color);
+            margin: 32px 0;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution {
+            background: rgba(241, 161, 42, 0.03);
+            border-left-color: var(--accent-orange);
+        }
+        .answer p, .solution p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 2 / Урок 3</div>
+
+    <h1>Scan и ввод данных</h1>
+
+    <p class="lead">Программы, которые всегда выводят одно и то же -- скучные. Полезная программа взаимодействует с пользователем: спрашивает имя, запрашивает число, ждет команду. Для этого в Go есть функции ввода.</p>
+
+    <hr>
+
+    <!-- SECTION: Зачем программе ввод? -->
+    <h2 id="why-input">Зачем программе ввод?</h2>
+
+    <p>Любая полезная программа работает по схеме:</p>
+
+    <div class="info-box">
+        <div class="info-row">Ввод данных (от пользователя)</div>
+        <div class="info-row">Обработка (логика)</div>
+        <div class="info-row">Вывод результата (на экран)</div>
+    </div>
+
+    <p>Без ввода программа статична -- всегда делает одно и то же:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Скучная программа — всегда здоровается только с Павлом
+name := "Павел"
+fmt.Println("Привет,", name)</code></pre>
+    </div>
+
+    <p>С вводом программа интерактивна:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Интересная программа — здоровается с кем угодно
+var name string
+fmt.Scan(&amp;name)
+fmt.Println("Привет,", name)</code></pre>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: fmt.Scan -->
+    <h2 id="fmt-scan">fmt.Scan -- чтение данных</h2>
+
+    <p><code>fmt.Scan</code> читает данные, которые вводит пользователь, и записывает их в переменную:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Print("Введите имя: ")
+
+    var name string
+    fmt.Scan(&amp;name)
+
+    fmt.Println("Привет,", name)
+}</code></pre>
+    </div>
+
+    <p><strong>Как это работает:</strong></p>
+    <ol>
+        <li><code>Print</code> выводит приглашение (без перехода на новую строку)</li>
+        <li>Программа <strong>останавливается</strong> и ждет ввода</li>
+        <li>Пользователь вводит текст и нажимает Enter</li>
+        <li><code>Scan</code> записывает введенное в переменную <code>name</code></li>
+        <li>Программа продолжает работу</li>
+    </ol>
+
+    <hr>
+
+    <!-- SECTION: Зачем нужен & -->
+    <h2 id="ampersand">Зачем нужен & (амперсанд)?</h2>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p><code>&amp;</code> -- обязательный символ перед переменной в <code>Scan</code>. Без него код не скомпилируется.</p>
+    </div>
+
+    <p><strong>Почему так?</strong></p>
+
+    <p><code>Scan</code> должен <strong>записать</strong> значение в переменную. Но если передать просто <code>name</code>, функция получит <strong>копию</strong> переменной -- пустую строку. Изменив копию, оригинал останется пустым.</p>
+
+    <p><code>&amp;name</code> передает не копию, а <strong>адрес</strong> переменной -- место в памяти, где она хранится. Зная адрес, <code>Scan</code> может записать данные напрямую в оригинальную переменную.</p>
+
+    <div class="info-box">
+        <div class="info-row"><code>fmt.Scan(name)</code> -- передаем копию (пустую строку). Scan изменит копию, оригинал пустой</div>
+        <div class="info-row"><code>fmt.Scan(&amp;name)</code> -- передаем адрес переменной. Scan запишет данные по этому адресу</div>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Думай о <code>&amp;</code> как об адресе дома. Если сказать курьеру "дом" -- он ничего не доставит. А если дать адрес -- посылка придет куда нужно.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Чтение нескольких значений -->
+    <h2 id="multiple-values">Чтение нескольких значений</h2>
+
+    <p><code>Scan</code> умеет читать несколько значений за раз. Пользователь вводит их через пробел:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">var firstName, lastName string
+fmt.Scan(&amp;firstName, &amp;lastName)
+
+fmt.Printf("Привет, %s %s!\n", firstName, lastName)</code></pre>
+    </div>
+
+    <p><strong>Ввод:</strong> <code>Павел Тарасов</code></p>
+    <p><strong>Вывод:</strong> <code>Привет, Павел Тарасов!</code></p>
+
+    <h3>Как это работает?</h3>
+
+    <p><code>Scan</code> разделяет ввод по <strong>пробелам</strong>. Первое слово -- в первую переменную, второе -- во вторую.</p>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p>Количество переменных должно соответствовать количеству введенных слов. Лишние слова будут проигнорированы.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Чтение чисел -->
+    <h2 id="reading-numbers">Чтение чисел</h2>
+
+    <p><code>Scan</code> умеет читать не только строки. Тип переменной определяет, что ожидается:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Целое число
+var age int
+fmt.Scan(&amp;age)
+
+// Дробное число
+var price float64
+fmt.Scan(&amp;price)</code></pre>
+    </div>
+
+    <p><strong>Пример:</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Print("Сколько вам лет? ")
+var age int
+fmt.Scan(&amp;age)
+
+fmt.Printf("Через 10 лет вам будет %d\n", age+10)</code></pre>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Для дробных чисел вводи <strong>точку</strong>, не запятую: <code>3.14</code>, не <code>3,14</code>.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Scan vs Scanln -->
+    <h2 id="scan-vs-scanln">Scan vs Scanln</h2>
+
+    <p>В пакете <code>fmt</code> есть две похожие функции:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Функция</th>
+                <th>Разделитель</th>
+                <th>Когда использовать</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>Scan</code></td>
+                <td>Пробел или Enter</td>
+                <td>Чтение отдельных слов/чисел</td>
+            </tr>
+            <tr>
+                <td><code>Scanln</code></td>
+                <td>Только Enter</td>
+                <td>Чтение до конца строки</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Scan — пробел разделяет значения
+fmt.Scan(&amp;a, &amp;b)  // ввод "5 10" → a=5, b=10
+
+// Scanln — читает до Enter
+fmt.Scanln(&amp;a, &amp;b)  // то же самое, но строго одна строка</code></pre>
+    </div>
+
+    <p>На практике <code>Scan</code> используется чаще.</p>
+
+    <hr>
+
+    <!-- SECTION: Проблема: строка с пробелами -->
+    <h2 id="problem-spaces">Проблема: строка с пробелами</h2>
+
+    <p><code>Scan</code> разделяет ввод по пробелам. Но что если нужно прочитать <strong>всю строку целиком</strong>?</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">var fullName string
+fmt.Scan(&amp;fullName)
+// Ввод: "Павел Тарасов"
+// fullName = "Павел"  — только первое слово!</code></pre>
+    </div>
+
+    <p>Для чтения строки с пробелами нужен другой инструмент -- <code>bufio.Scanner</code>.</p>
+
+    <hr>
+
+    <!-- SECTION: bufio.Scanner -->
+    <h2 id="bufio-scanner">bufio.Scanner -- чтение строк целиком</h2>
+
+    <p><code>bufio.Scanner</code> читает ввод <strong>построчно</strong>, сохраняя пробелы:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+func main() {
+    fmt.Print("Введите полное имя: ")
+
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()
+    fullName := scanner.Text()
+
+    fmt.Println("Привет,", fullName)
+}</code></pre>
+    </div>
+
+    <p><strong>Ввод:</strong> <code>Павел Тарасов</code></p>
+    <p><strong>Вывод:</strong> <code>Привет, Павел Тарасов</code></p>
+
+    <h3>Как это работает?</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">scanner := bufio.NewScanner(os.Stdin)  // создаем сканер для консольного ввода
+scanner.Scan()                          // ждем ввода и читаем строку
+fullName := scanner.Text()              // получаем прочитанный текст</code></pre>
+    </div>
+
+    <p><strong>Три новых элемента:</strong></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Элемент</th>
+                <th>Что это</th>
+                <th>Зачем</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>bufio</code></td>
+                <td>Пакет</td>
+                <td>Буферизованный ввод-вывод</td>
+            </tr>
+            <tr>
+                <td><code>os.Stdin</code></td>
+                <td>Источник</td>
+                <td>Стандартный ввод (консоль)</td>
+            </tr>
+            <tr>
+                <td><code>scanner.Text()</code></td>
+                <td>Метод</td>
+                <td>Возвращает прочитанную строку</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p><strong>Когда что использовать:</strong> <code>fmt.Scan</code> -- для отдельных слов и чисел. <code>bufio.Scanner</code> -- для строк с пробелами.</p>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Возвращаемые значения Scan -->
+    <h2 id="return-values">Возвращаемые значения Scan</h2>
+
+    <p><code>Scan</code> возвращает два значения:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">n, err := fmt.Scan(&amp;name)</code></pre>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Значение</th>
+                <th>Тип</th>
+                <th>Что содержит</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>n</code></td>
+                <td><code>int</code></td>
+                <td>Количество успешно прочитанных значений</td>
+            </tr>
+            <tr>
+                <td><code>err</code></td>
+                <td><code>error</code></td>
+                <td>Ошибка (или <code>nil</code>, если все хорошо)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Когда может быть ошибка?</strong></p>
+    <ul>
+        <li>Пользователь ввел текст вместо числа</li>
+        <li>Ввод закончился раньше, чем ожидалось</li>
+    </ul>
+
+    <p>В учебных программах ошибки часто игнорируют:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Scan(&amp;name)  // без проверки — для простоты</code></pre>
+    </div>
+
+    <p>Но в реальном коде ошибки <strong>всегда</strong> нужно обрабатывать. Об этом -- в модуле про ошибки.</p>
+
+    <hr>
+
+    <!-- SECTION: Пустой идентификатор _ -->
+    <h2 id="blank-identifier">Пустой идентификатор _</h2>
+
+    <p>Если не нужны возвращаемые значения, но хочется явно показать это:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">_, _ = fmt.Scan(&amp;name)  // явно игнорируем n и err</code></pre>
+    </div>
+
+    <p><code>_</code> -- это <strong>пустой идентификатор</strong> (blank identifier). Он говорит: "это значение мне не нужно".</p>
+
+    <p>Go не позволяет объявлять неиспользуемые переменные -- будет ошибка компиляции. <code>_</code> решает эту проблему, когда значение есть, но не нужно.</p>
+
+    <hr>
+
+    <!-- SECTION: Проверь себя -->
+    <h2 id="check-yourself">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Зачем перед переменной в fmt.Scan нужен символ &?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>&amp;</code> передает <strong>адрес</strong> переменной, а не ее копию. Это позволяет <code>Scan</code> записать введенное значение напрямую в оригинальную переменную. Без <code>&amp;</code> функция получит копию и изменит только ее -- оригинал останется пустым.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Чем отличается fmt.Scan от bufio.Scanner?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p><code>fmt.Scan</code> разделяет ввод по пробелам -- каждое слово идет в отдельную переменную.</p>
+                    <p><code>bufio.Scanner</code> читает строку целиком, включая пробелы между словами.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что вернет fmt.Scan при успешном чтении трех значений?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Вернет <code>3</code> (количество успешно прочитанных значений) и <code>nil</code> (отсутствие ошибки).</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Для чего используется пустой идентификатор _?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Для явного игнорирования значений, которые не нужны. Go требует использовать все объявленные переменные -- <code>_</code> позволяет "принять" значение и сразу отбросить его.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">var name string
+fmt.Scan(&amp;name)
+fmt.Println("Привет,", name)</code></pre>
+            </div>
+            <p><strong>Ввод:</strong> <code>Мария</code></p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Привет, Мария</code></p>
+                    <p><strong>Почему:</strong> <code>Scan</code> читает строку "Мария" и записывает в переменную <code>name</code>. <code>Println</code> выводит "Привет," и значение переменной через пробел.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">var a, b string
+fmt.Scan(&amp;a, &amp;b)
+fmt.Println(b, a)</code></pre>
+            </div>
+            <p><strong>Ввод:</strong> <code>Hello World</code></p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>World Hello</code></p>
+                    <p><strong>Почему:</strong> <code>Scan</code> разделяет ввод по пробелу: <code>a = "Hello"</code>, <code>b = "World"</code>. Вывод в обратном порядке: сначала <code>b</code>, потом <code>a</code>.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">var x int
+fmt.Scan(&amp;x)
+fmt.Printf("Результат: %d\n", x*2)</code></pre>
+            </div>
+            <p><strong>Ввод:</strong> <code>15</code></p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Результат: 30</code></p>
+                    <p><strong>Почему:</strong> <code>Scan</code> читает "15" и преобразует в число <code>15</code> (тип <code>int</code>). Умножаем на 2, получаем 30.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Что выведет?</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">var name string
+fmt.Scan(&amp;name)
+fmt.Println(name)</code></pre>
+            </div>
+            <p><strong>Ввод:</strong> <code>Анна Каренина</code></p>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Вывод:</strong> <code>Анна</code></p>
+                    <p><strong>Почему:</strong> <code>Scan</code> читает до первого пробела. Получаем только "Анна", "Каренина" игнорируется.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Найди ошибку</span>
+        </div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-lang">Go</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><code class="language-go">var age int
+fmt.Scan(age)
+fmt.Println("Возраст:", age)</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution">
+                    <p><strong>Ошибка:</strong> Отсутствует <code>&amp;</code> перед <code>age</code>.</p>
+                    <p><strong>Правильно:</strong> <code>fmt.Scan(&amp;age)</code></p>
+                    <p>Без <code>&amp;</code> код не скомпилируется. <code>Scan</code> требует адрес переменной, чтобы записать в нее значение.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- SECTION: Резюме -->
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ввод данных в Go</span>
+        </div>
+        <ul class="summary-list">
+            <li><strong>fmt.Scan</strong> -- чтение данных из консоли. Разделяет ввод по пробелам</li>
+            <li><strong>& (амперсанд)</strong> -- передает адрес переменной, чтобы <code>Scan</code> мог записать в нее значение</li>
+            <li><strong>Несколько значений:</strong> <code>fmt.Scan(&amp;a, &amp;b)</code> -- пользователь вводит через пробел</li>
+            <li><strong>Типы:</strong> переменная <code>int</code> -- читаем число, <code>string</code> -- читаем текст</li>
+            <li><strong>bufio.Scanner</strong> -- для чтения строк с пробелами целиком</li>
+            <li><strong>Пустой идентификатор _</strong> -- для игнорирования ненужных возвращаемых значений</li>
+        </ul>
+    </div>
+
+    <div class="alert alert-tip">
+        <div class="alert-icon">*</div>
+        <div class="alert-label">Tip</div>
+        <p>Для простых случаев (слово, число) используй <code>fmt.Scan</code>. Для строк с пробелами -- <code>bufio.Scanner</code>.</p>
+    </div>
+
+    <hr>
+
+    <nav class="nav-footer">
+        <a href="02-printf-formatting.html" class="nav-link">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий урок</div>
+                <div class="nav-title">Printf и форматирование</div>
+            </div>
+        </a>
+        <a href="04-bufio-scanner.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий урок</div>
+                <div class="nav-title">bufio.Scanner -- чтение строк</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            history.back();
+        });
+    }
+
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
