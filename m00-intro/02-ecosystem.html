@@ -274,6 +274,10 @@
             background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
             color: var(--accent-green);
         }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
         .card-title {
             font-size: 14px;
             font-weight: 500;
@@ -284,6 +288,9 @@
         }
         .card-body p { margin-bottom: 10px; }
         .card-body p:last-child { margin-bottom: 0; }
+        .card-body table {
+            margin: 12px 0;
+        }
 
         details {
             margin-top: 12px;
@@ -416,6 +423,16 @@
             color: var(--text-secondary);
             margin-bottom: 6px;
             font-size: 14px;
+        }
+
+        /* Section label for questions/tasks */
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* Navigation footer */
@@ -613,6 +630,8 @@
 
     <h2 id="check-yourself">Проверь себя</h2>
 
+    <h3 class="section-label">Вопросы</h3>
+
     <div class="card question-card">
         <div class="card-head">
             <span class="card-num">01</span>
@@ -664,6 +683,147 @@
                         <li><strong>Горутины</strong> — легко обрабатывать много запросов параллельно</li>
                         <li><strong>Надёжность</strong> — статическая типизация ловит ошибки на этапе компиляции</li>
                     </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Назови три "кита" Go и объясни, как каждый из них влияет на разработку.</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ol>
+                        <li><strong>Простота</strong> — минимум синтаксиса, код легко читать и понимать, меньше ошибок</li>
+                        <li><strong>Скорость</strong> — компиляция в нативный код, статическая типизация, миллионы запросов в секунду</li>
+                        <li><strong>Параллелизм</strong> — горутины позволяют эффективно использовать все ядра процессора</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h3 class="section-label">Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Соотнеси инструмент с его назначением</span>
+        </div>
+        <div class="card-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Инструмент</th>
+                        <th>Назначение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Docker</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>Kubernetes</td>
+                        <td>?</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Варианты: A) Управление контейнерами в кластере, B) Упаковка приложений в контейнеры</p>
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ul>
+                        <li><strong>Docker</strong> — B) Упаковка приложений в контейнеры</li>
+                        <li><strong>Kubernetes</strong> — A) Управление контейнерами в кластере</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Выбор "китов" Go для высокой нагрузки</span>
+        </div>
+        <div class="card-body">
+            <p>Компания разрабатывает сервис, который должен обрабатывать 100 000 запросов в секунду. Какие два "кита" Go помогут решить эту задачу?</p>
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ol>
+                        <li><strong>Скорость</strong> — нативный код работает быстро без интерпретатора</li>
+                        <li><strong>Параллелизм</strong> — горутины позволяют обрабатывать много запросов одновременно</li>
+                    </ol>
+                    <p>Простота тоже важна (меньше багов), но для высокой нагрузки критичны именно скорость и параллелизм.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Аргументы в пользу Go для микросервисов</span>
+        </div>
+        <div class="card-body">
+            <p>Стартап выбирает язык для микросервисной архитектуры. Приведи три аргумента в пользу Go.</p>
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ol>
+                        <li><strong>Быстрый запуск</strong> — микросервисы в контейнерах должны стартовать мгновенно</li>
+                        <li><strong>Горутины</strong> — каждый микросервис легко обрабатывает много параллельных запросов</li>
+                        <li><strong>Единый бинарник</strong> — Go компилируется в один исполняемый файл, без зависимостей</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Определи область применения Go</span>
+        </div>
+        <div class="card-body">
+            <p>К какой области применения Go относится каждый пример?</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Пример</th>
+                        <th>Область</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>REST API для мобильного приложения</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>Система оркестрации контейнеров</td>
+                        <td>?</td>
+                    </tr>
+                    <tr>
+                        <td>Сервис авторизации в большом приложении</td>
+                        <td>?</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Области: A) Сетевые приложения, B) DevOps/инфраструктура, C) Микросервисы</p>
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <ul>
+                        <li><strong>REST API для мобильного приложения</strong> — A) Сетевые приложения</li>
+                        <li><strong>Система оркестрации контейнеров</strong> — B) DevOps/инфраструктура</li>
+                        <li><strong>Сервис авторизации</strong> — C) Микросервисы</li>
+                    </ul>
                 </div>
             </details>
         </div>
