@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Множественные возвраты</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        :root{--bg-primary:#070709;--bg-secondary:#0d0d0f;--bg-tertiary:#111113;--text-primary:#ffffff;--text-secondary:#dddddd;--text-muted:#a7a7a7;--border-color:#1a1a1c;--border-light:#363636;--accent-green:#2af16b;--accent-orange:#f1a12a}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;line-height:1.65;color:var(--text-primary);background-color:var(--bg-primary);min-height:100vh;-webkit-font-smoothing:antialiased;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}main{max-width:100%;padding:16px;padding-bottom:calc(24px + env(safe-area-inset-bottom))}.module-badge{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-green);background:rgba(42,241,107,.1);padding:4px 10px;border-radius:4px;margin-bottom:12px}h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:12px}.lead{font-size:16px;line-height:1.6;color:var(--text-secondary);margin-bottom:32px}h2{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin:40px 0 20px;scroll-margin-top:20px}h2::before{content:'';width:6px;height:6px;background:var(--accent-green);border-radius:2px;flex-shrink:0}h3{font-size:18px;font-weight:600;letter-spacing:-.01em;color:var(--text-primary);margin:24px 0 12px}p{font-size:15px;line-height:1.7;color:var(--text-secondary);margin-bottom:16px}ul,ol{margin:0 0 16px 20px;color:var(--text-secondary)}li{margin-bottom:6px;line-height:1.6;font-size:15px}code{font-family:'JetBrains Mono',monospace;background:var(--bg-secondary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.code-block{margin:20px 0;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden}.code-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg-tertiary);border-bottom:1px solid var(--border-color)}.code-lang{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}.copy-btn{background:transparent;border:1px solid var(--border-color);color:var(--text-muted);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}.copy-btn:active{background:var(--bg-tertiary)}.copy-btn.copied{border-color:var(--accent-green);background:rgba(42,241,107,.1);color:var(--accent-green)}.code-block pre{margin:0;padding:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}.code-block code{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.5;background:transparent;padding:0;color:inherit}.output-block{margin:16px 0 24px;padding:16px 20px;background:var(--bg-tertiary);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-secondary)}.alert{margin:24px 0;padding:16px 16px 16px 44px;background:var(--bg-secondary);border-radius:8px;border:1px solid var(--border-color);position:relative}.alert-icon{position:absolute;left:14px;top:16px;width:18px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;font-weight:700}.alert-important .alert-icon{background:rgba(241,161,42,.15);color:var(--accent-orange)}.alert-tip .alert-icon{background:rgba(42,241,107,.15);color:var(--accent-green)}.alert p{margin:0;font-size:14px}.card{margin:16px 0;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden}.card-head{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-tertiary);border-bottom:1px solid var(--border-color)}.card-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px}.question-card .card-num{background:linear-gradient(135deg,rgba(42,241,107,.2),rgba(42,241,107,.05));color:var(--accent-green)}.task-card .card-num{background:linear-gradient(135deg,rgba(241,161,42,.2),rgba(241,161,42,.05));color:var(--accent-orange)}.card-title{font-size:14px;font-weight:500;color:var(--text-primary)}.card-body{padding:16px}.card-body p{margin-bottom:10px}.card-body p:last-child{margin-bottom:0}.card-body pre{margin:0 0 16px;padding:16px;background:var(--bg-tertiary);border-radius:6px;overflow-x:auto}.card-body code{font-family:'JetBrains Mono',monospace;font-size:14px}details{margin-top:12px}details summary{cursor:pointer;color:var(--accent-green);font-size:13px;font-weight:500;padding:8px 0;list-style:none;display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent}details summary::before{content:'>';font-size:12px;transition:transform .2s}details[open] summary::before{transform:rotate(90deg)}details summary::-webkit-details-marker{display:none}.answer{margin-top:10px;padding:12px;background:rgba(42,241,107,.03);border-radius:6px;border-left:2px solid var(--accent-green)}.answer p{font-size:14px;color:var(--text-secondary)}.summary-box{margin:28px 0;padding:20px;background:linear-gradient(135deg,rgba(42,241,107,.08) 0%,rgba(42,241,107,.02) 100%);border:1px solid rgba(42,241,107,.2);border-radius:12px}.summary-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.summary-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;background:var(--accent-green);color:var(--bg-primary);border-radius:4px}.summary-title{font-size:15px;font-weight:600;color:var(--text-primary)}.summary-list{margin:0;padding-left:18px}.summary-list li{color:var(--text-secondary);margin-bottom:6px;font-size:14px}blockquote{margin:20px 0;padding:16px;background:linear-gradient(90deg,rgba(42,241,107,.06) 0%,transparent 100%);border-left:2px solid var(--accent-green);border-radius:0 6px 6px 0}blockquote p{font-size:14px;font-weight:500;color:var(--text-primary);margin:0}.nav-footer{display:flex;flex-direction:column;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--border-color)}.nav-link{display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;text-decoration:none;-webkit-tap-highlight-color:transparent}.nav-link:active{background:var(--bg-tertiary)}.nav-link.next{justify-content:flex-end;text-align:right}.nav-arrow{font-size:18px;color:var(--accent-green)}.nav-label{font-size:11px;color:var(--text-muted);margin-bottom:2px}.nav-title{font-size:14px;font-weight:500;color:var(--text-primary)}.diagram-box{margin:20px 0;padding:16px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);overflow-x:auto;white-space:pre}
+    </style>
+</head>
+<body>
+<main>
+    <div class="module-badge">Модуль 5 / Урок 4</div>
+    <h1>Множественные возвраты</h1>
+    <p class="lead">Go позволяет функциям возвращать несколько значений одновременно. Это мощная особенность языка, которая особенно полезна для обработки ошибок.</p>
+
+    <h2 id="zachem">Зачем возвращать несколько значений</h2>
+    <p>В большинстве языков функция возвращает одно значение. Но иногда нужно вернуть несколько:</p>
+    <ul>
+        <li>Результат операции <strong>и</strong> признак успеха</li>
+        <li>Частное <strong>и</strong> остаток от деления</li>
+        <li>Минимум <strong>и</strong> максимум из набора чисел</li>
+    </ul>
+    <p>В Go функция может возвращать <strong>несколько значений</strong> одновременно.</p>
+
+    <h2 id="sintaksis">Множественный возврат на самом деле</h2>
+    <h3>Синтаксис</h3>
+    <p>Типы возвращаемых значений перечисляются в круглых скобках:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">func divide(a, b int) (int, int) {
+    quotient := a / b
+    remainder := a % b
+    return quotient, remainder
+}</code></pre>
+    </div>
+
+    <div class="diagram-box">func divide(a, b int) (int, int) {
+                        |    |
+                        |    +-- тип второго возвращаемого значения
+                        +-- тип первого возвращаемого значения
+
+    return quotient, remainder
+           |          |
+           |          +-- второе значение
+           +-- первое значение
+}</div>
+
+    <h3>Получение нескольких значений</h3>
+    <p>При вызове указываем несколько переменных через запятую:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    q, r := divide(17, 5)
+    fmt.Println("Частное:", q)
+    fmt.Println("Остаток:", r)
+}
+
+func divide(a, b int) (int, int) {
+    return a / b, a % b
+}</code></pre>
+    </div>
+    <div class="output-block">Частное: 3<br>Остаток: 2</div>
+
+    <h2 id="primery">Примеры использования</h2>
+    <h3>Минимум и максимум</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    min, max := minMax(3, 7)
+    fmt.Println("Минимум:", min)
+    fmt.Println("Максимум:", max)
+}
+
+func minMax(a, b int) (int, int) {
+    if a < b {
+        return a, b
+    }
+    return b, a
+}</code></pre>
+    </div>
+    <div class="output-block">Минимум: 3<br>Максимум: 7</div>
+
+    <h3>Разные типы</h3>
+    <p>Возвращаемые значения могут быть разных типов:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    name, age := getUserInfo()
+    fmt.Println("Имя:", name)
+    fmt.Println("Возраст:", age)
+}
+
+func getUserInfo() (string, int) {
+    return "Алексей", 25
+}</code></pre>
+    </div>
+    <div class="output-block">Имя: Алексей<br>Возраст: 25</div>
+
+    <h2 id="ignorirovanie">Игнорирование значений</h2>
+    <p>Если нужно только одно из возвращаемых значений, ненужное можно <strong>игнорировать</strong> с помощью <code>_</code> (пустой идентификатор):</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    q, _ := divide(17, 5)  // Нужно только частное
+    fmt.Println("Частное:", q)
+
+    _, r := divide(17, 5)  // Нужен только остаток
+    fmt.Println("Остаток:", r)
+}
+
+func divide(a, b int) (int, int) {
+    return a / b, a % b
+}</code></pre>
+    </div>
+    <div class="output-block">Частное: 3<br>Остаток: 2</div>
+    <p><code>_</code> говорит Go: "это значение мне не нужно, не создавай для него переменную".</p>
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>В Go нельзя объявить переменную и не использовать её — будет ошибка компиляции. <code>_</code> решает эту проблему.</p>
+    </div>
+
+    <h2 id="poryadok">Порядок значений</h2>
+    <p>Порядок переменных при получении должен соответствовать порядку в <code>return</code>:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">func getCoordinates() (int, int) {
+    return 10, 20  // x, y
+}
+
+func main() {
+    x, y := getCoordinates()  // x=10, y=20 — правильно
+    y, x := getCoordinates()  // y=10, x=20 — перепутано!
+}</code></pre>
+    </div>
+    <h3>Ловушка: перепутанный порядок</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    remainder, quotient := divide(17, 5)  // Неправильный порядок!
+    fmt.Println("Частное:", quotient)     // Выведет: Частное: 2
+    fmt.Println("Остаток:", remainder)    // Выведет: Остаток: 3
+}
+
+func divide(a, b int) (int, int) {
+    return a / b, a % b  // частное, остаток
+}</code></pre>
+    </div>
+    <p>Компилятор не заметит ошибку — типы совпадают. Всегда проверяйте порядок.</p>
+
+    <h2 id="named">Именованные возвращаемые значения</h2>
+    <p>Go позволяет давать имена возвращаемым значениям:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">func divide(a, b int) (quotient int, remainder int) {
+    quotient = a / b
+    remainder = a % b
+    return  // "голый" return возвращает именованные значения
+}</code></pre>
+    </div>
+    <p>При этом:</p>
+    <ul>
+        <li>Именованные значения автоматически инициализируются нулевыми значениями</li>
+        <li><code>return</code> без аргументов возвращает текущие значения именованных переменных</li>
+    </ul>
+    <div class="alert alert-tip">
+        <div class="alert-icon">✓</div>
+        <p>Именованные возвраты полезны для документирования — сразу видно, что функция возвращает. Но "голый" return может ухудшить читаемость в длинных функциях.</p>
+    </div>
+
+    <h2 id="kolichestvo">Количество переменных при получении</h2>
+    <p>Количество переменных слева от <code>:=</code> должно точно соответствовать количеству возвращаемых значений:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">func getTwo() (int, int) {
+    return 1, 2
+}
+
+func main() {
+    a := getTwo()        // Ошибка! Ожидается 2 переменные
+    a, b, c := getTwo()  // Ошибка! Ожидается 2 переменные
+    a, b := getTwo()     // OK
+}</code></pre>
+    </div>
+    <p>Исключение — игнорирование с <code>_</code>:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">a, _ := getTwo()  // OK: берём только первое
+_, b := getTwo()  // OK: берём только второе</code></pre>
+    </div>
+
+    <h2 id="proverka">Проверь себя</h2>
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">01</span><span class="card-title">Как объявить функцию, возвращающую два значения типа int?</span></div>
+        <div class="card-body">
+            <details><summary>Показать ответ</summary>
+                <div class="answer"><p><code>func имяФункции() (int, int) { return значение1, значение2 }</code><br>Типы указываются в круглых скобках через запятую.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">02</span><span class="card-title">Как игнорировать одно из возвращаемых значений?</span></div>
+        <div class="card-body">
+            <details><summary>Показать ответ</summary>
+                <div class="answer"><p>Использовать пустой идентификатор <code>_</code>:<br><code>value, _ := functionReturningTwo()</code></p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">03</span><span class="card-title">Что произойдёт, если перепутать порядок переменных при получении?</span></div>
+        <div class="card-body">
+            <details><summary>Показать ответ</summary>
+                <div class="answer"><p>Если типы одинаковые, компилятор не заметит ошибку. Программа скомпилируется, но логика будет неверной — значения присвоятся в неправильном порядке.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">04</span><span class="card-title">Что такое "голый" return?</span></div>
+        <div class="card-body">
+            <details><summary>Показать ответ</summary>
+                <div class="answer"><p>"Голый" return — это <code>return</code> без аргументов в функции с именованными возвращаемыми значениями. Он возвращает текущие значения именованных переменных.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет код?</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a, b := swap(5, 10)
+    fmt.Println(a, b)
+}
+
+func swap(x, y int) (int, int) {
+    return y, x
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Вывод:</strong> <code>10 5</code></p><p><code>swap(5, 10)</code> возвращает <code>y, x</code> = <code>10, 5</code></p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет код?</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    _, second := getTwo()
+    fmt.Println(second)
+}
+
+func getTwo() (int, int) {
+    return 100, 200
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Вывод:</strong> <code>200</code></p><p>Первое значение (100) игнорируется с <code>_</code>.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">03</span><span class="card-title">Найди ошибку</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">func getData() (int, string) {
+    return "hello", 42
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Ошибка:</strong> Порядок значений не соответствует типам. Объявлено <code>(int, string)</code>, возвращается <code>("hello", 42)</code> — строка и число в обратном порядке.</p><p><strong>Исправление:</strong> <code>return 42, "hello"</code></p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет код?</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    sum, product := calculate(3, 4)
+    fmt.Println(sum + product)
+}
+
+func calculate(a, b int) (int, int) {
+    return a + b, a * b
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Вывод:</strong> <code>19</code></p><p><code>sum = 3+4 = 7</code>, <code>product = 3*4 = 12</code>, <code>7 + 12 = 19</code></p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код?</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    name, ok := lookup(5)
+    if ok {
+        fmt.Println(name)
+    } else {
+        fmt.Println("не найдено")
+    }
+}
+
+func lookup(id int) (string, bool) {
+    if id == 1 {
+        return "Алексей", true
+    }
+    return "", false
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Вывод:</strong> <code>не найдено</code></p><p><code>lookup(5)</code>: id не равен 1, возвращается <code>"", false</code>.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a, b := getValues()
+    c, d := getValues()
+    fmt.Println(a + c, b + d)
+}
+
+func getValues() (int, int) {
+    return 10, 20
+}</code></pre>
+            <details><summary>Показать решение</summary>
+                <div class="answer"><p><strong>Вывод:</strong> <code>20 40</code></p><p><code>a=10, b=20, c=10, d=20</code>. <code>10+10=20</code>, <code>20+20=40</code>.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+        <ul class="summary-list">
+            <li>Go позволяет возвращать несколько значений: <code>func f() (int, string)</code></li>
+            <li>Получение: <code>a, b := f()</code></li>
+            <li>Игнорирование: <code>a, _ := f()</code></li>
+            <li>Порядок переменных должен соответствовать порядку в <code>return</code></li>
+        </ul>
+    </div>
+
+    <blockquote><p><strong>Правило:</strong> Количество переменных слева от <code>:=</code> должно равняться количеству возвращаемых значений (или использовать <code>_</code> для игнорирования).</p></blockquote>
+
+    <nav class="nav-footer">
+        <a href="03-return-values.html" class="nav-link prev"><span class="nav-arrow">&larr;</span><div><div class="nav-label">Предыдущий</div><div class="nav-title">Возвращаемые значения</div></div></a>
+        <a href="05-scope.html" class="nav-link next"><div><div class="nav-label">Следующий</div><div class="nav-title">Область видимости</div></div><span class="nav-arrow">&rarr;</span></a>
+    </nav>
+</main>
+<script>
+const tg=window.Telegram?.WebApp;if(tg){tg.ready();tg.expand();tg.BackButton.show();tg.BackButton.onClick(()=>{window.history.back()})}hljs.highlightAll();function copyCode(btn){const code=btn.closest('.code-block').querySelector('code');const text=code.textContent;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>{showCopied(btn)}).catch(()=>{fallbackCopy(text,btn)})}else{fallbackCopy(text,btn)}}function fallbackCopy(text,btn){const textarea=document.createElement('textarea');textarea.value=text;textarea.style.position='fixed';textarea.style.opacity='0';document.body.appendChild(textarea);textarea.select();try{document.execCommand('copy');showCopied(btn)}catch(e){if(tg){tg.showAlert('Не удалось скопировать')}}document.body.removeChild(textarea)}function showCopied(btn){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000)}
+</script>
+</body>
+</html>

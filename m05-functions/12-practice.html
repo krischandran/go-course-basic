@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Практика: функции</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.table-wrapper{overflow-x:auto;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bg-tertiary)}th{background:var(--bg-secondary);color:var(--accent-blue);font-weight:600}td{color:var(--text-secondary)}tr:hover td{background:var(--bg-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}.checklist{list-style:none;margin-left:0}.checklist li{padding:4px 0;color:var(--text-secondary)}.checklist li::before{content:'[ ] ';color:var(--accent-blue)}</style>
+</head>
+<body>
+    <span class="module-badge">Модуль 5: Функции</span>
+    <h1>Практика: функции</h1>
+    <p class="lead">Закрепим всё, что изучили в модуле. Каждая задача проверяет конкретную тему.</p>
+
+    <h2>Задачи</h2>
+
+    <details class="task-card">
+        <summary>Задача 1: Объявление функций</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    greet()
+    greet()
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">greet</span>() {
+    fmt.Println(<span style="color:#98c379">"Привет!"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">Привет!
+Привет!</div></code></div>
+        <p><strong>Тема:</strong> Объявление и вызов функций. Функция <code>greet</code> объявлена без параметров и возвращаемых значений. Вызывается дважды - выполняется дважды.</p>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 2: Параметры и аргументы</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+    double(x)
+    fmt.Println(x)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">double</span>(n <span style="color:#c678dd">int</span>) {
+    n = n * <span style="color:#d19a66">2</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>10</code></p>
+        <p><strong>Тема:</strong> Передача по значению. Параметр <code>n</code> - копия <code>x</code>. Изменение <code>n</code> не влияет на <code>x</code> в main.</p>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 3: Возвращаемые значения</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result := add(<span style="color:#d19a66">3</span>, multiply(<span style="color:#d19a66">2</span>, <span style="color:#d19a66">4</span>))
+    fmt.Println(result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">add</span>(a, b <span style="color:#c678dd">int</span>) <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">return</span> a + b
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">multiply</span>(a, b <span style="color:#c678dd">int</span>) <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">return</span> a * b
+}</code></div>
+        <p><strong>Вывод:</strong> <code>11</code></p>
+        <p><strong>Тема:</strong> Возвращаемые значения, вложенные вызовы.</p>
+        <ol>
+            <li><code>multiply(2, 4)</code> возвращает 8</li>
+            <li><code>add(3, 8)</code> возвращает 11</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 4: Множественные возвраты</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    a, b := swap(<span style="color:#d19a66">5</span>, <span style="color:#d19a66">10</span>)
+    c, _ := swap(a, b)
+    fmt.Println(c)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">swap</span>(x, y <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">int</span>) {
+    <span style="color:#c678dd">return</span> y, x
+}</code></div>
+        <p><strong>Вывод:</strong> <code>5</code></p>
+        <p><strong>Тема:</strong> Множественные возвраты, игнорирование значений.</p>
+        <ol>
+            <li><code>swap(5, 10)</code> возвращает <code>a=10, b=5</code></li>
+            <li><code>swap(10, 5)</code> возвращает <code>c=5, _=10</code></li>
+            <li>Выводится <code>c = 5</code></li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 5: Область видимости</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">var</span> x = <span style="color:#d19a66">100</span>
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+    fmt.Println(x)
+    printX()
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">printX</span>() {
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">10
+100</div></code></div>
+        <p><strong>Тема:</strong> Локальные vs глобальные переменные.</p>
+        <ol>
+            <li>В main создаётся локальная <code>x = 10</code> (затеняет глобальную)</li>
+            <li>Выводится локальная x = 10</li>
+            <li>В printX нет локальной x, используется глобальная x = 100</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 6: Shadowing</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    n := <span style="color:#d19a66">5</span>
+
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        n := n * <span style="color:#d19a66">2</span>
+        fmt.Print(n, <span style="color:#98c379">" "</span>)
+    }
+
+    fmt.Println(n)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>10 10 10 5</code></p>
+        <p><strong>Тема:</strong> Shadowing в цикле.</p>
+        <ol>
+            <li>Внешняя <code>n = 5</code></li>
+            <li>На каждой итерации создаётся НОВАЯ локальная <code>n := 5 * 2 = 10</code></li>
+            <li>Выводится 10 трижды</li>
+            <li>После цикла внешняя <code>n = 5</code></li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 7: defer</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    fmt.Print(count())
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">count</span>() <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">defer</span> fmt.Print(<span style="color:#98c379">"A"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Print(<span style="color:#98c379">"B"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Print(<span style="color:#98c379">"C"</span>)
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">42</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>CBA42</code></p>
+        <p><strong>Тема:</strong> defer и LIFO.</p>
+        <ol>
+            <li>return готовит значение 42</li>
+            <li>defer выполняются в обратном порядке: C, B, A</li>
+            <li>Функция возвращает 42</li>
+            <li>main печатает 42</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 8: Аргументы defer</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">1</span>
+    <span style="color:#c678dd">defer</span> fmt.Println(x)
+    x = <span style="color:#d19a66">2</span>
+    <span style="color:#c678dd">defer</span> fmt.Println(x)
+    x = <span style="color:#d19a66">3</span>
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">3
+2
+1</div></code></div>
+        <p><strong>Тема:</strong> Аргументы defer вычисляются сразу.</p>
+        <ol>
+            <li>defer с x=1 запоминает 1</li>
+            <li>defer с x=2 запоминает 2</li>
+            <li>Выводится x=3</li>
+            <li>defer в обратном порядке: 2, 1</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 9: error и nil</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    a, err := process(<span style="color:#d19a66">10</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка A"</span>)
+    }
+
+    b, err := process(<span style="color:#d19a66">-5</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка B"</span>)
+    }
+
+    fmt.Println(a, b)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>(n <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> n < <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"отрицательное число"</span>)
+    }
+    <span style="color:#c678dd">return</span> n * <span style="color:#d19a66">2</span>, <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">Ошибка B
+20 0</div></code></div>
+        <p><strong>Тема:</strong> Паттерн if err != nil.</p>
+        <ol>
+            <li><code>process(10)</code> возвращает <code>a=20, err=nil</code> - без ошибки</li>
+            <li><code>process(-5)</code> возвращает <code>b=0, err!=nil</code> - выводится "Ошибка B"</li>
+            <li>Выводится <code>20 0</code></li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 10: Цепочка ошибок</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := level1()
+    fmt.Println(err)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">level1</span>() <span style="color:#c678dd">error</span> {
+    err := level2()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"level1: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">level2</span>() <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"база данных недоступна"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>level1: база данных недоступна</code></p>
+        <p><strong>Тема:</strong> fmt.Errorf и оборачивание ошибок.</p>
+        <ol>
+            <li><code>level2()</code> возвращает ошибку "база данных недоступна"</li>
+            <li><code>level1()</code> оборачивает её с контекстом "level1: "</li>
+            <li>Итоговое сообщение показывает всю цепочку</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 11: panic и defer</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"main defer"</span>)
+    dangerous()
+    fmt.Println(<span style="color:#98c379">"after dangerous"</span>)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">dangerous</span>() {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"dangerous defer"</span>)
+    <span style="color:#c678dd">panic</span>(<span style="color:#98c379">"boom"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">dangerous defer
+main defer
+panic: boom
+...</div></code></div>
+        <p><strong>Тема:</strong> defer выполняется при panic.</p>
+        <ol>
+            <li>panic в dangerous</li>
+            <li>Выполняется defer в dangerous: "dangerous defer"</li>
+            <li>Возврат в main, выполняется defer: "main defer"</li>
+            <li>Программа завершается с panic</li>
+            <li>"after dangerous" никогда не выводится</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 12: Комплексная</summary>
+        <p>Что выведет код?</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := calculate(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+
+    sum, product := process(result)
+    fmt.Printf(<span style="color:#98c379">"Сумма: %d, Произведение: %d\n"</span>, sum, product)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">calculate</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>(n <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">int</span>) {
+    <span style="color:#c678dd">return</span> n + <span style="color:#d19a66">10</span>, n * <span style="color:#d19a66">10</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>Сумма: 15, Произведение: 50</code></p>
+        <p><strong>Тема:</strong> Комбинация всех концепций.</p>
+        <ol>
+            <li><code>calculate(10, 2)</code> возвращает <code>5, nil</code></li>
+            <li>Ошибки нет, продолжаем</li>
+            <li><code>process(5)</code> возвращает <code>15, 50</code></li>
+            <li>Выводим результат</li>
+        </ol>
+    </details>
+
+    <h2>Задачи на написание кода</h2>
+
+    <details class="task-card">
+        <summary>Задача 13: Напиши функцию max3</summary>
+        <p>Напиши функцию <code>max3(a, b, c int) int</code>, которая возвращает максимум из трёх чисел.</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    fmt.Println(max3(<span style="color:#d19a66">1</span>, <span style="color:#d19a66">5</span>, <span style="color:#d19a66">3</span>))   <span class="comment">// 5</span>
+    fmt.Println(max3(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>, <span style="color:#d19a66">7</span>))  <span class="comment">// 10</span>
+    fmt.Println(max3(<span style="color:#d19a66">4</span>, <span style="color:#d19a66">4</span>, <span style="color:#d19a66">4</span>))   <span class="comment">// 4</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">max3</span>(a, b, c <span style="color:#c678dd">int</span>) <span style="color:#c678dd">int</span> {
+    max := a
+    <span style="color:#c678dd">if</span> b > max {
+        max = b
+    }
+    <span style="color:#c678dd">if</span> c > max {
+        max = c
+    }
+    <span style="color:#c678dd">return</span> max
+}</code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 14: Напиши функцию с ошибкой</summary>
+        <p>Напиши функцию <code>safeDivide(a, b float64) (float64, error)</code>, которая делит a на b. При b == 0 возвращает ошибку.</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := safeDivide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Результат:"</span>, result)
+
+    result2, err2 := safeDivide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
+    <span style="color:#c678dd">if</span> err2 != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err2)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Результат:"</span>, result2)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">safeDivide</span>(a, b <span style="color:#c678dd">float64</span>) (<span style="color:#c678dd">float64</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}
+<div class="output">Результат: 5
+Ошибка: деление на ноль</div></code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 15: Функция с defer</summary>
+        <p>Напиши функцию <code>withLogging(name string)</code>, которая выводит "Начало: name" при входе и "Конец: name" при выходе (используя defer).</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    withLogging(<span style="color:#98c379">"main"</span>)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">withLogging</span>(name <span style="color:#c678dd">string</span>) {
+    fmt.Println(<span style="color:#98c379">"Начало:"</span>, name)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Конец:"</span>, name)
+
+    fmt.Println(<span style="color:#98c379">"Выполняем работу..."</span>)
+}
+<div class="output">Начало: main
+Выполняем работу...
+Конец: main</div></code></div>
+    </details>
+
+    <h2>Итоги модуля</h2>
+
+    <h3>Что изучили</h3>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>Тема</th><th>Ключевая идея</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Объявление функций</td><td><code>func name(params) returnType { }</code></td></tr>
+                <tr><td>Параметры</td><td>Передача по значению - копия</td></tr>
+                <tr><td>Возвраты</td><td><code>return</code> возвращает значение</td></tr>
+                <tr><td>Множественные возвраты</td><td><code>func f() (int, int)</code></td></tr>
+                <tr><td>Область видимости</td><td>Переменная живёт в своём блоке</td></tr>
+                <tr><td>Shadowing</td><td><code>:=</code> создаёт новую переменную</td></tr>
+                <tr><td>defer</td><td>Выполняется при выходе, LIFO</td></tr>
+                <tr><td>error</td><td>Интерфейс для ошибок</td></tr>
+                <tr><td>if err != nil</td><td>Главный паттерн обработки</td></tr>
+                <tr><td>fmt.Errorf</td><td>Создание ошибок с контекстом</td></tr>
+                <tr><td>panic</td><td>Только для критических багов</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Чеклист готовности</h3>
+    <ul class="checklist">
+        <li>Умею объявлять функции с параметрами и возвратами</li>
+        <li>Понимаю передачу по значению</li>
+        <li>Могу использовать множественные возвраты</li>
+        <li>Понимаю область видимости и shadowing</li>
+        <li>Правильно использую defer</li>
+        <li>Обрабатываю ошибки через if err != nil</li>
+        <li>Создаю информативные ошибки через fmt.Errorf</li>
+        <li>Знаю, когда использовать panic, а когда error</li>
+    </ul>
+
+    <div class="summary-box">
+        <h3>Следующий модуль</h3>
+        <p>Массивы и срезы - основные коллекции в Go.</p>
+    </div>
+
+    <div class="nav-footer">
+        <a href="11-panic.html" class="nav-link">← panic</a>
+        <a href="../index.html" class="nav-link">К списку модулей →</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        /* global hljs */ /* global Telegram */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                if (tg.BackButton) {
+                    tg.BackButton.show();
+                    tg.BackButton.onClick(function() {
+                        window.history.back();
+                    });
+                }
+            }
+            document.querySelectorAll('.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

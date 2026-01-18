@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shadowing (затенение переменных)</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}.tip-card{border-left-color:var(--accent-green)}.tip-card .card-title::before{content:'TIP';font-size:10px;background:var(--accent-green);color:#000;padding:2px 6px;border-radius:4px}.warning-card{border-left-color:var(--accent-red)}.warning-card .card-title::before{content:'!';font-size:12px;font-weight:700;background:var(--accent-red);color:#000;padding:2px 8px;border-radius:4px}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.table-wrapper{overflow-x:auto;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bg-tertiary)}th{background:var(--bg-secondary);color:var(--accent-blue);font-weight:600;white-space:nowrap}td{color:var(--text-secondary)}tr:hover td{background:var(--bg-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+</head>
+<body>
+    <span class="module-badge">Модуль 5: Функции</span>
+    <h1>Shadowing (затенение переменных)</h1>
+    <p class="lead"><strong>Shadowing</strong> (затенение) - это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем. Внутренняя переменная "скрывает" внешнюю.</p>
+
+    <h2>Что такое shadowing</h2>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+    fmt.Println(x)  <span class="comment">// 10</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        x := <span style="color:#d19a66">20</span>     <span class="comment">// Новая переменная x, затеняет внешнюю</span>
+        fmt.Println(x)  <span class="comment">// 20</span>
+    }
+
+    fmt.Println(x)  <span class="comment">// 10 - внешняя x не изменилась</span>
+}</code></div>
+
+    <h2>Shadowing на самом деле</h2>
+
+    <h3>Как работает затенение</h3>
+    <p>При использовании <code>:=</code> во внутреннем блоке создаётся <strong>новая</strong> переменная, даже если переменная с таким именем уже существует:</p>
+
+    <div class="diagram-box">
+        <pre>  func main() {
+      x := 10                    &lt;- x1 = 10
+
+      if true {
+          x := 20                &lt;- x2 = 20 (новая!)
+          fmt.Println(x)         выводит x2 = 20
+      }                          &lt;- x2 умирает
+
+      fmt.Println(x)             выводит x1 = 10
+  }                              &lt;- x1 умирает</pre>
+    </div>
+
+    <p>Внутренняя <code>x</code> и внешняя <code>x</code> - это <strong>разные переменные</strong> в памяти.</p>
+
+    <h3>Присваивание vs Объявление</h3>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>Оператор</th><th>Что делает</th><th>Shadowing?</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>:=</code></td><td>Создаёт новую переменную</td><td>Да, если имя совпадает</td></tr>
+                <tr><td><code>=</code></td><td>Присваивает существующей</td><td>Нет, меняет внешнюю</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        x = <span style="color:#d19a66">20</span>  <span class="comment">// Присваивание, НЕ объявление</span>
+    }
+
+    fmt.Println(x)  <span class="comment">// 20 - внешняя x изменилась</span>
+}</code></div>
+
+    <h2>Типичные случаи shadowing</h2>
+
+    <h3>В условиях if</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := <span style="color:#98c379">"внешняя ошибка"</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        err := <span style="color:#98c379">"внутренняя ошибка"</span>  <span class="comment">// Затенение!</span>
+        fmt.Println(err)  <span class="comment">// внутренняя ошибка</span>
+    }
+
+    fmt.Println(err)  <span class="comment">// внешняя ошибка</span>
+}</code></div>
+
+    <h3>В циклах for</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    i := <span style="color:#d19a66">100</span>
+
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        fmt.Println(i)  <span class="comment">// 0, 1, 2 - внутренняя i</span>
+    }
+
+    fmt.Println(i)  <span class="comment">// 100 - внешняя i</span>
+}</code></div>
+
+    <h3>В функциях</h3>
+    <div class="code-block"><code><span style="color:#c678dd">var</span> name = <span style="color:#98c379">"глобальное"</span>
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    name := <span style="color:#98c379">"локальное"</span>     <span class="comment">// Затеняет глобальную</span>
+    fmt.Println(name)       <span class="comment">// локальное</span>
+    printGlobal()
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">printGlobal</span>() {
+    fmt.Println(name)       <span class="comment">// глобальное - здесь нет затенения</span>
+}</code></div>
+
+    <h2>Ловушка: случайное затенение</h2>
+    <p>Самая частая ошибка - случайно использовать <code>:=</code> вместо <code>=</code>:</p>
+
+    <h3>Ловушка 1: Не изменяется внешняя переменная</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result := <span style="color:#d19a66">0</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        result := <span style="color:#d19a66">10</span>  <span class="comment">// Ошибка! Хотели изменить, но создали новую</span>
+    }
+
+    fmt.Println(result)  <span class="comment">// 0, а не 10!</span>
+}</code></div>
+
+    <p><strong>Исправление:</strong></p>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result := <span style="color:#d19a66">0</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        result = <span style="color:#d19a66">10</span>  <span class="comment">// Присваивание существующей переменной</span>
+    }
+
+    fmt.Println(result)  <span class="comment">// 10</span>
+}</code></div>
+
+    <h3>Ловушка 2: err в цепочке if</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">var</span> err <span style="color:#c678dd">error</span> = <span style="color:#d19a66">nil</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        err := fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// Затенение!</span>
+        fmt.Println(err)  <span class="comment">// ошибка</span>
+    }
+
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Есть ошибка:"</span>, err)
+    } <span style="color:#c678dd">else</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибок нет"</span>)  <span class="comment">// Выведется это!</span>
+    }
+}</code></div>
+
+    <p>Внешняя <code>err</code> осталась <code>nil</code>, хотя мы думали, что её изменили.</p>
+
+    <p><strong>Исправление:</strong></p>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">var</span> err <span style="color:#c678dd">error</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        err = fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// Присваивание, не объявление</span>
+    }
+
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Есть ошибка:"</span>, err)  <span class="comment">// Теперь работает</span>
+    }
+}</code></div>
+
+    <h2>Когда shadowing полезен</h2>
+
+    <h3>Намеренное ограничение области</h3>
+    <p>Иногда shadowing используется намеренно:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    data := <span style="color:#98c379">"чувствительные данные"</span>
+
+    <span class="comment">// Обработка в изолированном блоке</span>
+    {
+        data := <span style="color:#98c379">"безопасная копия"</span>
+        fmt.Println(<span style="color:#98c379">"Обработка:"</span>, data)
+    }
+
+    fmt.Println(<span style="color:#98c379">"Оригинал:"</span>, data)  <span class="comment">// Оригинал не изменён</span>
+}</code></div>
+
+    <h3>В коротком объявлении if</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+
+    <span class="comment">// Новая переменная только для условия</span>
+    <span style="color:#c678dd">if</span> x := getValue(); x > <span style="color:#d19a66">5</span> {
+        fmt.Println(<span style="color:#98c379">"Значение больше 5:"</span>, x)
+    }
+
+    fmt.Println(<span style="color:#98c379">"Исходный x:"</span>, x)  <span class="comment">// 10</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">getValue</span>() <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">7</span>
+}</code></div>
+
+    <h2>Как избежать случайного shadowing</h2>
+
+    <h3>1. Используйте разные имена</h3>
+    <div class="code-block"><code><span class="comment">// Плохо</span>
+x := <span style="color:#d19a66">10</span>
+<span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+    x := <span style="color:#d19a66">20</span>  <span class="comment">// Легко перепутать с x = 20</span>
+}
+
+<span class="comment">// Хорошо</span>
+outerX := <span style="color:#d19a66">10</span>
+<span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+    innerX := <span style="color:#d19a66">20</span>  <span class="comment">// Явно другая переменная</span>
+}</code></div>
+
+    <h3>2. Объявляйте переменные заранее</h3>
+    <div class="code-block"><code><span class="comment">// Плохо</span>
+<span style="color:#c678dd">if</span> condition {
+    result := calculate()  <span class="comment">// Можно забыть, что это новая переменная</span>
+}
+
+<span class="comment">// Хорошо</span>
+<span style="color:#c678dd">var</span> result <span style="color:#c678dd">int</span>
+<span style="color:#c678dd">if</span> condition {
+    result = calculate()  <span class="comment">// Явно присваивание</span>
+}</code></div>
+
+    <h3>3. Обращайте внимание на := vs =</h3>
+    <ul>
+        <li><code>:=</code> - создаёт новую переменную</li>
+        <li><code>=</code> - присваивает существующей</li>
+    </ul>
+
+    <h2>Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <details class="question-card">
+        <summary>Вопрос 1: Что такое shadowing?</summary>
+        <p>Shadowing (затенение) - это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем блоке. Внутренняя переменная "скрывает" внешнюю в пределах своего блока.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 2: Чем отличается := от = в контексте shadowing?</summary>
+        <p><code>:=</code> создаёт <strong>новую</strong> переменную, даже если переменная с таким именем уже существует (это вызывает shadowing).<br><code>=</code> присваивает значение <strong>существующей</strong> переменной (shadowing не происходит).</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 3: Изменится ли внешняя переменная при shadowing?</summary>
+        <p>Нет. При shadowing создаётся новая переменная. Внешняя переменная остаётся неизменной - она просто временно "скрыта" внутренней.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 4: Как избежать случайного shadowing?</summary>
+        <p>1. Использовать разные имена для переменных в разных блоках<br>2. Объявлять переменные заранее (до блока) с помощью <code>var</code><br>3. Внимательно проверять использование <code>:=</code> vs <code>=</code></p>
+    </details>
+
+    <h3>Задачи</h3>
+
+    <details class="task-card">
+        <summary>Задача 1: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">5</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        x := <span style="color:#d19a66">10</span>
+        x++
+        fmt.Println(x)
+    }
+
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">11
+5</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Внешняя <code>x = 5</code></li>
+            <li>В блоке if создаётся новая <code>x = 10</code></li>
+            <li><code>x++</code> увеличивает внутреннюю <code>x</code> до 11</li>
+            <li>Выводится 11</li>
+            <li>После блока внутренняя <code>x</code> умирает</li>
+            <li>Внешняя <code>x</code> по-прежнему 5</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 2: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    n := <span style="color:#d19a66">1</span>
+
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        n := n + <span style="color:#d19a66">1</span>
+        fmt.Print(n, <span style="color:#98c379">" "</span>)
+    }
+
+    fmt.Println(n)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>2 2 2 1</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Внешняя <code>n = 1</code></li>
+            <li>Каждая итерация создаёт новую <code>n := 1 + 1 = 2</code> (используя значение внешней n)</li>
+            <li>Выводится 2 три раза</li>
+            <li>После цикла внешняя <code>n</code> по-прежнему 1</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 3: Исправь shadowing</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    sum := <span style="color:#d19a66">0</span>
+
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">1</span>; i <= <span style="color:#d19a66">5</span>; i++ {
+        sum := sum + i
+    }
+
+    fmt.Println(sum)  <span class="comment">// Хотим получить 15</span>
+}</code></div>
+        <p><strong>Проблема:</strong> В цикле используется <code>:=</code>, что создаёт новую локальную переменную <code>sum</code>.</p>
+        <p><strong>Исправление:</strong> Заменить <code>:=</code> на <code>=</code>:</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    sum := <span style="color:#d19a66">0</span>
+
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">1</span>; i <= <span style="color:#d19a66">5</span>; i++ {
+        sum = sum + i  <span class="comment">// Присваивание, не объявление</span>
+    }
+
+    fmt.Println(sum)  <span class="comment">// 15</span>
+}</code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 4: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">var</span> x = <span style="color:#d19a66">100</span>
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    fmt.Println(x)
+
+    x := <span style="color:#d19a66">200</span>
+    fmt.Println(x)
+
+    printX()
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">printX</span>() {
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">100
+200
+100</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Первый вывод: глобальная <code>x = 100</code></li>
+            <li>Создаётся локальная <code>x = 200</code>, затеняет глобальную</li>
+            <li>Второй вывод: локальная <code>x = 200</code></li>
+            <li>В <code>printX()</code> локальная <code>x</code> из <code>main</code> не видна</li>
+            <li>Третий вывод: глобальная <code>x = 100</code></li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 5: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    a := <span style="color:#d19a66">1</span>
+    b := <span style="color:#d19a66">2</span>
+
+    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
+        a := <span style="color:#d19a66">10</span>
+        b = <span style="color:#d19a66">20</span>
+        fmt.Println(a, b)
+    }
+
+    fmt.Println(a, b)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">10 20
+1 20</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li><code>a = 1</code>, <code>b = 2</code></li>
+            <li>В блоке if: <code>a := 10</code> - создаёт новую локальную <code>a</code> (shadowing)</li>
+            <li><code>b = 20</code> - присваивает внешней <code>b</code> (НЕ shadowing)</li>
+            <li>Выводится <code>10 20</code></li>
+            <li>После блока: <code>a</code> вернулась к внешней = 1, <code>b</code> была изменена = 20</li>
+            <li>Выводится <code>1 20</code></li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 6: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">5</span>
+
+    <span style="color:#c678dd">for</span> x := <span style="color:#d19a66">0</span>; x < <span style="color:#d19a66">3</span>; x++ {
+        fmt.Print(x)
+    }
+
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>0125</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Внешняя <code>x = 5</code></li>
+            <li>В цикле создаётся новая <code>x := 0</code> (shadowing)</li>
+            <li>Цикл выводит: 0, 1, 2</li>
+            <li>После цикла внешняя <code>x = 5</code></li>
+            <li>Итого: <code>012</code> + <code>5</code> = <code>0125</code></li>
+        </ol>
+    </details>
+
+    <div class="summary-box">
+        <h3>Резюме</h3>
+        <p><strong>Ключевые идеи:</strong></p>
+        <ul>
+            <li>Shadowing - создание переменной с тем же именем во внутреннем блоке</li>
+            <li><code>:=</code> создаёт новую переменную, <code>=</code> присваивает существующей</li>
+            <li>Внешняя переменная при shadowing не изменяется</li>
+            <li>Случайное shadowing - частый источник багов</li>
+        </ul>
+        <p><strong>Главная ловушка:</strong> Использовать <code>:=</code> вместо <code>=</code>, думая, что изменяешь внешнюю переменную.</p>
+        <p><strong>Правило:</strong> Если хотите изменить переменную из внешнего блока, используйте <code>=</code>, а не <code>:=</code>.</p>
+    </div>
+
+    <div class="nav-footer">
+        <a href="05-scope.html" class="nav-link">← Область видимости</a>
+        <a href="07-defer.html" class="nav-link">defer →</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        /* global hljs */ /* global Telegram */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                if (tg.BackButton) {
+                    tg.BackButton.show();
+                    tg.BackButton.onClick(function() {
+                        window.history.back();
+                    });
+                }
+            }
+            document.querySelectorAll('.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

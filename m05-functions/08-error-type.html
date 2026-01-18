@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ошибки: тип error</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px}.warning-card{border-left-color:var(--accent-red)}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+</head>
+<body>
+    <span class="module-badge">Модуль 5: Функции</span>
+    <h1>Ошибки: тип error</h1>
+    <p class="lead">В Go ошибки - это <strong>обычные значения</strong>, которые функции возвращают вместе с результатом.</p>
+
+    <h2>Зачем нужны ошибки</h2>
+    <p>Программы не всегда работают идеально. Файл может не существовать, сеть может быть недоступна, пользователь может ввести некорректные данные.</p>
+
+    <div class="code-block"><code>result, err := someFunction()
+<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+    <span class="comment">// Обработать ошибку</span>
+}
+<span class="comment">// Использовать result</span></code></div>
+
+    <h2>error на самом деле</h2>
+
+    <h3>Интерфейс error</h3>
+    <p><code>error</code> - это встроенный интерфейс Go с одним методом:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">type</span> <span style="color:#e5c07b">error</span> <span style="color:#c678dd">interface</span> {
+    Error() <span style="color:#c678dd">string</span>
+}</code></div>
+
+    <p>Любой тип, который имеет метод <code>Error() string</code>, является ошибкой.</p>
+
+    <h3>nil - отсутствие ошибки</h3>
+    <p>Если ошибки нет, функция возвращает <code>nil</code>:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>  <span class="comment">// nil означает "ошибки нет"</span>
+}</code></div>
+
+    <div class="diagram-box">
+        <pre>  Возвращаемые значения
+
+  result, err := divide(10, 2)
+
+  Случай 1: Успех
+  result = 5, err = nil
+
+  Случай 2: Ошибка
+  result = 0, err = "деление на ноль"</pre>
+    </div>
+
+    <h2>Паттерн "результат, ошибка"</h2>
+    <p>Большинство функций в Go возвращают два значения:</p>
+    <ol>
+        <li><strong>Результат</strong> - полезные данные</li>
+        <li><strong>Ошибка</strong> - <code>nil</code> если всё хорошо, или описание проблемы</li>
+    </ol>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">doSomething</span>() (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
+    <span class="comment">// Если всё хорошо:</span>
+    <span style="color:#c678dd">return</span> <span style="color:#98c379">"результат"</span>, <span style="color:#d19a66">nil</span>
+
+    <span class="comment">// Если что-то пошло не так:</span>
+    <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"описание ошибки"</span>)
+}</code></div>
+
+    <h3>Пример: безопасное деление</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Результат:"</span>, result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"нельзя делить на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}
+<div class="output">Результат: 5</div></code></div>
+
+    <h2>Создание ошибок</h2>
+
+    <h3>С помощью fmt.Errorf</h3>
+    <p>Самый простой способ создать ошибку:</p>
+
+    <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"что-то пошло не так"</span>)</code></div>
+
+    <p>С форматированием:</p>
+    <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, filename)
+err := fmt.Errorf(<span style="color:#98c379">"значение %d вне диапазона"</span>, value)</code></div>
+
+    <h3>С помощью errors.New</h3>
+    <p>Для простых сообщений без форматирования:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">import</span> <span style="color:#98c379">"errors"</span>
+
+err := errors.New(<span style="color:#98c379">"что-то пошло не так"</span>)</code></div>
+
+    <h2>Проверка ошибок</h2>
+
+    <h3>Базовая проверка</h3>
+    <div class="code-block"><code>result, err := someFunction()
+<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+    <span class="comment">// Ошибка произошла</span>
+    fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+    <span style="color:#c678dd">return</span>
+}
+<span class="comment">// Ошибки нет, используем result</span></code></div>
+
+    <h3>Ловушка: игнорирование ошибок</h3>
+    <div class="code-block"><code>result, _ := someFunction()  <span class="comment">// Опасно! Ошибка игнорируется</span></code></div>
+
+    <p>Игнорировать ошибки с <code>_</code> - плохая практика. Программа может работать с некорректными данными.</p>
+
+    <div class="card warning-card">
+        <div class="card-title">Всегда проверяйте ошибки</div>
+        <p>Игнорирование ошибок - частая причина багов.</p>
+    </div>
+
+    <h2>Примеры функций с ошибками</h2>
+
+    <h3>Пример 1: Проверка возраста</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    age, err := validateAge(<span style="color:#d19a66">-5</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Возраст:"</span>, age)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">validateAge</span>(age <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> age < <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"возраст не может быть отрицательным: %d"</span>, age)
+    }
+    <span style="color:#c678dd">if</span> age > <span style="color:#d19a66">150</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"возраст слишком большой: %d"</span>, age)
+    }
+    <span style="color:#c678dd">return</span> age, <span style="color:#d19a66">nil</span>
+}
+<div class="output">Ошибка: возраст не может быть отрицательным: -5</div></code></div>
+
+    <h3>Пример 2: Поиск элемента</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    index, err := findIndex(<span style="color:#98c379">"hello"</span>, <span style="color:#98c379">'e'</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Индекс:"</span>, index)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">findIndex</span>(s <span style="color:#c678dd">string</span>, ch <span style="color:#c678dd">byte</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < len(s); i++ {
+        <span style="color:#c678dd">if</span> s[i] == ch {
+            <span style="color:#c678dd">return</span> i, <span style="color:#d19a66">nil</span>
+        }
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">-1</span>, fmt.Errorf(<span style="color:#98c379">"символ '%c' не найден в строке"</span>, ch)
+}
+<div class="output">Индекс: 1</div></code></div>
+
+    <h2>Что возвращать при ошибке</h2>
+
+    <h3>Нулевое значение для результата</h3>
+    <p>При ошибке возвращайте нулевое значение типа:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">getValue</span>() (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> somethingWrong {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// 0 - нулевое значение для int</span>
+    }
+    <span style="color:#c678dd">return</span> value, <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">getName</span>() (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> somethingWrong {
+        <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// "" - нулевое значение для string</span>
+    }
+    <span style="color:#c678dd">return</span> name, <span style="color:#d19a66">nil</span>
+}</code></div>
+
+    <h3>Не используйте результат при ошибке</h3>
+    <p>Если функция вернула ошибку, не используйте результат:</p>
+
+    <div class="code-block"><code>result, err := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
+<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+    <span class="comment">// НЕ используйте result здесь!</span>
+    fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+    <span style="color:#c678dd">return</span>
+}
+<span class="comment">// Безопасно использовать result</span>
+fmt.Println(result)</code></div>
+
+    <h2>Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <details class="question-card">
+        <summary>Вопрос 1: Что такое error в Go?</summary>
+        <p><code>error</code> - это встроенный интерфейс с одним методом <code>Error() string</code>. Любой тип, реализующий этот метод, является ошибкой. Ошибки в Go - это обычные значения, которые возвращаются из функций.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 2: Что означает err == nil?</summary>
+        <p><code>err == nil</code> означает отсутствие ошибки. Если функция вернула <code>nil</code> вместо ошибки, операция прошла успешно.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 3: Как создать ошибку с форматированием?</summary>
+        <p>С помощью <code>fmt.Errorf</code>:</p>
+        <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, filename)</code></div>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 4: Почему плохо игнорировать ошибки с _?</summary>
+        <p>Игнорирование ошибок может привести к работе с некорректными данными, неожиданному поведению программы и сложным в отладке багам. Всегда проверяйте ошибки.</p>
+    </details>
+
+    <h3>Задачи</h3>
+
+    <details class="task-card">
+        <summary>Задача 1: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := calculate(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">calculate</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>деление на ноль</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Вызывается <code>calculate(10, 0)</code></li>
+            <li><code>b == 0</code> - истинно</li>
+            <li>Возвращается <code>0, fmt.Errorf("деление на ноль")</code></li>
+            <li><code>err != nil</code> - истинно</li>
+            <li>Выводится ошибка</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 2: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := calculate(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">calculate</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>5</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Вызывается <code>calculate(10, 2)</code></li>
+            <li><code>b == 0</code> - ложно</li>
+            <li>Возвращается <code>5, nil</code></li>
+            <li><code>err != nil</code> - ложно (err == nil)</li>
+            <li>Выводится результат 5</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 3: Напиши функцию</summary>
+        <p>Напиши функцию <code>sqrt</code>, которая вычисляет квадратный корень. Если число отрицательное - верни ошибку.</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result, err := sqrt(<span style="color:#d19a66">16</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(<span style="color:#98c379">"Корень:"</span>, result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">sqrt</span>(n <span style="color:#c678dd">float64</span>) (<span style="color:#c678dd">float64</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> n < <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"отрицательное число: %v"</span>, n)
+    }
+    <span style="color:#c678dd">return</span> math.Sqrt(n), <span style="color:#d19a66">nil</span>
+}</code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 4: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    name, err := getName(<span style="color:#98c379">""</span>)
+    fmt.Println(name, err)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">getName</span>(input <span style="color:#c678dd">string</span>) (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> input == <span style="color:#98c379">""</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"пустой ввод"</span>)
+    }
+    <span style="color:#c678dd">return</span> input, <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code> пустой ввод</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Вызывается <code>getName("")</code></li>
+            <li><code>input == ""</code> - истинно</li>
+            <li>Возвращается <code>"", fmt.Errorf("пустой ввод")</code></li>
+            <li><code>name = ""</code>, <code>err = "пустой ввод"</code></li>
+            <li>Выводится пустая строка и ошибка</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 5: Найди проблему</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>() {
+    result, _ := riskyOperation()
+    fmt.Println(result * <span style="color:#d19a66">2</span>)
+}</code></div>
+        <p><strong>Проблема:</strong> Ошибка от <code>riskyOperation</code> игнорируется с <code>_</code>. Если операция вернёт ошибку, <code>result</code> может быть некорректным (например, 0), и программа продолжит работу с неверными данными.</p>
+        <p><strong>Исправление:</strong></p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>() {
+    result, err := riskyOperation()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+        <span style="color:#c678dd">return</span>
+    }
+    fmt.Println(result * <span style="color:#d19a66">2</span>)
+}</code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 6: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    a, err1 := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
+    b, err2 := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
+
+    fmt.Println(a, err1)
+    fmt.Println(b, err2)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"на ноль делить нельзя"</span>)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">5 &lt;nil&gt;
+0 на ноль делить нельзя</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Первый вызов: <code>divide(10, 2)</code> возвращает <code>5, nil</code></li>
+            <li>Второй вызов: <code>divide(10, 0)</code> возвращает <code>0, "на ноль делить нельзя"</code></li>
+            <li><code>&lt;nil&gt;</code> - так Go отображает nil при выводе</li>
+        </ol>
+    </details>
+
+    <div class="summary-box">
+        <h3>Резюме</h3>
+        <p><strong>Ключевые идеи:</strong></p>
+        <ul>
+            <li><code>error</code> - интерфейс для представления ошибок</li>
+            <li><code>nil</code> означает отсутствие ошибки</li>
+            <li>Функции возвращают <code>(результат, error)</code></li>
+            <li>Создание ошибок: <code>fmt.Errorf()</code> или <code>errors.New()</code></li>
+        </ul>
+        <p><strong>Главная ловушка:</strong> Игнорировать ошибки с <code>_</code> - программа может работать с некорректными данными.</p>
+        <p><strong>Правило:</strong> Всегда проверяйте ошибки. Если функция возвращает error - проверьте его.</p>
+    </div>
+
+    <div class="nav-footer">
+        <a href="07-defer.html" class="nav-link">← defer</a>
+        <a href="09-if-err-nil.html" class="nav-link">Паттерн if err != nil →</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        /* global hljs */ /* global Telegram */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                if (tg.BackButton) {
+                    tg.BackButton.show();
+                    tg.BackButton.onClick(function() {
+                        window.history.back();
+                    });
+                }
+            }
+            document.querySelectorAll('.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

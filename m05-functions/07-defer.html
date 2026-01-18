@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>defer - отложенное выполнение</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}.tip-card{border-left-color:var(--accent-green)}.warning-card{border-left-color:var(--accent-red)}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+</head>
+<body>
+    <span class="module-badge">Модуль 5: Функции</span>
+    <h1>defer - отложенное выполнение</h1>
+    <p class="lead"><code>defer</code> гарантирует выполнение кода при выходе из функции - независимо от того, как она завершится.</p>
+
+    <h2>Зачем нужен defer</h2>
+    <p>Часто нужно выполнить "уборку" в конце функции: закрыть файл, освободить ресурс, записать лог. Проблема - функция может завершиться в разных местах:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>() {
+    <span class="comment">// Открыли ресурс...</span>
+
+    <span style="color:#c678dd">if</span> condition1 {
+        <span style="color:#c678dd">return</span>  <span class="comment">// Забыли закрыть!</span>
+    }
+
+    <span style="color:#c678dd">if</span> condition2 {
+        <span style="color:#c678dd">return</span>  <span class="comment">// Снова забыли!</span>
+    }
+
+    <span class="comment">// Закрыли ресурс... но только если дошли сюда</span>
+}</code></div>
+
+    <p><code>defer</code> решает эту проблему - он гарантирует выполнение кода при выходе из функции.</p>
+
+    <h2>defer на самом деле</h2>
+
+    <h3>Что делает defer</h3>
+    <p>Оператор <code>defer</code> <strong>откладывает</strong> выполнение функции до момента выхода из текущей функции:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Это выполнится последним"</span>)
+    fmt.Println(<span style="color:#98c379">"Это выполнится первым"</span>)
+    fmt.Println(<span style="color:#98c379">"Это выполнится вторым"</span>)
+}
+<div class="output">Это выполнится первым
+Это выполнится вторым
+Это выполнится последним</div></code></div>
+
+    <h3>Когда выполняется defer</h3>
+
+    <div class="diagram-box">
+        <pre>  func example() {
+      defer cleanup()    &lt;- запоминается, НЕ выполняется
+      // ...
+      // код функции
+      // ...
+  }  &lt;- вот здесь выполняется cleanup()
+
+  defer выполняется:
+  * При return
+  * При достижении конца функции
+  * При panic</pre>
+    </div>
+
+    <h2>Базовый синтаксис</h2>
+    <p>После <code>defer</code> идёт вызов функции:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"конец"</span>)
+<span style="color:#c678dd">defer</span> cleanup()
+<span style="color:#c678dd">defer</span> file.Close()</code></div>
+
+    <h3>Пример с несколькими return</h3>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    result := process(<span style="color:#d19a66">5</span>)
+    fmt.Println(<span style="color:#98c379">"Результат:"</span>, result)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>(n <span style="color:#c678dd">int</span>) <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Выход из process"</span>)
+
+    <span style="color:#c678dd">if</span> n < <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">-1</span>
+    }
+
+    <span style="color:#c678dd">if</span> n == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>
+    }
+
+    <span style="color:#c678dd">return</span> n * <span style="color:#d19a66">2</span>
+}
+<div class="output">Выход из process
+Результат: 10</div></code></div>
+
+    <p>Независимо от того, какой <code>return</code> выполнится, <code>defer</code> сработает.</p>
+
+    <h2>Несколько defer - порядок LIFO</h2>
+    <p>Если в функции несколько <code>defer</code>, они выполняются в обратном порядке - <strong>LIFO</strong> (Last In, First Out):</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Первый defer"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Второй defer"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Третий defer"</span>)
+    fmt.Println(<span style="color:#98c379">"Основной код"</span>)
+}
+<div class="output">Основной код
+Третий defer
+Второй defer
+Первый defer</div></code></div>
+
+    <div class="diagram-box">
+        <pre>  Стек defer (LIFO)
+
+  defer A   =&gt;  [A]
+  defer B   =&gt;  [A, B]
+  defer C   =&gt;  [A, B, C]
+
+  Выполнение: C -&gt; B -&gt; A</pre>
+    </div>
+
+    <h2>Аргументы вычисляются сразу</h2>
+    <p><strong>Важно:</strong> аргументы defer-функции вычисляются в момент <code>defer</code>, а не в момент выполнения:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">10</span>
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Значение x:"</span>, x)  <span class="comment">// x вычисляется здесь!</span>
+    x = <span style="color:#d19a66">20</span>
+    fmt.Println(<span style="color:#98c379">"Текущее x:"</span>, x)
+}
+<div class="output">Текущее x: 20
+Значение x: 10</div></code></div>
+
+    <p>Значение <code>x</code> (10) было "захвачено" в момент <code>defer</code>, хотя функция выполнилась позже.</p>
+
+    <h2>Практическое применение</h2>
+
+    <h3>Логирование входа/выхода</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">doWork</span>() {
+    fmt.Println(<span style="color:#98c379">"Начало doWork"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Конец doWork"</span>)
+
+    fmt.Println(<span style="color:#98c379">"Выполняем работу..."</span>)
+}
+<div class="output">Начало doWork
+Выполняем работу...
+Конец doWork</div></code></div>
+
+    <h3>Закрытие ресурсов (концепция)</h3>
+    <p>Типичный паттерн с файлами (подробнее в модуле о файлах):</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">processFile</span>(filename <span style="color:#c678dd">string</span>) {
+    <span class="comment">// Открываем файл</span>
+    <span class="comment">// ...</span>
+
+    <span style="color:#c678dd">defer</span> closeFile()  <span class="comment">// Гарантированно закроем</span>
+
+    <span class="comment">// Работаем с файлом</span>
+    <span class="comment">// Даже если здесь ошибка - файл закроется</span>
+}</code></div>
+
+    <h3>Отмена операции при ошибке</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">transaction</span>() {
+    fmt.Println(<span style="color:#98c379">"Начинаем транзакцию"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"Завершаем транзакцию"</span>)
+
+    fmt.Println(<span style="color:#98c379">"Шаг 1: готово"</span>)
+    fmt.Println(<span style="color:#98c379">"Шаг 2: готово"</span>)
+    fmt.Println(<span style="color:#98c379">"Шаг 3: готово"</span>)
+}
+<div class="output">Начинаем транзакцию
+Шаг 1: готово
+Шаг 2: готово
+Шаг 3: готово
+Завершаем транзакцию</div></code></div>
+
+    <h2>Ловушки defer</h2>
+
+    <h3>Ловушка 1: defer в цикле</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        <span style="color:#c678dd">defer</span> fmt.Println(i)
+    }
+    fmt.Println(<span style="color:#98c379">"После цикла"</span>)
+}
+<div class="output">После цикла
+2
+1
+0</div></code></div>
+
+    <p>Все <code>defer</code> накапливаются и выполняются при выходе из функции, не из цикла!</p>
+
+    <h3>Ловушка 2: изменение переменной после defer</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">1</span>
+    <span style="color:#c678dd">defer</span> fmt.Println(x)  <span class="comment">// Захватывает x = 1</span>
+    x = <span style="color:#d19a66">2</span>
+}
+<div class="output">1</div></code></div>
+
+    <p>Аргумент вычислился в момент <code>defer</code>, когда <code>x</code> был равен 1.</p>
+
+    <h3>Ловушка 3: забыть скобки</h3>
+    <div class="code-block"><code><span style="color:#c678dd">defer</span> fmt.Println  <span class="comment">// Неправильно! Нужно: defer fmt.Println()</span></code></div>
+
+    <p>После <code>defer</code> должен быть <strong>вызов</strong> функции.</p>
+
+    <h2>defer с анонимной функцией</h2>
+    <p>Чтобы defer использовал актуальное значение переменной, можно использовать анонимную функцию:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">1</span>
+    <span style="color:#c678dd">defer</span> <span style="color:#c678dd">func</span>() {
+        fmt.Println(x)  <span class="comment">// x вычисляется при выполнении defer</span>
+    }()
+    x = <span style="color:#d19a66">2</span>
+}
+<div class="output">2</div></code></div>
+
+    <p>Анонимная функция "захватывает" переменную <code>x</code>, а не её значение.</p>
+
+    <h2>Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <details class="question-card">
+        <summary>Вопрос 1: Когда выполняется код после defer?</summary>
+        <p>Код после <code>defer</code> выполняется при выходе из функции: при <code>return</code>, при достижении конца функции, или при <code>panic</code>.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 2: В каком порядке выполняются несколько defer?</summary>
+        <p>В обратном порядке - LIFO (Last In, First Out). Последний <code>defer</code> выполнится первым.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 3: Когда вычисляются аргументы defer-функции?</summary>
+        <p>Аргументы вычисляются в момент выполнения <code>defer</code>, а не в момент вызова отложенной функции. Это важно помнить при работе с переменными.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 4: Выполнится ли defer, если функция завершается через return?</summary>
+        <p>Да. <code>defer</code> выполняется при любом выходе из функции, включая <code>return</code>.</p>
+    </details>
+
+    <h3>Задачи</h3>
+
+    <details class="task-card">
+        <summary>Задача 1: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    fmt.Println(<span style="color:#98c379">"A"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"B"</span>)
+    fmt.Println(<span style="color:#98c379">"C"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">A
+C
+B</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Выводится "A"</li>
+            <li>defer запоминает вывод "B"</li>
+            <li>Выводится "C"</li>
+            <li>Функция завершается, выполняется defer - выводится "B"</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 2: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"1"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"2"</span>)
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"3"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">3
+2
+1</div></code></div>
+        <p><strong>Разбор:</strong> LIFO - последний defer выполняется первым.</p>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 3: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">5</span>
+    <span style="color:#c678dd">defer</span> fmt.Println(x)
+    x = <span style="color:#d19a66">10</span>
+    fmt.Println(x)
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">10
+5</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li><code>x = 5</code></li>
+            <li>defer запоминает вывод 5 (значение на момент defer)</li>
+            <li><code>x = 10</code></li>
+            <li>Выводится 10</li>
+            <li>Функция завершается, defer выводит 5</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 4: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        <span style="color:#c678dd">defer</span> fmt.Print(i)
+    }
+    fmt.Print(<span style="color:#98c379">"X"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>X210</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>i=0: defer запоминает вывод 0</li>
+            <li>i=1: defer запоминает вывод 1</li>
+            <li>i=2: defer запоминает вывод 2</li>
+            <li>Выводится "X"</li>
+            <li>defer выполняются в обратном порядке: 2, 1, 0</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 5: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    fmt.Println(getValue())
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">getValue</span>() <span style="color:#c678dd">int</span> {
+    <span style="color:#c678dd">defer</span> fmt.Println(<span style="color:#98c379">"defer в getValue"</span>)
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">42</span>
+}</code></div>
+        <p><strong>Вывод:</strong></p>
+        <div class="code-block"><code><div class="output">defer в getValue
+42</div></code></div>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li>Вызывается <code>getValue()</code></li>
+            <li>return готовит значение 42</li>
+            <li>Перед выходом выполняется defer - выводится "defer в getValue"</li>
+            <li>Функция возвращает 42</li>
+            <li>main выводит 42</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 6: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    x := <span style="color:#d19a66">1</span>
+    <span style="color:#c678dd">defer</span> <span style="color:#c678dd">func</span>() {
+        fmt.Println(x)
+    }()
+    x = <span style="color:#d19a66">2</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>2</code></p>
+        <p><strong>Разбор:</strong> Анонимная функция захватывает переменную <code>x</code> по ссылке. Когда defer выполняется, <code>x</code> уже равен 2.</p>
+    </details>
+
+    <div class="summary-box">
+        <h3>Резюме</h3>
+        <p><strong>Ключевые идеи:</strong></p>
+        <ul>
+            <li><code>defer</code> откладывает выполнение до выхода из функции</li>
+            <li>Несколько defer выполняются в обратном порядке (LIFO)</li>
+            <li>Аргументы вычисляются в момент defer, не при выполнении</li>
+            <li>defer выполняется при любом способе выхода из функции</li>
+        </ul>
+        <p><strong>Главная ловушка:</strong> Ожидать актуальное значение переменной в defer - аргументы "замораживаются" в момент defer.</p>
+        <p><strong>Правило:</strong> Используйте defer для гарантированной очистки ресурсов - он выполнится независимо от пути выхода из функции.</p>
+    </div>
+
+    <div class="nav-footer">
+        <a href="06-shadowing.html" class="nav-link">← Shadowing</a>
+        <a href="08-error-type.html" class="nav-link">Ошибки: тип error →</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        /* global hljs */ /* global Telegram */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                if (tg.BackButton) {
+                    tg.BackButton.show();
+                    tg.BackButton.onClick(function() {
+                        window.history.back();
+                    });
+                }
+            }
+            document.querySelectorAll('.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

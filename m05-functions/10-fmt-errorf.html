@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>fmt.Errorf - создание ошибок с контекстом</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.table-wrapper{overflow-x:auto;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bg-tertiary)}th{background:var(--bg-secondary);color:var(--accent-blue);font-weight:600;white-space:nowrap}td{color:var(--text-secondary)}tr:hover td{background:var(--bg-secondary)}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+</head>
+<body>
+    <span class="module-badge">Модуль 5: Функции</span>
+    <h1>fmt.Errorf - создание ошибок с контекстом</h1>
+    <p class="lead">Без контекста отладка превращается в детектив. С контекстом - всё ясно сразу.</p>
+
+    <h2>Зачем добавлять контекст</h2>
+    <p>Представь: программа упала с ошибкой "файл не найден". Какой файл? Где? В какой функции это случилось?</p>
+
+    <div class="code-block"><code><span class="comment">// С контекстом - всё ясно:</span>
+Ошибка: загрузка конфига: чтение файла: open config.json: no such file or directory</code></div>
+
+    <h2>fmt.Errorf на самом деле</h2>
+
+    <h3>Базовое использование</h3>
+    <p><code>fmt.Errorf</code> создаёт ошибку с форматированным сообщением:</p>
+
+    <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"что-то пошло не так"</span>)</code></div>
+
+    <p>С подстановкой значений:</p>
+    <div class="code-block"><code>filename := <span style="color:#98c379">"config.json"</span>
+err := fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, filename)
+<span class="comment">// Ошибка: файл config.json не найден</span>
+
+age := <span style="color:#d19a66">-5</span>
+err := fmt.Errorf(<span style="color:#98c379">"некорректный возраст: %d"</span>, age)
+<span class="comment">// Ошибка: некорректный возраст: -5</span></code></div>
+
+    <h3>Форматирование как в fmt.Printf</h3>
+    <p><code>fmt.Errorf</code> поддерживает те же спецификаторы:</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>Спецификатор</th><th>Тип</th><th>Пример</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>%s</code></td><td>строка</td><td><code>"hello"</code></td></tr>
+                <tr><td><code>%d</code></td><td>целое число</td><td><code>42</code></td></tr>
+                <tr><td><code>%v</code></td><td>любое значение</td><td>автоматический формат</td></tr>
+                <tr><td><code>%q</code></td><td>строка в кавычках</td><td><code>"hello"</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="code-block"><code>name := <span style="color:#98c379">"test.txt"</span>
+line := <span style="color:#d19a66">42</span>
+
+err := fmt.Errorf(<span style="color:#98c379">"ошибка в файле %q на строке %d"</span>, name, line)
+fmt.Println(err)
+<div class="output">ошибка в файле "test.txt" на строке 42</div></code></div>
+
+    <h2>Оборачивание ошибок (%w)</h2>
+
+    <h3>Зачем оборачивать</h3>
+    <p>Когда функция получает ошибку от другой функции, полезно добавить контекст, сохранив оригинальную ошибку:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">readConfig</span>(filename <span style="color:#c678dd">string</span>) (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
+    data, err := readFile(filename)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span class="comment">// Добавляем контекст: что делали, когда случилась ошибка</span>
+        <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"чтение конфига: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> data, <span style="color:#d19a66">nil</span>
+}</code></div>
+
+    <h3>Спецификатор %w</h3>
+    <p><code>%w</code> (от "wrap" - оборачивать) сохраняет оригинальную ошибку внутри новой:</p>
+
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := level3()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(err)
+    }
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">level3</span>() <span style="color:#c678dd">error</span> {
+    err := level2()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"level3: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">level2</span>() <span style="color:#c678dd">error</span> {
+    err := level1()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"level2: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">level1</span>() <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"оригинальная ошибка"</span>)
+}
+<div class="output">level3: level2: оригинальная ошибка</div></code></div>
+
+    <p>Видна вся цепочка вызовов - легко понять, где и что произошло.</p>
+
+    <h2>Стиль сообщений об ошибках</h2>
+
+    <h3>Правила хорошего сообщения</h3>
+    <ol>
+        <li><strong>Начинать с маленькой буквы</strong> - ошибки часто объединяются в цепочку</li>
+        <li><strong>Без точки в конце</strong> - по той же причине</li>
+        <li><strong>Краткость</strong> - только суть проблемы</li>
+        <li><strong>Контекст</strong> - что делали, когда случилась ошибка</li>
+    </ol>
+
+    <div class="code-block"><code><span class="comment">// Хорошо</span>
+fmt.Errorf(<span style="color:#98c379">"открытие файла: %w"</span>, err)
+fmt.Errorf(<span style="color:#98c379">"парсинг JSON: %w"</span>, err)
+fmt.Errorf(<span style="color:#98c379">"некорректный возраст: %d"</span>, age)
+
+<span class="comment">// Плохо</span>
+fmt.Errorf(<span style="color:#98c379">"Ошибка при открытии файла."</span>)  <span class="comment">// Заглавная буква, точка</span>
+fmt.Errorf(<span style="color:#98c379">"error"</span>)  <span class="comment">// Слишком общее</span>
+fmt.Errorf(<span style="color:#98c379">"не удалось выполнить операцию открытия файла конфигурации"</span>)  <span class="comment">// Слишком длинно</span></code></div>
+
+    <h3>Паттерн: операция + контекст</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">processUser</span>(id <span style="color:#c678dd">int</span>) <span style="color:#c678dd">error</span> {
+    user, err := getUser(id)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"получение пользователя %d: %w"</span>, id, err)
+    }
+
+    err = validateUser(user)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"валидация пользователя %d: %w"</span>, id, err)
+    }
+
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}</code></div>
+
+    <h2>Примеры использования</h2>
+
+    <h3>Пример 1: Цепочка вызовов</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := startApp()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+    }
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">startApp</span>() <span style="color:#c678dd">error</span> {
+    err := loadConfig()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"запуск приложения: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">loadConfig</span>() <span style="color:#c678dd">error</span> {
+    err := readFile(<span style="color:#98c379">"config.json"</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"загрузка конфига: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">readFile</span>(name <span style="color:#c678dd">string</span>) <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, name)
+}
+<div class="output">Ошибка: запуск приложения: загрузка конфига: файл config.json не найден</div></code></div>
+
+    <h3>Пример 2: Валидация данных</h3>
+    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := validateOrder(<span style="color:#d19a66">0</span>, <span style="color:#d19a66">-100</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
+    }
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">validateOrder</span>(quantity, price <span style="color:#c678dd">int</span>) <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">if</span> quantity <= <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"некорректное количество: %d"</span>, quantity)
+    }
+    <span style="color:#c678dd">if</span> price < <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"отрицательная цена: %d"</span>, price)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+<div class="output">Ошибка: некорректное количество: 0</div></code></div>
+
+    <h2>%w vs %v</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>Спецификатор</th><th>Что делает</th><th>Когда использовать</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>%w</code></td><td>Оборачивает ошибку (сохраняет цепочку)</td><td>Когда нужна цепочка ошибок</td></tr>
+                <tr><td><code>%v</code></td><td>Просто вставляет текст ошибки</td><td>Когда цепочка не нужна</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="code-block"><code>originalErr := fmt.Errorf(<span style="color:#98c379">"оригинал"</span>)
+
+<span class="comment">// %w - оборачивание (цепочка сохраняется)</span>
+wrappedErr := fmt.Errorf(<span style="color:#98c379">"контекст: %w"</span>, originalErr)
+
+<span class="comment">// %v - просто текст (цепочка теряется)</span>
+textErr := fmt.Errorf(<span style="color:#98c379">"контекст: %v"</span>, originalErr)</code></div>
+
+    <div class="card">
+        <p><strong>TIP:</strong> Используйте <code>%w</code> почти всегда - это позволяет сохранить всю цепочку ошибок для отладки.</p>
+    </div>
+
+    <h2>Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <details class="question-card">
+        <summary>Вопрос 1: Чем отличается %w от %v при создании ошибки?</summary>
+        <p><code>%w</code> оборачивает ошибку, сохраняя её как часть цепочки (можно извлечь оригинальную ошибку). <code>%v</code> просто вставляет текстовое представление ошибки, теряя связь с оригиналом.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 2: Какие правила стиля для сообщений об ошибках в Go?</summary>
+        <p>1. Начинать с маленькой буквы<br>2. Не ставить точку в конце<br>3. Быть кратким - только суть<br>4. Добавлять контекст - что делали, когда случилась ошибка</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 3: Зачем оборачивать ошибки с контекстом?</summary>
+        <p>Чтобы при отладке видеть всю цепочку вызовов: где произошла ошибка, через какие функции она прошла, что пытались сделать. Это значительно упрощает поиск проблем.</p>
+    </details>
+
+    <details class="question-card">
+        <summary>Вопрос 4: Какой спецификатор использовать для строки в кавычках?</summary>
+        <p><code>%q</code> - выводит строку в двойных кавычках. Полезно для имён файлов или значений, чтобы чётко видеть границы строки.</p>
+    </details>
+
+    <h3>Задачи</h3>
+
+    <details class="task-card">
+        <summary>Задача 1: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := outer()
+    fmt.Println(err)
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">outer</span>() <span style="color:#c678dd">error</span> {
+    err := inner()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"outer: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">inner</span>() <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"inner error"</span>)
+}</code></div>
+        <p><strong>Вывод:</strong> <code>outer: inner error</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li><code>inner()</code> возвращает ошибку "inner error"</li>
+            <li><code>outer()</code> оборачивает её с контекстом "outer: "</li>
+            <li>Итоговое сообщение: "outer: inner error"</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 2: Что выведет код?</summary>
+        <div class="code-block"><code>name := <span style="color:#98c379">"test.txt"</span>
+line := <span style="color:#d19a66">10</span>
+err := fmt.Errorf(<span style="color:#98c379">"ошибка в %s:%d"</span>, name, line)
+fmt.Println(err)</code></div>
+        <p><strong>Вывод:</strong> <code>ошибка в test.txt:10</code></p>
+        <p><strong>Разбор:</strong> <code>%s</code> заменяется на "test.txt", <code>%d</code> заменяется на 10.</p>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 3: Исправь стиль ошибки</summary>
+        <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"Ошибка: не удалось открыть файл конфигурации приложения."</span>)</code></div>
+        <p><strong>Проблемы:</strong></p>
+        <ol>
+            <li>Заглавная буква в начале</li>
+            <li>Слово "Ошибка:" избыточно (и так ясно, что это ошибка)</li>
+            <li>Слишком длинное сообщение</li>
+            <li>Точка в конце</li>
+        </ol>
+        <p><strong>Исправление:</strong></p>
+        <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"открытие конфига: файл не найден"</span>)</code></div>
+        <p>Или с оборачиванием:</p>
+        <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"открытие конфига: %w"</span>, originalErr)</code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 4: Что выведет код?</summary>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+    err := process(<span style="color:#98c379">""</span>, <span style="color:#d19a66">5</span>)
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        fmt.Println(err)
+    }
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>(name <span style="color:#c678dd">string</span>, count <span style="color:#c678dd">int</span>) <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">if</span> name == <span style="color:#98c379">""</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"пустое имя при count=%d"</span>, count)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}</code></div>
+        <p><strong>Вывод:</strong> <code>пустое имя при count=5</code></p>
+        <p><strong>Разбор:</strong></p>
+        <ol>
+            <li><code>name == ""</code> - истинно</li>
+            <li>Возвращается ошибка с форматированием</li>
+            <li><code>%d</code> заменяется на 5</li>
+        </ol>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 5: Напиши функцию</summary>
+        <p>Напиши функцию <code>divide</code>, которая делит два числа. При делении на ноль верни ошибку с контекстом (какие числа пытались разделить).</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
+    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
+        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление %d на ноль"</span>, a)
+    }
+    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
+}
+
+<span class="comment">// divide(10, 0) вернёт: деление 10 на ноль</span></code></div>
+    </details>
+
+    <details class="task-card">
+        <summary>Задача 6: Построй цепочку ошибок</summary>
+        <p>Есть три функции: <code>app()</code> вызывает <code>service()</code>, который вызывает <code>repository()</code>. <code>repository()</code> возвращает ошибку "запись не найдена". Оберни ошибку на каждом уровне.</p>
+        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">app</span>() <span style="color:#c678dd">error</span> {
+    err := service()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"app: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">service</span>() <span style="color:#c678dd">error</span> {
+    err := repository()
+    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"service: %w"</span>, err)
+    }
+    <span style="color:#c678dd">return</span> <span style="color:#d19a66">nil</span>
+}
+
+<span style="color:#c678dd">func</span> <span style="color:#61afef">repository</span>() <span style="color:#c678dd">error</span> {
+    <span style="color:#c678dd">return</span> fmt.Errorf(<span style="color:#98c379">"запись не найдена"</span>)
+}
+
+<span class="comment">// Вывод: app: service: запись не найдена</span></code></div>
+    </details>
+
+    <div class="summary-box">
+        <h3>Резюме</h3>
+        <p><strong>Ключевые идеи:</strong></p>
+        <ul>
+            <li><code>fmt.Errorf</code> создаёт ошибку с форматированным сообщением</li>
+            <li><code>%w</code> оборачивает ошибку, сохраняя цепочку</li>
+            <li>Стиль: маленькая буква, без точки, кратко, с контекстом</li>
+            <li>Паттерн: "операция: %w" на каждом уровне</li>
+        </ul>
+        <p><strong>Главная ловушка:</strong> Использовать <code>%v</code> вместо <code>%w</code> - теряется цепочка ошибок, сложнее отлаживать.</p>
+        <p><strong>Правило:</strong> Всегда добавляйте контекст при оборачивании ошибки - это сэкономит часы отладки.</p>
+    </div>
+
+    <div class="nav-footer">
+        <a href="09-if-err-nil.html" class="nav-link">← Паттерн if err != nil</a>
+        <a href="11-panic.html" class="nav-link">panic →</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        /* global hljs */ /* global Telegram */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                const tg = Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                if (tg.BackButton) {
+                    tg.BackButton.show();
+                    tg.BackButton.onClick(function() {
+                        window.history.back();
+                    });
+                }
+            }
+            document.querySelectorAll('.code-block code').forEach(function(block) {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
+</body>
+</html>

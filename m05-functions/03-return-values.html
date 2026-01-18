@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Возвращаемые значения</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .output-block {
+            margin: 16px 0 24px;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .info-box {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+        .card-body pre {
+            margin: 0 0 16px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .card-body code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .diagram-box {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 5 / Урок 3</div>
+
+    <h1>Возвращаемые значения</h1>
+    <p class="lead">Функции могут не только выполнять действия, но и возвращать результат для дальнейшего использования в коде.</p>
+
+    <h2 id="ogranicheniye">Ограничение функций без возврата</h2>
+
+    <p>Функция <code>printSum</code> выводит результат, но не отдаёт его:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func printSum(a, b int) {
+    fmt.Println(a + b)
+}
+
+func main() {
+    printSum(3, 5)  // Выводит 8, но мы не можем использовать это значение
+}</code></pre>
+    </div>
+
+    <p>Что если нужно сохранить результат в переменную? Или использовать его в вычислениях? Для этого функция должна <strong>возвращать</strong> значение.</p>
+
+    <h2 id="return">Возврат значения на самом деле</h2>
+
+    <h3>Что такое return</h3>
+
+    <p>Оператор <code>return</code> делает две вещи:</p>
+    <ol>
+        <li><strong>Завершает</strong> выполнение функции</li>
+        <li><strong>Передаёт значение</strong> обратно в место вызова</li>
+    </ol>
+
+    <div class="diagram-box">func add(a, b int) int {
+                        |
+                        +-- тип возвращаемого
+                            значения
+    return a + b
+           |
+           +-- значение, которое вернётся
+}</div>
+
+    <h3>Как работает возврат</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func add(a, b int) int {
+    return a + b
+}
+
+func main() {
+    result := add(3, 5)  // result = 8
+    fmt.Println(result)
+}</code></pre>
+    </div>
+
+    <p>Выполнение:</p>
+    <ol>
+        <li>Вызывается <code>add(3, 5)</code></li>
+        <li>Внутри функции вычисляется <code>3 + 5 = 8</code></li>
+        <li><code>return 8</code> завершает функцию и возвращает 8</li>
+        <li>Значение 8 присваивается переменной <code>result</code></li>
+    </ol>
+
+    <h2 id="sintaksis">Синтаксис функции с возвратом</h2>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func имяФункции(параметры) типВозврата {
+    // тело
+    return значение
+}</code></pre>
+    </div>
+
+    <p>Тип возвращаемого значения указывается <strong>после</strong> круглых скобок с параметрами.</p>
+
+    <h3>Функция без параметров, но с возвратом</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    msg := getMessage()
+    fmt.Println(msg)
+}
+
+func getMessage() string {
+    return "Привет, Go!"
+}</code></pre>
+    </div>
+
+    <div class="output-block">Привет, Go!</div>
+
+    <h3>Функция с параметрами и возвратом</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result := multiply(4, 5)
+    fmt.Println("Результат:", result)
+}
+
+func multiply(a, b int) int {
+    return a * b
+}</code></pre>
+    </div>
+
+    <div class="output-block">Результат: 20</div>
+
+    <h2 id="tipy">Типы возвращаемых значений</h2>
+
+    <p>Функция может возвращать любой тип:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getNumber() int {
+    return 42
+}
+
+func getName() string {
+    return "Алексей"
+}
+
+func isEven(n int) bool {
+    return n%2 == 0
+}
+
+func getPrice() float64 {
+    return 99.99
+}</code></pre>
+    </div>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>Тип значения после <code>return</code> должен совпадать с типом, указанным в объявлении функции.</p>
+    </div>
+
+    <h2 id="sovpadeniye">Совпадение типов</h2>
+
+    <h3>Три места, где тип должен совпадать</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getMessage() string {  // 1. Тип в объявлении: string
+    return "Привет"         // 2. Тип возвращаемого значения: string
+}
+
+func main() {
+    msg := getMessage()     // 3. Тип переменной: string (выводится автоматически)
+    fmt.Println(msg)
+}</code></pre>
+    </div>
+
+    <h3>Ловушка: несовпадение типов</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getNumber() int {
+    return "42"  // Ошибка! string != int
+}</code></pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getNumber() int {
+    return 42
+}
+
+func main() {
+    var result string = getNumber()  // Ошибка! int != string
+}</code></pre>
+    </div>
+
+    <h2 id="zavershenie">return завершает функцию</h2>
+
+    <p>Код после <code>return</code> <strong>никогда не выполнится</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getValue() int {
+    return 10
+    fmt.Println("Это не выполнится")  // Недостижимый код
+}</code></pre>
+    </div>
+
+    <p>Go выдаст предупреждение о недостижимом коде.</p>
+
+    <h3>Несколько return в функции</h3>
+
+    <p>Функция может иметь несколько <code>return</code> в разных ветках:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(checkSign(5))
+    fmt.Println(checkSign(-3))
+    fmt.Println(checkSign(0))
+}
+
+func checkSign(n int) string {
+    if n > 0 {
+        return "положительное"
+    }
+    if n < 0 {
+        return "отрицательное"
+    }
+    return "ноль"
+}</code></pre>
+    </div>
+
+    <div class="output-block">положительное<br>отрицательное<br>ноль</div>
+
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <p>Если функция объявлена с типом возврата, каждый путь выполнения должен заканчиваться <code>return</code>. Иначе — ошибка компиляции.</p>
+    </div>
+
+    <h2 id="ispolzovaniye">Использование возвращаемого значения</h2>
+
+    <h3>Сохранить в переменную</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">result := add(3, 5)
+fmt.Println(result)</code></pre>
+    </div>
+
+    <h3>Использовать напрямую</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">fmt.Println(add(3, 5))  // Сразу выводим результат</code></pre>
+    </div>
+
+    <h3>Использовать в выражении</h3>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">total := add(3, 5) + add(10, 20)
+fmt.Println(total)  // 8 + 30 = 38</code></pre>
+    </div>
+
+    <h3>Игнорировать результат</h3>
+
+    <p>Можно вызвать функцию и не использовать её результат:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">add(3, 5)  // Результат вычисляется, но теряется</code></pre>
+    </div>
+
+    <p>Это законно, но обычно бессмысленно для чистых функций.</p>
+
+    <h2 id="return-bez-znacheniya">return без значения</h2>
+
+    <p>В функциях, которые ничего не возвращают, <code>return</code> можно использовать для досрочного выхода:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    printPositive(-5)
+    printPositive(10)
+}
+
+func printPositive(n int) {
+    if n <= 0 {
+        return  // Досрочный выход, ничего не возвращаем
+    }
+    fmt.Println("Число:", n)
+}</code></pre>
+    </div>
+
+    <div class="output-block">Число: 10</div>
+
+    <p>Для <code>n = -5</code> функция завершается на <code>return</code>, не доходя до <code>fmt.Println</code>.</p>
+
+    <h2 id="vyvod-vs-vozvrat">Вывод vs Возврат</h2>
+
+    <p>Важно не путать:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Функция выводит</th>
+                <th>Функция возвращает</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>fmt.Println(x)</code> внутри</td>
+                <td><code>return x</code></td>
+            </tr>
+            <tr>
+                <td>Результат виден в консоли</td>
+                <td>Результат можно использовать в коде</td>
+            </tr>
+            <tr>
+                <td>Нельзя сохранить в переменную</td>
+                <td>Можно сохранить, передать, обработать</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">// Выводит — результат нельзя использовать
+func printSum(a, b int) {
+    fmt.Println(a + b)
+}
+
+// Возвращает — результат можно использовать
+func getSum(a, b int) int {
+    return a + b
+}
+
+func main() {
+    printSum(3, 5)          // Просто выводит 8
+    result := getSum(3, 5)  // Сохраняем 8 в переменную
+    fmt.Println(result * 2) // Используем: 16
+}</code></pre>
+    </div>
+
+    <h2 id="obyazatelnost">Обязательность return</h2>
+
+    <p>Если функция объявлена с типом возврата, <code>return</code> <strong>обязателен</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getMessage() string {
+    message := "Привет"
+    // Ошибка компиляции: missing return
+}</code></pre>
+    </div>
+
+    <p><strong>Исправление:</strong></p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span class="code-lang">Go</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code class="language-go">func getMessage() string {
+    message := "Привет"
+    return message
+}</code></pre>
+    </div>
+
+    <h2 id="proverka">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что делает оператор return?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Оператор <code>return</code> выполняет две функции:</p>
+                    <ol>
+                        <li>Завершает выполнение функции</li>
+                        <li>Передаёт значение обратно в место вызова</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Где указывается тип возвращаемого значения?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Тип возвращаемого значения указывается после круглых скобок с параметрами:</p>
+                    <pre><code class="language-go">func add(a, b int) int {
+                    ^^^
+                    здесь</code></pre>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Чем отличается функция, которая выводит результат, от функции, которая его возвращает?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Функция с выводом (<code>fmt.Println</code>) показывает результат в консоли, но его нельзя использовать в коде. Функция с возвратом (<code>return</code>) передаёт значение обратно — его можно сохранить в переменную и использовать дальше.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Выполнится ли код после return?</span>
+        </div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer">
+                    <p>Нет. <code>return</code> немедленно завершает функцию. Код после <code>return</code> называется "недостижимым" и никогда не выполнится.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := double(5)
+    fmt.Println(x)
+}
+
+func double(n int) int {
+    return n * 2
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>10</code></p>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li>Вызывается <code>double(5)</code></li>
+                        <li>Внутри: <code>5 * 2 = 10</code></li>
+                        <li><code>return 10</code> возвращает 10</li>
+                        <li><code>x = 10</code>, выводится 10</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result := checkSign(-7)
+    fmt.Println(result)
+}
+
+func checkSign(n int) int {
+    if n > 0 {
+        return 1
+    }
+    if n < 0 {
+        return -1
+    }
+    return 0
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>-1</code></p>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li>Вызывается <code>checkSign(-7)</code></li>
+                        <li><code>-7 > 0</code> — ложно, пропускаем</li>
+                        <li><code>-7 < 0</code> — истинно, <code>return -1</code></li>
+                        <li>Результат: -1</li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-title">Найди ошибку</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">func getGreeting() string {
+    greeting := "Привет!"
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Ошибка:</strong> Отсутствует <code>return</code>. Функция объявлена как возвращающая <code>string</code>, но не содержит <code>return</code>.</p>
+                    <p><strong>Исправление:</strong></p>
+                    <pre><code class="language-go">func getGreeting() string {
+    greeting := "Привет!"
+    return greeting
+}</code></pre>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := getValue()
+    b := getValue()
+    fmt.Println(a + b)
+}
+
+func getValue() int {
+    return 5
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>10</code></p>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li><code>a = getValue()</code> = 5</li>
+                        <li><code>b = getValue()</code> = 5</li>
+                        <li><code>a + b = 5 + 5 = 10</code></li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(add(add(1, 2), add(3, 4)))
+}
+
+func add(a, b int) int {
+    return a + b
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>10</code></p>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li><code>add(1, 2) = 3</code></li>
+                        <li><code>add(3, 4) = 7</code></li>
+                        <li><code>add(3, 7) = 10</code></li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head">
+            <span class="card-num">06</span>
+            <span class="card-title">Что выведет код?</span>
+        </div>
+        <div class="card-body">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result := process(10)
+    fmt.Println(result)
+}
+
+func process(n int) int {
+    if n > 5 {
+        return n * 2
+    }
+    return n + 100
+    fmt.Println("Конец функции")
+}</code></pre>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="answer">
+                    <p><strong>Вывод:</strong> <code>20</code></p>
+                    <p><strong>Разбор:</strong></p>
+                    <ol>
+                        <li>Вызывается <code>process(10)</code></li>
+                        <li><code>10 > 5</code> — истинно</li>
+                        <li><code>return 10 * 2 = 20</code></li>
+                        <li>Строка <code>fmt.Println("Конец функции")</code> никогда не выполнится — она после <code>return</code></li>
+                    </ol>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ключевые идеи</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>return</code> завершает функцию и возвращает значение</li>
+            <li>Тип возврата указывается после параметров: <code>func name() int</code></li>
+            <li>Тип значения после <code>return</code> должен совпадать с объявленным типом</li>
+            <li>Код после <code>return</code> не выполняется</li>
+        </ul>
+    </div>
+
+    <blockquote>
+        <p><strong>Правило:</strong> Если функция объявлена с типом возврата, каждый путь выполнения должен заканчиваться <code>return</code>.</p>
+    </blockquote>
+
+    <nav class="nav-footer">
+        <a href="02-parameters-arguments.html" class="nav-link prev">
+            <span class="nav-arrow">&larr;</span>
+            <div>
+                <div class="nav-label">Предыдущий</div>
+                <div class="nav-title">Параметры и аргументы</div>
+            </div>
+        </a>
+        <a href="04-multiple-returns.html" class="nav-link next">
+            <div>
+                <div class="nav-label">Следующий</div>
+                <div class="nav-title">Множественные возвраты</div>
+            </div>
+            <span class="nav-arrow">&rarr;</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.history.back();
+        });
+    }
+
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        const text = code.textContent;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            }).catch(() => {
+                fallbackCopy(text, btn);
+            });
+        } else {
+            fallbackCopy(text, btn);
+        }
+    }
+
+    function fallbackCopy(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showCopied(btn);
+        } catch (e) {
+            if (tg) {
+                tg.showAlert('Не удалось скопировать');
+            }
+        }
+        document.body.removeChild(textarea);
+    }
+
+    function showCopied(btn) {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
