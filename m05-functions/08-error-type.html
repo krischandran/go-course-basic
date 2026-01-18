@@ -3,414 +3,798 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ошибки: тип error</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{white-space:pre;font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px}.warning-card{border-left-color:var(--accent-red)}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+    <title>Ошибки: тип error — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+        .lead { font-size: 16px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 32px; }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before { content: ''; width: 6px; height: 6px; background: var(--accent-green); border-radius: 2px; flex-shrink: 0; }
+        h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin: 24px 0 12px; }
+        p { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 16px; }
+        ul, ol { margin: 0 0 16px 20px; color: var(--text-secondary); }
+        li { margin-bottom: 6px; line-height: 1.6; font-size: 15px; }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active { background: var(--bg-tertiary); }
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; background: transparent; padding: 0; color: inherit; }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon { position: absolute; left: 14px; top: 16px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 700; }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert p { margin: 0; font-size: 14px; }
+
+        .card { margin: 16px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 16px; }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details { margin-top: 12px; }
+        details summary { cursor: pointer; color: var(--accent-green); font-size: 13px; font-weight: 500; padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 6px; -webkit-tap-highlight-color: transparent; }
+        details summary::before { content: '>'; font-size: 12px; transition: transform 0.2s; }
+        details[open] summary::before { transform: rotate(90deg); }
+        details summary::-webkit-details-marker { display: none; }
+        .answer { margin-top: 10px; padding: 12px; background: rgba(42, 241, 107, 0.03); border-radius: 6px; border-left: 2px solid var(--accent-green); }
+        .answer p { font-size: 14px; color: var(--text-secondary); }
+
+        .summary-box { margin: 28px 0; padding: 20px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 12px; }
+        .summary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .summary-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 8px; background: var(--accent-green); color: var(--bg-primary); border-radius: 4px; }
+        .summary-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 18px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 6px; font-size: 14px; }
+
+        blockquote { margin: 20px 0; padding: 16px; background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%); border-left: 2px solid var(--accent-green); border-radius: 0 6px 6px 0; }
+        blockquote p { font-size: 14px; font-weight: 500; color: var(--text-primary); margin: 0; }
+
+        .nav-footer { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+        .nav-link:active { background: var(--bg-tertiary); }
+        .nav-link.prev { text-align: left; }
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 18px; color: var(--accent-green); }
+        .nav-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .nav-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+
+        .info-box { margin: 20px 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+        .info-box .info-title { color: var(--text-muted); font-size: 12px; margin-bottom: 12px; }
+        .info-row { padding: 6px 0; color: var(--text-secondary); }
+        .info-row:not(:last-child) { border-bottom: 1px solid var(--border-color); }
+    </style>
 </head>
 <body>
-    <span class="module-badge">Модуль 5: Функции</span>
-    <h1>Ошибки: тип error</h1>
-    <p class="lead">В Go ошибки - это <strong>обычные значения</strong>, которые функции возвращают вместе с результатом.</p>
 
-    <h2>Зачем нужны ошибки</h2>
-    <p>Программы не всегда работают идеально. Файл может не существовать, сеть может быть недоступна, пользователь может ввести некорректные данные.</p>
+    <main>
+        <div class="module-badge">Модуль 5 / Урок 8</div>
 
-    <div class="code-block"><code>result, err := someFunction()
-<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-    <span class="comment">// Обработать ошибку</span>
+        <h1>Ошибки: тип error</h1>
+        <p class="lead">В Go ошибки — это <strong>обычные значения</strong>, которые функции возвращают вместе с результатом.</p>
+
+        <h2>Зачем нужны ошибки</h2>
+
+        <p>Программы не всегда работают идеально. Файл может не существовать, сеть может быть недоступна, пользователь может ввести некорректные данные.</p>
+
+        <p>В Go ошибки — это <strong>обычные значения</strong>, которые функции возвращают вместе с результатом:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">result, err := someFunction()
+if err != nil {
+    // Обработать ошибку
 }
-<span class="comment">// Использовать result</span></code></div>
+// Использовать result</code></pre>
+        </div>
 
-    <h2>error на самом деле</h2>
+        <h2>error на самом деле</h2>
 
-    <h3>Интерфейс error</h3>
-    <p><code>error</code> - это встроенный интерфейс Go с одним методом:</p>
+        <h3>Интерфейс error</h3>
 
-    <div class="code-block"><code><span style="color:#c678dd">type</span> <span style="color:#e5c07b">error</span> <span style="color:#c678dd">interface</span> {
-    Error() <span style="color:#c678dd">string</span>
-}</code></div>
+        <p><code>error</code> — это встроенный интерфейс Go с одним методом:</p>
 
-    <p>Любой тип, который имеет метод <code>Error() string</code>, является ошибкой.</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">type error interface {
+    Error() string
+}</code></pre>
+        </div>
 
-    <h3>nil - отсутствие ошибки</h3>
-    <p>Если ошибки нет, функция возвращает <code>nil</code>:</p>
+        <p>Любой тип, который имеет метод <code>Error() string</code>, является ошибкой.</p>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+        <h3>nil — отсутствие ошибки</h3>
+
+        <p>Если ошибки нет, функция возвращает <code>nil</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("деление на ноль")
     }
-    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>  <span class="comment">// nil означает "ошибки нет"</span>
-}</code></div>
+    return a / b, nil  // nil означает "ошибки нет"
+}</code></pre>
+        </div>
 
-    <div class="diagram-box">
-        <pre>  Возвращаемые значения
+        <div class="info-box">
+            <div class="info-title">Возвращаемые значения</div>
+            <div class="info-row"><code>result, err := divide(10, 2)</code></div>
+            <div class="info-row"><strong>Успех:</strong> result = 5, err = nil</div>
+            <div class="info-row"><strong>Ошибка:</strong> result = 0, err = "деление на ноль"</div>
+        </div>
 
-  result, err := divide(10, 2)
+        <h2>Паттерн "результат, ошибка"</h2>
 
-  Случай 1: Успех
-  result = 5, err = nil
+        <p>Большинство функций в Go возвращают два значения:</p>
+        <ol>
+            <li><strong>Результат</strong> — полезные данные</li>
+            <li><strong>Ошибка</strong> — <code>nil</code> если всё хорошо, или описание проблемы</li>
+        </ol>
 
-  Случай 2: Ошибка
-  result = 0, err = "деление на ноль"</pre>
-    </div>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">func doSomething() (string, error) {
+    // Если всё хорошо:
+    return "результат", nil
 
-    <h2>Паттерн "результат, ошибка"</h2>
-    <p>Большинство функций в Go возвращают два значения:</p>
-    <ol>
-        <li><strong>Результат</strong> - полезные данные</li>
-        <li><strong>Ошибка</strong> - <code>nil</code> если всё хорошо, или описание проблемы</li>
-    </ol>
+    // Если что-то пошло не так:
+    return "", fmt.Errorf("описание ошибки")
+}</code></pre>
+        </div>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">doSomething</span>() (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
-    <span class="comment">// Если всё хорошо:</span>
-    <span style="color:#c678dd">return</span> <span style="color:#98c379">"результат"</span>, <span style="color:#d19a66">nil</span>
+        <h3>Пример: безопасное деление</h3>
 
-    <span class="comment">// Если что-то пошло не так:</span>
-    <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"описание ошибки"</span>)
-}</code></div>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
 
-    <h3>Пример: безопасное деление</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result, err := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-        <span style="color:#c678dd">return</span>
+import "fmt"
+
+func main() {
+    result, err := divide(10, 2)
+    if err != nil {
+        fmt.Println("Ошибка:", err)
+        return
     }
-    fmt.Println(<span style="color:#98c379">"Результат:"</span>, result)
-}
-
-<span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"нельзя делить на ноль"</span>)
-    }
-    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
-}
-<div class="output">Результат: 5</div></code></div>
-
-    <h2>Создание ошибок</h2>
-
-    <h3>С помощью fmt.Errorf</h3>
-    <p>Самый простой способ создать ошибку:</p>
-
-    <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"что-то пошло не так"</span>)</code></div>
-
-    <p>С форматированием:</p>
-    <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, filename)
-err := fmt.Errorf(<span style="color:#98c379">"значение %d вне диапазона"</span>, value)</code></div>
-
-    <h3>С помощью errors.New</h3>
-    <p>Для простых сообщений без форматирования:</p>
-
-    <div class="code-block"><code><span style="color:#c678dd">import</span> <span style="color:#98c379">"errors"</span>
-
-err := errors.New(<span style="color:#98c379">"что-то пошло не так"</span>)</code></div>
-
-    <h2>Проверка ошибок</h2>
-
-    <h3>Базовая проверка</h3>
-    <div class="code-block"><code>result, err := someFunction()
-<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-    <span class="comment">// Ошибка произошла</span>
-    fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-    <span style="color:#c678dd">return</span>
-}
-<span class="comment">// Ошибки нет, используем result</span></code></div>
-
-    <h3>Ловушка: игнорирование ошибок</h3>
-    <div class="code-block"><code>result, _ := someFunction()  <span class="comment">// Опасно! Ошибка игнорируется</span></code></div>
-
-    <p>Игнорировать ошибки с <code>_</code> - плохая практика. Программа может работать с некорректными данными.</p>
-
-    <div class="card warning-card">
-        <div class="card-title">Всегда проверяйте ошибки</div>
-        <p>Игнорирование ошибок - частая причина багов.</p>
-    </div>
-
-    <h2>Примеры функций с ошибками</h2>
-
-    <h3>Пример 1: Проверка возраста</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    age, err := validateAge(<span style="color:#d19a66">-5</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-        <span style="color:#c678dd">return</span>
-    }
-    fmt.Println(<span style="color:#98c379">"Возраст:"</span>, age)
+    fmt.Println("Результат:", result)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">validateAge</span>(age <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> age < <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"возраст не может быть отрицательным: %d"</span>, age)
+func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("нельзя делить на ноль")
     }
-    <span style="color:#c678dd">if</span> age > <span style="color:#d19a66">150</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"возраст слишком большой: %d"</span>, age)
-    }
-    <span style="color:#c678dd">return</span> age, <span style="color:#d19a66">nil</span>
-}
-<div class="output">Ошибка: возраст не может быть отрицательным: -5</div></code></div>
+    return a / b, nil
+}</code></pre>
+        </div>
 
-    <h3>Пример 2: Поиск элемента</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    index, err := findIndex(<span style="color:#98c379">"hello"</span>, <span style="color:#98c379">'e'</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-        <span style="color:#c678dd">return</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Результат: 5</code></pre>
+        </div>
+
+        <h2>Создание ошибок</h2>
+
+        <h3>С помощью fmt.Errorf</h3>
+
+        <p>Самый простой способ создать ошибку:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">err := fmt.Errorf("что-то пошло не так")</code></pre>
+        </div>
+
+        <p>С форматированием:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">err := fmt.Errorf("файл %s не найден", filename)
+err := fmt.Errorf("значение %d вне диапазона", value)</code></pre>
+        </div>
+
+        <h3>С помощью errors.New</h3>
+
+        <p>Для простых сообщений без форматирования:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">import "errors"
+
+err := errors.New("что-то пошло не так")</code></pre>
+        </div>
+
+        <h2>Проверка ошибок</h2>
+
+        <h3>Базовая проверка</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">result, err := someFunction()
+if err != nil {
+    // Ошибка произошла
+    fmt.Println("Ошибка:", err)
+    return
+}
+// Ошибки нет, используем result</code></pre>
+        </div>
+
+        <h3>Ловушка: игнорирование ошибок</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">result, _ := someFunction()  // Опасно! Ошибка игнорируется</code></pre>
+        </div>
+
+        <p>Игнорировать ошибки с <code>_</code> — плохая практика. Программа может работать с некорректными данными.</p>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <p>Всегда проверяйте ошибки. Игнорирование ошибок — частая причина багов.</p>
+        </div>
+
+        <h2>Примеры функций с ошибками</h2>
+
+        <h3>Пример 1: Проверка возраста</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    age, err := validateAge(-5)
+    if err != nil {
+        fmt.Println("Ошибка:", err)
+        return
     }
-    fmt.Println(<span style="color:#98c379">"Индекс:"</span>, index)
+    fmt.Println("Возраст:", age)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">findIndex</span>(s <span style="color:#c678dd">string</span>, ch <span style="color:#c678dd">byte</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < len(s); i++ {
-        <span style="color:#c678dd">if</span> s[i] == ch {
-            <span style="color:#c678dd">return</span> i, <span style="color:#d19a66">nil</span>
+func validateAge(age int) (int, error) {
+    if age < 0 {
+        return 0, fmt.Errorf("возраст не может быть отрицательным: %d", age)
+    }
+    if age > 150 {
+        return 0, fmt.Errorf("возраст слишком большой: %d", age)
+    }
+    return age, nil
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Ошибка: возраст не может быть отрицательным: -5</code></pre>
+        </div>
+
+        <h3>Пример 2: Поиск элемента</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    index, err := findIndex("hello", 'e')
+    if err != nil {
+        fmt.Println("Ошибка:", err)
+        return
+    }
+    fmt.Println("Индекс:", index)
+}
+
+func findIndex(s string, ch byte) (int, error) {
+    for i := 0; i < len(s); i++ {
+        if s[i] == ch {
+            return i, nil
         }
     }
-    <span style="color:#c678dd">return</span> <span style="color:#d19a66">-1</span>, fmt.Errorf(<span style="color:#98c379">"символ '%c' не найден в строке"</span>, ch)
-}
-<div class="output">Индекс: 1</div></code></div>
+    return -1, fmt.Errorf("символ '%c' не найден в строке", ch)
+}</code></pre>
+        </div>
 
-    <h2>Что возвращать при ошибке</h2>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Индекс: 1</code></pre>
+        </div>
 
-    <h3>Нулевое значение для результата</h3>
-    <p>При ошибке возвращайте нулевое значение типа:</p>
+        <h2>Что возвращать при ошибке</h2>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">getValue</span>() (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> somethingWrong {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// 0 - нулевое значение для int</span>
+        <h3>Нулевое значение для результата</h3>
+
+        <p>При ошибке возвращайте нулевое значение типа:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">func getValue() (int, error) {
+    if somethingWrong {
+        return 0, fmt.Errorf("ошибка")  // 0 — нулевое значение для int
     }
-    <span style="color:#c678dd">return</span> value, <span style="color:#d19a66">nil</span>
+    return value, nil
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">getName</span>() (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> somethingWrong {
-        <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// "" - нулевое значение для string</span>
+func getName() (string, error) {
+    if somethingWrong {
+        return "", fmt.Errorf("ошибка")  // "" — нулевое значение для string
     }
-    <span style="color:#c678dd">return</span> name, <span style="color:#d19a66">nil</span>
-}</code></div>
+    return name, nil
+}</code></pre>
+        </div>
 
-    <h3>Не используйте результат при ошибке</h3>
-    <p>Если функция вернула ошибку, не используйте результат:</p>
+        <h3>Не используйте результат при ошибке</h3>
 
-    <div class="code-block"><code>result, err := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
-<span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-    <span class="comment">// НЕ используйте result здесь!</span>
-    fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-    <span style="color:#c678dd">return</span>
+        <p>Если функция вернула ошибку, не используйте результат:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">result, err := divide(10, 0)
+if err != nil {
+    // НЕ используйте result здесь!
+    fmt.Println("Ошибка:", err)
+    return
 }
-<span class="comment">// Безопасно использовать result</span>
-fmt.Println(result)</code></div>
+// Безопасно использовать result
+fmt.Println(result)</code></pre>
+        </div>
 
-    <h2>Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
-    <h3>Вопросы</h3>
+        <h3>Вопросы</h3>
 
-    <details class="question-card">
-        <summary>Вопрос 1: Что такое error в Go?</summary>
-        <p><code>error</code> - это встроенный интерфейс с одним методом <code>Error() string</code>. Любой тип, реализующий этот метод, является ошибкой. Ошибки в Go - это обычные значения, которые возвращаются из функций.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что такое error в Go?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>error</code> — это встроенный интерфейс с одним методом <code>Error() string</code>. Любой тип, реализующий этот метод, является ошибкой. Ошибки в Go — это обычные значения, которые возвращаются из функций.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 2: Что означает err == nil?</summary>
-        <p><code>err == nil</code> означает отсутствие ошибки. Если функция вернула <code>nil</code> вместо ошибки, операция прошла успешно.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что означает err == nil?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>err == nil</code> означает отсутствие ошибки. Если функция вернула <code>nil</code> вместо ошибки, операция прошла успешно.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 3: Как создать ошибку с форматированием?</summary>
-        <p>С помощью <code>fmt.Errorf</code>:</p>
-        <div class="code-block"><code>err := fmt.Errorf(<span style="color:#98c379">"файл %s не найден"</span>, filename)</code></div>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Как создать ошибку с форматированием?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>С помощью <code>fmt.Errorf</code>:</p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">err := fmt.Errorf("файл %s не найден", filename)</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 4: Почему плохо игнорировать ошибки с _?</summary>
-        <p>Игнорирование ошибок может привести к работе с некорректными данными, неожиданному поведению программы и сложным в отладке багам. Всегда проверяйте ошибки.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Почему плохо игнорировать ошибки с _?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Игнорирование ошибок может привести к работе с некорректными данными, неожиданному поведению программы и сложным в отладке багам. Всегда проверяйте ошибки.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <h3>Задачи</h3>
+        <h3>Задачи</h3>
 
-    <details class="task-card">
-        <summary>Задача 1: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result, err := calculate(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result, err := calculate(10, 0)
+    if err != nil {
         fmt.Println(err)
-        <span style="color:#c678dd">return</span>
+        return
     }
     fmt.Println(result)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">calculate</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+func calculate(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("деление на ноль")
     }
-    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
-}</code></div>
-        <p><strong>Вывод:</strong> <code>деление на ноль</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Вызывается <code>calculate(10, 0)</code></li>
-            <li><code>b == 0</code> - истинно</li>
-            <li>Возвращается <code>0, fmt.Errorf("деление на ноль")</code></li>
-            <li><code>err != nil</code> - истинно</li>
-            <li>Выводится ошибка</li>
-        </ol>
-    </details>
+    return a / b, nil
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>деление на ноль</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Вызывается <code>calculate(10, 0)</code></li>
+                            <li><code>b == 0</code> — истинно</li>
+                            <li>Возвращается <code>0, fmt.Errorf("деление на ноль")</code></li>
+                            <li><code>err != nil</code> — истинно</li>
+                            <li>Выводится ошибка</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 2: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result, err := calculate(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result, err := calculate(10, 2)
+    if err != nil {
         fmt.Println(err)
-        <span style="color:#c678dd">return</span>
+        return
     }
     fmt.Println(result)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">calculate</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"деление на ноль"</span>)
+func calculate(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("деление на ноль")
     }
-    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
-}</code></div>
-        <p><strong>Вывод:</strong> <code>5</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Вызывается <code>calculate(10, 2)</code></li>
-            <li><code>b == 0</code> - ложно</li>
-            <li>Возвращается <code>5, nil</code></li>
-            <li><code>err != nil</code> - ложно (err == nil)</li>
-            <li>Выводится результат 5</li>
-        </ol>
-    </details>
+    return a / b, nil
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>5</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Вызывается <code>calculate(10, 2)</code></li>
+                            <li><code>b == 0</code> — ложно</li>
+                            <li>Возвращается <code>5, nil</code></li>
+                            <li><code>err != nil</code> — ложно (err == nil)</li>
+                            <li>Выводится результат 5</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 3: Напиши функцию</summary>
-        <p>Напиши функцию <code>sqrt</code>, которая вычисляет квадратный корень. Если число отрицательное - верни ошибку.</p>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result, err := sqrt(<span style="color:#d19a66">16</span>)
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-        <span style="color:#c678dd">return</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Напиши функцию</span></div>
+            <div class="card-body">
+                <p>Напиши функцию <code>sqrt</code>, которая вычисляет квадратный корень. Если число отрицательное — верни ошибку.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    result, err := sqrt(16)
+    if err != nil {
+        fmt.Println("Ошибка:", err)
+        return
     }
-    fmt.Println(<span style="color:#98c379">"Корень:"</span>, result)
+    fmt.Println("Корень:", result)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">sqrt</span>(n <span style="color:#c678dd">float64</span>) (<span style="color:#c678dd">float64</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> n < <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"отрицательное число: %v"</span>, n)
+func sqrt(n float64) (float64, error) {
+    if n < 0 {
+        return 0, fmt.Errorf("отрицательное число: %v", n)
     }
-    <span style="color:#c678dd">return</span> math.Sqrt(n), <span style="color:#d19a66">nil</span>
-}</code></div>
-    </details>
+    return math.Sqrt(n), nil
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 4: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    name, err := getName(<span style="color:#98c379">""</span>)
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    name, err := getName("")
     fmt.Println(name, err)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">getName</span>(input <span style="color:#c678dd">string</span>) (<span style="color:#c678dd">string</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> input == <span style="color:#98c379">""</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#98c379">""</span>, fmt.Errorf(<span style="color:#98c379">"пустой ввод"</span>)
+func getName(input string) (string, error) {
+    if input == "" {
+        return "", fmt.Errorf("пустой ввод")
     }
-    <span style="color:#c678dd">return</span> input, <span style="color:#d19a66">nil</span>
-}</code></div>
-        <p><strong>Вывод:</strong> <code> пустой ввод</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Вызывается <code>getName("")</code></li>
-            <li><code>input == ""</code> - истинно</li>
-            <li>Возвращается <code>"", fmt.Errorf("пустой ввод")</code></li>
-            <li><code>name = ""</code>, <code>err = "пустой ввод"</code></li>
-            <li>Выводится пустая строка и ошибка</li>
-        </ol>
-    </details>
+    return input, nil
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code> пустой ввод</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Вызывается <code>getName("")</code></li>
+                            <li><code>input == ""</code> — истинно</li>
+                            <li>Возвращается <code>"", fmt.Errorf("пустой ввод")</code></li>
+                            <li><code>name = ""</code>, <code>err = "пустой ввод"</code></li>
+                            <li>Выводится пустая строка и ошибка</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 5: Найди проблему</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>() {
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Найди проблему</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">func process() {
     result, _ := riskyOperation()
-    fmt.Println(result * <span style="color:#d19a66">2</span>)
-}</code></div>
-        <p><strong>Проблема:</strong> Ошибка от <code>riskyOperation</code> игнорируется с <code>_</code>. Если операция вернёт ошибку, <code>result</code> может быть некорректным (например, 0), и программа продолжит работу с неверными данными.</p>
-        <p><strong>Исправление:</strong></p>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>() {
+    fmt.Println(result * 2)
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Проблема:</strong> Ошибка от <code>riskyOperation</code> игнорируется с <code>_</code>. Если операция вернёт ошибку, <code>result</code> может быть некорректным (например, 0), и программа продолжит работу с неверными данными.</p>
+                        <p><strong>Исправление:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">func process() {
     result, err := riskyOperation()
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибка:"</span>, err)
-        <span style="color:#c678dd">return</span>
+    if err != nil {
+        fmt.Println("Ошибка:", err)
+        return
     }
-    fmt.Println(result * <span style="color:#d19a66">2</span>)
-}</code></div>
-    </details>
+    fmt.Println(result * 2)
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 6: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    a, err1 := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">2</span>)
-    b, err2 := divide(<span style="color:#d19a66">10</span>, <span style="color:#d19a66">0</span>)
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a, err1 := divide(10, 2)
+    b, err2 := divide(10, 0)
 
     fmt.Println(a, err1)
     fmt.Println(b, err2)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">divide</span>(a, b <span style="color:#c678dd">int</span>) (<span style="color:#c678dd">int</span>, <span style="color:#c678dd">error</span>) {
-    <span style="color:#c678dd">if</span> b == <span style="color:#d19a66">0</span> {
-        <span style="color:#c678dd">return</span> <span style="color:#d19a66">0</span>, fmt.Errorf(<span style="color:#98c379">"на ноль делить нельзя"</span>)
+func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, fmt.Errorf("на ноль делить нельзя")
     }
-    <span style="color:#c678dd">return</span> a / b, <span style="color:#d19a66">nil</span>
-}</code></div>
-        <p><strong>Вывод:</strong></p>
-        <div class="code-block"><code><div class="output">5 &lt;nil&gt;
-0 на ноль делить нельзя</div></code></div>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Первый вызов: <code>divide(10, 2)</code> возвращает <code>5, nil</code></li>
-            <li>Второй вызов: <code>divide(10, 0)</code> возвращает <code>0, "на ноль делить нельзя"</code></li>
-            <li><code>&lt;nil&gt;</code> - так Go отображает nil при выводе</li>
-        </ol>
-    </details>
+    return a / b, nil
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Output</span></div>
+                            <pre><code>5 &lt;nil&gt;
+0 на ноль делить нельзя</code></pre>
+                        </div>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Первый вызов: <code>divide(10, 2)</code> → <code>5, nil</code></li>
+                            <li>Второй вызов: <code>divide(10, 0)</code> → <code>0, "на ноль делить нельзя"</code></li>
+                            <li><code>&lt;nil&gt;</code> — так Go отображает nil при выводе</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <div class="summary-box">
-        <h3>Резюме</h3>
-        <p><strong>Ключевые идеи:</strong></p>
-        <ul>
-            <li><code>error</code> - интерфейс для представления ошибок</li>
-            <li><code>nil</code> означает отсутствие ошибки</li>
-            <li>Функции возвращают <code>(результат, error)</code></li>
-            <li>Создание ошибок: <code>fmt.Errorf()</code> или <code>errors.New()</code></li>
-        </ul>
-        <p><strong>Главная ловушка:</strong> Игнорировать ошибки с <code>_</code> - программа может работать с некорректными данными.</p>
-        <p><strong>Правило:</strong> Всегда проверяйте ошибки. Если функция возвращает error - проверьте его.</p>
-    </div>
+        <h2>Резюме</h2>
 
-    <div class="nav-footer">
-        <a href="07-defer.html" class="nav-link">← defer</a>
-        <a href="09-if-err-nil.html" class="nav-link">Паттерн if err != nil →</a>
-    </div>
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li><code>error</code> — интерфейс для представления ошибок</li>
+                <li><code>nil</code> означает отсутствие ошибки</li>
+                <li>Функции возвращают <code>(результат, error)</code></li>
+                <li>Создание ошибок: <code>fmt.Errorf()</code> или <code>errors.New()</code></li>
+            </ul>
+        </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        /* global hljs */ /* global Telegram */
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-                const tg = Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                if (tg.BackButton) {
-                    tg.BackButton.show();
-                    tg.BackButton.onClick(function() {
-                        window.history.back();
-                    });
-                }
-            }
-            document.querySelectorAll('.code-block code').forEach(function(block) {
-                hljs.highlightElement(block);
-            });
+        <p><strong>Главная ловушка:</strong> Игнорировать ошибки с <code>_</code> — программа может работать с некорректными данными.</p>
+
+        <blockquote><p><strong>Правило:</strong> Всегда проверяйте ошибки. Если функция возвращает error — проверьте его.</p></blockquote>
+
+        <nav class="nav-footer">
+            <a href="07-defer.html" class="nav-link prev">
+                <span class="nav-arrow">&larr;</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">defer — отложенное выполнение</div>
+                </div>
+            </a>
+            <a href="09-if-err-nil.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">Паттерн if err != nil</div>
+                </div>
+                <span class="nav-arrow">&rarr;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
         });
-    </script>
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
 </body>
 </html>

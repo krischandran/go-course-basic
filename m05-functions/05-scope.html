@@ -3,31 +3,443 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Область видимости (scope)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{white-space:pre;font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}.tip-card{border-left-color:var(--accent-green)}.tip-card .card-title::before{content:'TIP';font-size:10px;background:var(--accent-green);color:#000;padding:2px 6px;border-radius:4px}.warning-card{border-left-color:var(--accent-red)}.warning-card .card-title::before{content:'!';font-size:12px;font-weight:700;background:var(--accent-red);color:#000;padding:2px 8px;border-radius:4px}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.table-wrapper{overflow-x:auto;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bg-tertiary)}th{background:var(--bg-secondary);color:var(--accent-blue);font-weight:600;white-space:nowrap}td{color:var(--text-secondary)}tr:hover td{background:var(--bg-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+    <title>Область видимости (scope) — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by JS - copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .diagram-box {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .diagram-box pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            white-space: pre;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML - details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML - navigation link alignment (prev) */
+        .nav-link.prev {
+            text-align: left;
+        }
+        /* Used by HTML - navigation link alignment (next) */
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
 </head>
 <body>
-    <span class="module-badge">Модуль 5: Функции</span>
-    <h1>Область видимости (scope)</h1>
-    <p class="lead"><strong>Область видимости</strong> (scope) - это часть кода, где переменная существует и доступна.</p>
 
-    <h2>Что такое область видимости</h2>
-    <p>Переменная "живёт" только внутри блока, где она объявлена. За пределами блока она не существует - попытка обратиться к ней вызовет ошибку компиляции.</p>
+    <main>
+        <div class="module-badge">Модуль 5 / Урок 5</div>
 
-    <h2>Область видимости на самом деле</h2>
+        <h1>Область видимости (scope)</h1>
+        <p class="lead"><strong>Область видимости</strong> (scope) — это часть кода, где переменная существует и доступна.</p>
 
-    <h3>Блоки в Go</h3>
-    <p><strong>Блок</strong> - это код между фигурными скобками <code>{}</code>. Блоки создают:</p>
-    <ul>
-        <li>Функции: <code>func f() { блок }</code></li>
-        <li>Условия: <code>if { блок }</code></li>
-        <li>Циклы: <code>for { блок }</code></li>
-    </ul>
+        <h2>Что такое область видимости</h2>
+        <p>Переменная "живёт" только внутри блока, где она объявлена. За пределами блока она не существует — попытка обратиться к ней вызовет ошибку компиляции.</p>
 
-    <div class="diagram-box">
-        <pre>  Уровни видимости
+        <h2>Область видимости на самом деле</h2>
+
+        <h3>Блоки в Go</h3>
+        <p><strong>Блок</strong> — это код между фигурными скобками <code>{}</code>. Блоки создают:</p>
+        <ul>
+            <li>Функции: <code>func f() { блок }</code></li>
+            <li>Условия: <code>if { блок }</code></li>
+            <li>Циклы: <code>for { блок }</code></li>
+        </ul>
+
+        <div class="diagram-box">
+            <pre>  Уровни видимости
 
   package main
   |
@@ -46,365 +458,578 @@
   |  func other() {
   |  |  // localVar здесь НЕ видна
   |  }</pre>
-    </div>
+        </div>
 
-    <h3>Правило: вложенность</h3>
-    <p>Внутренний блок <strong>видит</strong> переменные внешнего блока. Внешний блок <strong>не видит</strong> переменные внутреннего.</p>
+        <h3>Правило: вложенность</h3>
+        <p>Внутренний блок <strong>видит</strong> переменные внешнего блока. Внешний блок <strong>не видит</strong> переменные внутреннего.</p>
 
-    <h2>Локальные переменные функции</h2>
-    <p>Переменные, объявленные внутри функции, называются <strong>локальными</strong>. Они видны только внутри этой функции:</p>
+        <h2>Локальные переменные функции</h2>
+        <p>Переменные, объявленные внутри функции, называются <strong>локальными</strong>. Они видны только внутри этой функции:</p>
 
-    <div class="code-block"><code><span class="comment">// message не существует в printMessage</span>
-<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    message := <span style="color:#98c379">"Привет из main"</span>
-    fmt.Println(message)  <span class="comment">// OK</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    message := "Привет из main"
+    fmt.Println(message)  // OK
+
     printMessage()
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">printMessage</span>() {
-    fmt.Println(message)  <span class="comment">// Ошибка! message не существует здесь</span>
-}</code></div>
+func printMessage() {
+    fmt.Println(message)  // Ошибка! message не существует здесь
+}</code></pre>
+        </div>
 
-    <h3>Каждая функция - свой мир</h3>
+        <h3>Каждая функция — свой мир</h3>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">10</span>
-    fmt.Println(x)  <span class="comment">// 10</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+    fmt.Println(x)  // 10
+
     other()
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">other</span>() {
-    x := <span style="color:#d19a66">20</span>         <span class="comment">// Это ДРУГАЯ переменная x</span>
-    fmt.Println(x)  <span class="comment">// 20</span>
-}</code></div>
+func other() {
+    x := 20         // Это ДРУГАЯ переменная x
+    fmt.Println(x)  // 20
+}</code></pre>
+        </div>
 
-    <p>Переменная <code>x</code> в <code>main</code> и <code>x</code> в <code>other</code> - это разные переменные. Они не конфликтуют, потому что существуют в разных областях видимости.</p>
+        <p>Переменная <code>x</code> в <code>main</code> и <code>x</code> в <code>other</code> — это разные переменные. Они не конфликтуют, потому что существуют в разных областях видимости.</p>
 
-    <h2>Параметры - тоже локальные</h2>
-    <p>Параметры функции видны только внутри функции:</p>
+        <h2>Параметры — тоже локальные</h2>
+        <p>Параметры функции видны только внутри функции:</p>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    greet(<span style="color:#98c379">"Алексей"</span>)
-    fmt.Println(name)  <span class="comment">// Ошибка! name не существует в main</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    greet("Алексей")
+    fmt.Println(name)  // Ошибка! name не существует в main
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">greet</span>(name <span style="color:#c678dd">string</span>) {
-    fmt.Println(<span style="color:#98c379">"Привет,"</span>, name)  <span class="comment">// OK</span>
-}</code></div>
+func greet(name string) {
+    fmt.Println("Привет,", name)  // OK
+}</code></pre>
+        </div>
 
-    <p>Параметр <code>name</code> - локальная переменная функции <code>greet</code>.</p>
+        <p>Параметр <code>name</code> — локальная переменная функции <code>greet</code>.</p>
 
-    <h2>Область видимости в блоках</h2>
-    <p>Переменные внутри <code>if</code>, <code>for</code>, <code>switch</code> видны только внутри этих блоков:</p>
+        <h2>Область видимости в блоках</h2>
+        <p>Переменные внутри <code>if</code>, <code>for</code>, <code>switch</code> видны только внутри этих блоков:</p>
 
-    <h3>В условии if</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">if</span> x := <span style="color:#d19a66">10</span>; x > <span style="color:#d19a66">5</span> {
-        fmt.Println(x)  <span class="comment">// OK: x видна внутри if</span>
+        <h3>В условии if</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    if x := 10; x > 5 {
+        fmt.Println(x)  // OK: x видна внутри if
     }
-    fmt.Println(x)  <span class="comment">// Ошибка! x не существует здесь</span>
-}</code></div>
+    fmt.Println(x)  // Ошибка! x не существует здесь
+}</code></pre>
+        </div>
 
-    <h3>В цикле for</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
-        fmt.Println(i)  <span class="comment">// OK: i видна внутри for</span>
+        <h3>В цикле for</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 0; i < 3; i++ {
+        fmt.Println(i)  // OK: i видна внутри for
     }
-    fmt.Println(i)  <span class="comment">// Ошибка! i не существует здесь</span>
-}</code></div>
+    fmt.Println(i)  // Ошибка! i не существует здесь
+}</code></pre>
+        </div>
 
-    <h3>Переменная внутри блока</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">10</span>
+        <h3>Переменная внутри блока</h3>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        y := <span style="color:#d19a66">20</span>
-        fmt.Println(x, y)  <span class="comment">// OK: x видна из внешнего блока, y - локальная</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+
+    if true {
+        y := 20
+        fmt.Println(x, y)  // OK: x видна из внешнего блока, y — локальная
     }
 
-    fmt.Println(x)  <span class="comment">// OK</span>
-    fmt.Println(y)  <span class="comment">// Ошибка! y не существует здесь</span>
-}</code></div>
+    fmt.Println(x)  // OK
+    fmt.Println(y)  // Ошибка! y не существует здесь
+}</code></pre>
+        </div>
 
-    <h2>Глобальные переменные</h2>
-    <p>Переменные, объявленные вне функций, называются <strong>глобальными</strong>. Они видны во всех функциях пакета:</p>
+        <h2>Глобальные переменные</h2>
+        <p>Переменные, объявленные вне функций, называются <strong>глобальными</strong>. Они видны во всех функциях пакета:</p>
 
-    <div class="code-block"><code><span style="color:#c678dd">var</span> globalMessage = <span style="color:#98c379">"Я глобальная переменная"</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    fmt.Println(globalMessage)  <span class="comment">// OK</span>
+import "fmt"
+
+var globalMessage = "Я глобальная переменная"
+
+func main() {
+    fmt.Println(globalMessage)  // OK
     printGlobal()
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">printGlobal</span>() {
-    fmt.Println(globalMessage)  <span class="comment">// OK - та же переменная</span>
-}</code></div>
+func printGlobal() {
+    fmt.Println(globalMessage)  // OK — та же переменная
+}</code></pre>
+        </div>
 
-    <h3>Когда использовать глобальные переменные</h3>
-    <p>Глобальные переменные следует использовать осторожно:</p>
-    <ul>
-        <li><strong>Хорошо:</strong> Константы конфигурации, логгеры</li>
-        <li><strong>Плохо:</strong> Для передачи данных между функциями (используйте параметры)</li>
-    </ul>
+        <h3>Когда использовать глобальные переменные</h3>
+        <p>Глобальные переменные следует использовать осторожно:</p>
 
-    <div class="card warning-card">
-        <div class="card-title">Осторожно с глобальными</div>
-        <p>Глобальные переменные усложняют понимание кода - непонятно, кто и когда их меняет. Предпочитайте параметры и возвращаемые значения.</p>
-    </div>
+        <div class="diagram-box">
+            <pre>Хорошо:
+- Константы конфигурации
+- Логгеры
+- Соединения с базой данных (осторожно)
 
-    <h2>Время жизни переменной</h2>
-    <p>Переменная существует, пока выполняется блок, где она объявлена:</p>
+Плохо:
+- Для передачи данных между функциями (используйте параметры)
+- Для хранения состояния (используйте структуры)</pre>
+        </div>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
-        message := <span style="color:#98c379">"Итерация"</span>  <span class="comment">// Создаётся заново на каждой итерации</span>
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <p>Глобальные переменные усложняют понимание кода — непонятно, кто и когда их меняет. Предпочитайте параметры и возвращаемые значения.</p>
+        </div>
+
+        <h2>Время жизни переменной</h2>
+        <p>Переменная существует, пока выполняется блок, где она объявлена:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 0; i < 3; i++ {
+        message := "Итерация"  // Создаётся заново на каждой итерации
         fmt.Println(message, i)
     }
-    <span class="comment">// message больше не существует</span>
-}</code></div>
+    // message больше не существует
+}</code></pre>
+        </div>
 
-    <p>На каждой итерации цикла создаётся <strong>новая</strong> переменная <code>message</code>. После выхода из цикла она перестаёт существовать.</p>
+        <p>На каждой итерации цикла создаётся <strong>новая</strong> переменная <code>message</code>. После выхода из цикла она перестаёт существовать.</p>
 
-    <h2>Практические примеры</h2>
+        <h2>Практические примеры</h2>
 
-    <h3>Пример 1: Счётчик вне цикла</h3>
-    <p>Если нужно использовать счётчик после цикла, объявите его снаружи:</p>
+        <h3>Пример 1: Счётчик вне цикла</h3>
+        <p>Если нужно использовать счётчик после цикла, объявите его снаружи:</p>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    i := <span style="color:#d19a66">0</span>
-    <span style="color:#c678dd">for</span> ; i < <span style="color:#d19a66">5</span>; i++ {
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    i := 0
+    for ; i < 5; i++ {
         fmt.Println(i)
     }
-    fmt.Println(<span style="color:#98c379">"Итоговое значение:"</span>, i)  <span class="comment">// 5</span>
-}</code></div>
+    fmt.Println("Итоговое значение:", i)  // 5
+}</code></pre>
+        </div>
 
-    <h3>Пример 2: Накопление результата</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    sum := <span style="color:#d19a66">0</span>  <span class="comment">// Объявляем вне цикла</span>
+        <h3>Пример 2: Накопление результата</h3>
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">1</span>; i <= <span style="color:#d19a66">5</span>; i++ {
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    sum := 0  // Объявляем вне цикла
+
+    for i := 1; i <= 5; i++ {
         sum += i
     }
 
-    fmt.Println(<span style="color:#98c379">"Сумма:"</span>, sum)  <span class="comment">// 15</span>
-}</code></div>
+    fmt.Println("Сумма:", sum)  // 15
+}</code></pre>
+        </div>
 
-    <h3>Пример 3: Результат условия</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">var</span> status <span style="color:#c678dd">string</span>  <span class="comment">// Объявляем вне if</span>
+        <h3>Пример 3: Результат условия</h3>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        status = <span style="color:#98c379">"успех"</span>
-    } <span style="color:#c678dd">else</span> {
-        status = <span style="color:#98c379">"ошибка"</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var status string  // Объявляем вне if
+
+    if true {
+        status = "успех"
+    } else {
+        status = "ошибка"
     }
 
-    fmt.Println(<span style="color:#98c379">"Статус:"</span>, status)  <span class="comment">// Используем после if</span>
-}</code></div>
+    fmt.Println("Статус:", status)  // Используем после if
+}</code></pre>
+        </div>
 
-    <h2>Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
-    <h3>Вопросы</h3>
+        <h3>Вопросы</h3>
 
-    <details class="question-card">
-        <summary>Вопрос 1: Что такое область видимости переменной?</summary>
-        <p>Область видимости - это часть кода, где переменная существует и доступна. Переменная видна только внутри блока, где она объявлена, и во вложенных блоках.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что такое область видимости переменной?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Область видимости — это часть кода, где переменная существует и доступна. Переменная видна только внутри блока, где она объявлена, и во вложенных блоках.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 2: Видна ли переменная, объявленная внутри if, после закрывающей скобки?</summary>
-        <p>Нет. Переменная, объявленная внутри блока <code>if</code>, перестаёт существовать после закрывающей скобки <code>}</code>. Попытка обратиться к ней вызовет ошибку компиляции.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Видна ли переменная, объявленная внутри if, после закрывающей скобки?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. Переменная, объявленная внутри блока <code>if</code>, перестаёт существовать после закрывающей скобки <code>}</code>. Попытка обратиться к ней вызовет ошибку компиляции.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 3: Может ли функция видеть локальные переменные другой функции?</summary>
-        <p>Нет. Локальные переменные существуют только внутри функции, где объявлены. Другие функции их не видят. Для передачи данных используйте параметры и возвращаемые значения.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Может ли функция видеть локальные переменные другой функции?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. Локальные переменные существуют только внутри функции, где объявлены. Другие функции их не видят. Для передачи данных используйте параметры и возвращаемые значения.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 4: Чем глобальные переменные отличаются от локальных?</summary>
-        <p><strong>Локальные</strong> - объявлены внутри функции, видны только в ней.<br><strong>Глобальные</strong> - объявлены вне функций, видны во всех функциях пакета.<br>Глобальные объявляются с <code>var</code> на уровне пакета, не внутри функций.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Чем глобальные переменные отличаются от локальных?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>Локальные</strong> — объявлены внутри функции, видны только в ней</p>
+                        <p><strong>Глобальные</strong> — объявлены вне функций, видны во всех функциях пакета</p>
+                        <p>Глобальные объявляются с <code>var</code> на уровне пакета, не внутри функций.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <h3>Задачи</h3>
+        <h3>Задачи</h3>
 
-    <details class="task-card">
-        <summary>Задача 1: Скомпилируется ли код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        x := <span style="color:#d19a66">10</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Скомпилируется ли код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    if true {
+        x := 10
     }
     fmt.Println(x)
-}</code></div>
-        <p><strong>Ответ:</strong> Нет, не скомпилируется.</p>
-        <p><strong>Причина:</strong> Переменная <code>x</code> объявлена внутри блока <code>if</code> и не существует вне его. Попытка использовать <code>x</code> после закрывающей скобки вызовет ошибку: <code>undefined: x</code>.</p>
-        <p><strong>Исправление:</strong></p>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">var</span> x <span style="color:#c678dd">int</span>
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        x = <span style="color:#d19a66">10</span>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Нет, не скомпилируется.</strong></p>
+                        <p><strong>Причина:</strong> Переменная <code>x</code> объявлена внутри блока <code>if</code> и не существует вне его. Попытка использовать <code>x</code> после закрывающей скобки вызовет ошибку: <code>undefined: x</code>.</p>
+                        <p><strong>Исправление:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">func main() {
+    var x int
+    if true {
+        x = 10
     }
     fmt.Println(x)
-}</code></div>
-    </details>
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 2: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">5</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 5
     setX()
     fmt.Println(x)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">setX</span>() {
-    x := <span style="color:#d19a66">10</span>
+func setX() {
+    x := 10
     fmt.Println(x)
-}</code></div>
-        <p><strong>Вывод:</strong></p>
-        <div class="code-block"><code><div class="output">10
-5</div></code></div>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>В <code>main</code>: <code>x = 5</code></li>
-            <li>Вызывается <code>setX()</code>: создаётся НОВАЯ локальная переменная <code>x = 10</code>, выводится 10</li>
-            <li>Возвращаемся в <code>main</code></li>
-            <li><code>x</code> в <code>main</code> всё ещё равен 5 - это другая переменная</li>
-            <li>Выводится 5</li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Output</span></div>
+                            <pre><code>10
+5</code></pre>
+                        </div>
+                        <p><strong>Разбор:</strong></p>
+                        <p>1. В <code>main</code>: <code>x = 5</code></p>
+                        <p>2. Вызывается <code>setX()</code>: создаётся НОВАЯ локальная переменная <code>x = 10</code>, выводится 10</p>
+                        <p>3. Возвращаемся в <code>main</code></p>
+                        <p>4. <code>x</code> в <code>main</code> всё ещё равен 5 — это другая переменная</p>
+                        <p>5. Выводится 5</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 3: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">var</span> counter = <span style="color:#d19a66">0</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+import "fmt"
+
+var counter = 0
+
+func main() {
     increment()
     increment()
     fmt.Println(counter)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">increment</span>() {
+func increment() {
     counter++
-}</code></div>
-        <p><strong>Вывод:</strong> <code>2</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li><code>counter</code> - глобальная переменная, видна во всех функциях</li>
-            <li>Первый вызов <code>increment()</code>: <code>counter = 1</code></li>
-            <li>Второй вызов <code>increment()</code>: <code>counter = 2</code></li>
-            <li>Выводится 2</li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>2</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <p>1. <code>counter</code> — глобальная переменная, видна во всех функциях</p>
+                        <p>2. Первый вызов <code>increment()</code>: <code>counter = 1</code></p>
+                        <p>3. Второй вызов <code>increment()</code>: <code>counter = 2</code></p>
+                        <p>4. Выводится 2</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 4: Скомпилируется ли код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Скомпилируется ли код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    for i := 0; i < 3; i++ {
         fmt.Println(i)
     }
     total := i
     fmt.Println(total)
-}</code></div>
-        <p><strong>Ответ:</strong> Нет, не скомпилируется.</p>
-        <p><strong>Причина:</strong> Переменная <code>i</code> объявлена в заголовке <code>for</code> и существует только внутри цикла. После цикла <code>i</code> недоступна.</p>
-        <p><strong>Исправление:</strong></p>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    i := <span style="color:#d19a66">0</span>
-    <span style="color:#c678dd">for</span> ; i < <span style="color:#d19a66">3</span>; i++ {
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Нет, не скомпилируется.</strong></p>
+                        <p><strong>Причина:</strong> Переменная <code>i</code> объявлена в заголовке <code>for</code> и существует только внутри цикла. После цикла <code>i</code> недоступна.</p>
+                        <p><strong>Исправление:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">func main() {
+    i := 0
+    for ; i < 3; i++ {
         fmt.Println(i)
     }
     total := i
     fmt.Println(total)
-}</code></div>
-    </details>
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 5: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">1</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
-        x := x + <span style="color:#d19a66">1</span>  <span class="comment">// Внимание на :=</span>
-        fmt.Print(x, <span style="color:#98c379">" "</span>)
+import "fmt"
+
+func main() {
+    x := 1
+
+    for i := 0; i < 3; i++ {
+        x := x + 1  // Внимание на :=
+        fmt.Print(x, " ")
     }
 
     fmt.Println(x)
-}</code></div>
-        <p><strong>Вывод:</strong> <code>2 2 2 1</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li><code>x = 1</code> в main</li>
-            <li>Итерация 1: <code>x := x + 1</code> создаёт НОВУЮ локальную <code>x = 2</code> внутри цикла, выводит 2</li>
-            <li>Итерация 2: снова создаётся новая <code>x = 1 + 1 = 2</code>, выводит 2</li>
-            <li>Итерация 3: снова создаётся новая <code>x = 1 + 1 = 2</code>, выводит 2</li>
-            <li>После цикла: <code>x</code> в main всё ещё равен 1</li>
-        </ol>
-        <p>Каждая итерация создаёт новую локальную переменную <code>x</code>, используя значение внешней <code>x</code> (1).</p>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>2 2 2 1</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <p>1. <code>x = 1</code> в main</p>
+                        <p>2. Итерация 1: <code>x := x + 1</code> создаёт НОВУЮ локальную <code>x = 2</code> внутри цикла, выводит 2</p>
+                        <p>3. Итерация 2: снова создаётся новая <code>x = 1 + 1 = 2</code>, выводит 2</p>
+                        <p>4. Итерация 3: снова создаётся новая <code>x = 1 + 1 = 2</code>, выводит 2</p>
+                        <p>5. После цикла: <code>x</code> в main всё ещё равен 1</p>
+                        <p>Каждая итерация создаёт новую локальную переменную <code>x</code>, используя значение внешней <code>x</code> (1).</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 6: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result := process(<span style="color:#d19a66">5</span>)
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result := process(5)
     fmt.Println(result)
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">process</span>(n <span style="color:#c678dd">int</span>) <span style="color:#c678dd">int</span> {
-    <span style="color:#c678dd">if</span> n > <span style="color:#d19a66">0</span> {
-        bonus := <span style="color:#d19a66">10</span>
-        <span style="color:#c678dd">return</span> n + bonus
+func process(n int) int {
+    if n > 0 {
+        bonus := 10
+        return n + bonus
     }
-    <span style="color:#c678dd">return</span> n
-}</code></div>
-        <p><strong>Вывод:</strong> <code>15</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Вызывается <code>process(5)</code></li>
-            <li><code>5 > 0</code> - истинно</li>
-            <li>Создаётся <code>bonus = 10</code></li>
-            <li><code>return 5 + 10 = 15</code></li>
-            <li><code>result = 15</code>, выводится 15</li>
-        </ol>
-    </details>
+    return n
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>15</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <p>1. Вызывается <code>process(5)</code></p>
+                        <p>2. <code>5 > 0</code> — истинно</p>
+                        <p>3. Создаётся <code>bonus = 10</code></p>
+                        <p>4. <code>return 5 + 10 = 15</code></p>
+                        <p>5. <code>result = 15</code>, выводится 15</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <div class="summary-box">
-        <h3>Резюме</h3>
-        <p><strong>Ключевые идеи:</strong></p>
-        <ul>
-            <li>Область видимости - часть кода, где переменная существует</li>
-            <li>Локальные переменные видны только внутри своего блока</li>
-            <li>Параметры функции - локальные переменные</li>
-            <li>Глобальные переменные видны во всех функциях пакета</li>
-        </ul>
-        <p><strong>Главная ловушка:</strong> Попытка использовать переменную из <code>if</code> или <code>for</code> после закрывающей скобки - она там не существует.</p>
-        <p><strong>Правило:</strong> Если переменная нужна после блока, объявите её до блока.</p>
-    </div>
+        <h2>Резюме</h2>
 
-    <div class="nav-footer">
-        <a href="04-multiple-returns.html" class="nav-link">← Множественные возвраты</a>
-        <a href="06-shadowing.html" class="nav-link">Shadowing →</a>
-    </div>
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li>Область видимости — часть кода, где переменная существует</li>
+                <li>Локальные переменные видны только внутри своего блока</li>
+                <li>Параметры функции — локальные переменные</li>
+                <li>Глобальные переменные видны во всех функциях пакета</li>
+            </ul>
+        </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        /* global hljs */ /* global Telegram */
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-                const tg = Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                if (tg.BackButton) {
-                    tg.BackButton.show();
-                    tg.BackButton.onClick(function() {
-                        window.history.back();
-                    });
-                }
-            }
-            document.querySelectorAll('.code-block code').forEach(function(block) {
-                hljs.highlightElement(block);
-            });
+        <p><strong>Главная ловушка:</strong> Попытка использовать переменную из <code>if</code> или <code>for</code> после закрывающей скобки — она там не существует.</p>
+
+        <blockquote><p><strong>Правило:</strong> Если переменная нужна после блока, объявите её до блока.</p></blockquote>
+
+        <nav class="nav-footer">
+            <a href="04-multiple-returns.html" class="nav-link prev">
+                <span class="nav-arrow">&lt;-</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Множественные возвраты</div></div>
+            </a>
+            <a href="06-shadowing.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Shadowing переменных</div></div>
+                <span class="nav-arrow">-&gt;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
         });
-    </script>
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
 </body>
 </html>

@@ -3,53 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shadowing (затенение переменных)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/onedark.min.css" integrity="sha512-rP4RQCJ3oECgUrcqME0WLv5K4npPIDBBUS4n2izlP3u5y6jAdMwv8EPVQSr6a9m2CvX06awJXmSfeR+pMIa0hQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>*{margin:0;padding:0;box-sizing:border-box}:root{--bg-primary:#1a1b2e;--bg-secondary:#242538;--bg-tertiary:#2d2e42;--text-primary:#e1e2e6;--text-secondary:#9d9fa6;--accent-blue:#6c9eff;--accent-green:#7dd698;--accent-red:#ff7b9c}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;padding:16px;padding-top:calc(env(safe-area-inset-top) + 16px);padding-bottom:calc(env(safe-area-inset-bottom) + 100px);font-size:15px}.module-badge{display:inline-block;background:var(--accent-blue);color:#000;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}h1{font-size:1.5rem;margin-bottom:16px;color:var(--text-primary);line-height:1.3}.lead{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bg-tertiary)}h2{font-size:1.2rem;margin:24px 0 12px;color:var(--accent-blue);display:flex;align-items:center;gap:8px}h2::before{content:'';width:4px;height:20px;background:var(--accent-blue);border-radius:2px}h3{font-size:1rem;margin:16px 0 8px;color:var(--text-primary)}p{margin-bottom:12px;color:var(--text-secondary)}ul,ol{margin:0 0 12px 20px;color:var(--text-secondary)}li{margin-bottom:6px}strong{color:var(--text-primary);font-weight:600}.code-block{background:#282c34;border-radius:8px;padding:14px;margin:12px 0;overflow-x:auto;border:1px solid var(--bg-tertiary)}.code-block code{white-space:pre;font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.5;color:#abb2bf}.code-block .comment{color:#5c6370;font-style:italic}.code-block .output{border-top:1px dashed #5c6370;margin-top:10px;padding-top:10px;color:var(--accent-green)}code{font-family:'SF Mono',Consolas,monospace;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent-green)}.diagram-box{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border:1px solid var(--bg-tertiary);overflow-x:auto}.diagram-box pre{font-family:'SF Mono',Consolas,monospace;font-size:12px;line-height:1.4;color:var(--text-secondary);margin:0;white-space:pre}.card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.card-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:8px}.tip-card{border-left-color:var(--accent-green)}.tip-card .card-title::before{content:'TIP';font-size:10px;background:var(--accent-green);color:#000;padding:2px 6px;border-radius:4px}.warning-card{border-left-color:var(--accent-red)}.warning-card .card-title::before{content:'!';font-size:12px;font-weight:700;background:var(--accent-red);color:#000;padding:2px 8px;border-radius:4px}.question-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-green)}.question-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.question-card p{margin-top:10px;color:var(--text-secondary)}.table-wrapper{overflow-x:auto;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bg-tertiary)}th{background:var(--bg-secondary);color:var(--accent-blue);font-weight:600;white-space:nowrap}td{color:var(--text-secondary)}tr:hover td{background:var(--bg-secondary)}.summary-box{background:linear-gradient(135deg,rgba(108,158,255,.1),rgba(125,214,152,.1));border-radius:8px;padding:16px;margin:20px 0;border:1px solid var(--accent-blue)}.summary-box h3{color:var(--accent-blue);margin-bottom:10px}.nav-footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--bg-tertiary);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}.nav-link{color:var(--accent-blue);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:4px}.nav-link:hover{text-decoration:underline}.task-card{background:var(--bg-secondary);border-radius:8px;padding:14px;margin:12px 0;border-left:3px solid var(--accent-blue)}.task-card summary{cursor:pointer;font-weight:500;color:var(--text-primary)}.task-card[open] summary{margin-bottom:10px}</style>
+    <title>Shadowing (затенение переменных) — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.prev {
+            text-align: left;
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Scope diagram */
+        .scope-diagram {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .scope-level {
+            position: relative;
+            padding: 4px 12px;
+            margin: 2px 0;
+            border-left: 2px solid var(--border-light);
+        }
+        .scope-level-0 { margin-left: 0; border-color: var(--accent-green); }
+        .scope-level-1 { margin-left: 20px; border-color: var(--accent-orange); }
+        .scope-level-2 { margin-left: 40px; border-color: #6b8afd; }
+        .scope-code { color: var(--text-secondary); }
+        .scope-comment { color: var(--text-muted); font-style: italic; }
+    </style>
 </head>
 <body>
-    <span class="module-badge">Модуль 5: Функции</span>
-    <h1>Shadowing (затенение переменных)</h1>
-    <p class="lead"><strong>Shadowing</strong> (затенение) - это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем. Внутренняя переменная "скрывает" внешнюю.</p>
 
-    <h2>Что такое shadowing</h2>
+    <main>
+        <div class="module-badge">Модуль 5 / Урок 6</div>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">10</span>
-    fmt.Println(x)  <span class="comment">// 10</span>
+        <h1>Shadowing (затенение переменных)</h1>
+        <p class="lead"><strong>Shadowing</strong> (затенение) — это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем. Внутренняя переменная "скрывает" внешнюю.</p>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        x := <span style="color:#d19a66">20</span>     <span class="comment">// Новая переменная x, затеняет внешнюю</span>
-        fmt.Println(x)  <span class="comment">// 20</span>
+        <h2>Что такое shadowing</h2>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+    fmt.Println(x)  // 10
+
+    if true {
+        x := 20     // Новая переменная x, затеняет внешнюю
+        fmt.Println(x)  // 20
     }
 
-    fmt.Println(x)  <span class="comment">// 10 - внешняя x не изменилась</span>
-}</code></div>
+    fmt.Println(x)  // 10 — внешняя x не изменилась
+}</code></pre>
+        </div>
 
-    <h2>Shadowing на самом деле</h2>
+        <h2>Shadowing на самом деле</h2>
 
-    <h3>Как работает затенение</h3>
-    <p>При использовании <code>:=</code> во внутреннем блоке создаётся <strong>новая</strong> переменная, даже если переменная с таким именем уже существует:</p>
+        <h3>Как работает затенение</h3>
 
-    <div class="diagram-box">
-        <pre>  func main() {
-      x := 10                    &lt;- x1 = 10
+        <p>При использовании <code>:=</code> во внутреннем блоке создаётся <strong>новая</strong> переменная, даже если переменная с таким именем уже существует:</p>
 
-      if true {
-          x := 20                &lt;- x2 = 20 (новая!)
-          fmt.Println(x)         выводит x2 = 20
-      }                          &lt;- x2 умирает
+        <div class="scope-diagram">
+            <div class="scope-level scope-level-0">
+                <span class="scope-code">func main() {</span>
+            </div>
+            <div class="scope-level scope-level-1">
+                <span class="scope-code">x := 10</span> <span class="scope-comment">← x₁ = 10</span>
+            </div>
+            <div class="scope-level scope-level-2">
+                <span class="scope-code">if true {</span>
+            </div>
+            <div class="scope-level scope-level-2">
+                <span class="scope-code" style="margin-left: 12px;">x := 20</span> <span class="scope-comment">← x₂ = 20 (новая!)</span>
+            </div>
+            <div class="scope-level scope-level-2">
+                <span class="scope-code" style="margin-left: 12px;">fmt.Println(x)</span> <span class="scope-comment">→ выводит x₂ = 20</span>
+            </div>
+            <div class="scope-level scope-level-2">
+                <span class="scope-code">}</span> <span class="scope-comment">← x₂ умирает</span>
+            </div>
+            <div class="scope-level scope-level-1">
+                <span class="scope-code">fmt.Println(x)</span> <span class="scope-comment">→ выводит x₁ = 10</span>
+            </div>
+            <div class="scope-level scope-level-0">
+                <span class="scope-code">}</span> <span class="scope-comment">← x₁ умирает</span>
+            </div>
+        </div>
 
-      fmt.Println(x)             выводит x1 = 10
-  }                              &lt;- x1 умирает</pre>
-    </div>
+        <p>Внутренняя <code>x</code> и внешняя <code>x</code> — это <strong>разные переменные</strong> в памяти.</p>
 
-    <p>Внутренняя <code>x</code> и внешняя <code>x</code> - это <strong>разные переменные</strong> в памяти.</p>
+        <h3>Присваивание vs Объявление</h3>
 
-    <h3>Присваивание vs Объявление</h3>
-
-    <div class="table-wrapper">
         <table>
             <thead>
                 <tr><th>Оператор</th><th>Что делает</th><th>Shadowing?</th></tr>
@@ -59,395 +529,622 @@
                 <tr><td><code>=</code></td><td>Присваивает существующей</td><td>Нет, меняет внешнюю</td></tr>
             </tbody>
         </table>
-    </div>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">10</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        x = <span style="color:#d19a66">20</span>  <span class="comment">// Присваивание, НЕ объявление</span>
+import "fmt"
+
+func main() {
+    x := 10
+
+    if true {
+        x = 20  // Присваивание, НЕ объявление
     }
 
-    fmt.Println(x)  <span class="comment">// 20 - внешняя x изменилась</span>
-}</code></div>
+    fmt.Println(x)  // 20 — внешняя x изменилась
+}</code></pre>
+        </div>
 
-    <h2>Типичные случаи shadowing</h2>
+        <h2>Типичные случаи shadowing</h2>
 
-    <h3>В условиях if</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    err := <span style="color:#98c379">"внешняя ошибка"</span>
+        <h3>В условиях if</h3>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        err := <span style="color:#98c379">"внутренняя ошибка"</span>  <span class="comment">// Затенение!</span>
-        fmt.Println(err)  <span class="comment">// внутренняя ошибка</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    err := "внешняя ошибка"
+
+    if true {
+        err := "внутренняя ошибка"  // Затенение!
+        fmt.Println(err)  // внутренняя ошибка
     }
 
-    fmt.Println(err)  <span class="comment">// внешняя ошибка</span>
-}</code></div>
+    fmt.Println(err)  // внешняя ошибка
+}</code></pre>
+        </div>
 
-    <h3>В циклах for</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    i := <span style="color:#d19a66">100</span>
+        <h3>В циклах for</h3>
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
-        fmt.Println(i)  <span class="comment">// 0, 1, 2 - внутренняя i</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    i := 100
+
+    for i := 0; i < 3; i++ {
+        fmt.Println(i)  // 0, 1, 2 — внутренняя i
     }
 
-    fmt.Println(i)  <span class="comment">// 100 - внешняя i</span>
-}</code></div>
+    fmt.Println(i)  // 100 — внешняя i
+}</code></pre>
+        </div>
 
-    <h3>В функциях</h3>
-    <div class="code-block"><code><span style="color:#c678dd">var</span> name = <span style="color:#98c379">"глобальное"</span>
+        <h3>В функциях</h3>
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    name := <span style="color:#98c379">"локальное"</span>     <span class="comment">// Затеняет глобальную</span>
-    fmt.Println(name)       <span class="comment">// локальное</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+var name = "глобальное"
+
+func main() {
+    name := "локальное"     // Затеняет глобальную
+    fmt.Println(name)       // локальное
     printGlobal()
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">printGlobal</span>() {
-    fmt.Println(name)       <span class="comment">// глобальное - здесь нет затенения</span>
-}</code></div>
+func printGlobal() {
+    fmt.Println(name)       // глобальное — здесь нет затенения
+}</code></pre>
+        </div>
 
-    <h2>Ловушка: случайное затенение</h2>
-    <p>Самая частая ошибка - случайно использовать <code>:=</code> вместо <code>=</code>:</p>
+        <h2>Ловушка: случайное затенение</h2>
 
-    <h3>Ловушка 1: Не изменяется внешняя переменная</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result := <span style="color:#d19a66">0</span>
+        <p>Самая частая ошибка — случайно использовать <code>:=</code> вместо <code>=</code>:</p>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        result := <span style="color:#d19a66">10</span>  <span class="comment">// Ошибка! Хотели изменить, но создали новую</span>
+        <h3>Ловушка 1: Не изменяется внешняя переменная</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    result := 0
+
+    if true {
+        result := 10  // Ошибка! Хотели изменить, но создали новую
     }
 
-    fmt.Println(result)  <span class="comment">// 0, а не 10!</span>
-}</code></div>
+    fmt.Println(result)  // 0, а не 10!
+}</code></pre>
+        </div>
 
-    <p><strong>Исправление:</strong></p>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    result := <span style="color:#d19a66">0</span>
+        <p><strong>Исправление:</strong></p>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        result = <span style="color:#d19a66">10</span>  <span class="comment">// Присваивание существующей переменной</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">func main() {
+    result := 0
+
+    if true {
+        result = 10  // Присваивание существующей переменной
     }
 
-    fmt.Println(result)  <span class="comment">// 10</span>
-}</code></div>
+    fmt.Println(result)  // 10
+}</code></pre>
+        </div>
 
-    <h3>Ловушка 2: err в цепочке if</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">var</span> err <span style="color:#c678dd">error</span> = <span style="color:#d19a66">nil</span>
+        <h3>Ловушка 2: err в цепочке if</h3>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        err := fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// Затенение!</span>
-        fmt.Println(err)  <span class="comment">// ошибка</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var err error = nil
+
+    if true {
+        err := fmt.Errorf("ошибка")  // Затенение!
+        fmt.Println(err)  // ошибка
     }
 
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Есть ошибка:"</span>, err)
-    } <span style="color:#c678dd">else</span> {
-        fmt.Println(<span style="color:#98c379">"Ошибок нет"</span>)  <span class="comment">// Выведется это!</span>
+    if err != nil {
+        fmt.Println("Есть ошибка:", err)
+    } else {
+        fmt.Println("Ошибок нет")  // Выведется это!
     }
-}</code></div>
+}</code></pre>
+        </div>
 
-    <p>Внешняя <code>err</code> осталась <code>nil</code>, хотя мы думали, что её изменили.</p>
+        <p>Внешняя <code>err</code> осталась <code>nil</code>, хотя мы думали, что её изменили.</p>
 
-    <p><strong>Исправление:</strong></p>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    <span style="color:#c678dd">var</span> err <span style="color:#c678dd">error</span>
+        <p><strong>Исправление:</strong></p>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        err = fmt.Errorf(<span style="color:#98c379">"ошибка"</span>)  <span class="comment">// Присваивание, не объявление</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">func main() {
+    var err error
+
+    if true {
+        err = fmt.Errorf("ошибка")  // Присваивание, не объявление
     }
 
-    <span style="color:#c678dd">if</span> err != <span style="color:#d19a66">nil</span> {
-        fmt.Println(<span style="color:#98c379">"Есть ошибка:"</span>, err)  <span class="comment">// Теперь работает</span>
+    if err != nil {
+        fmt.Println("Есть ошибка:", err)  // Теперь работает
     }
-}</code></div>
+}</code></pre>
+        </div>
 
-    <h2>Когда shadowing полезен</h2>
+        <h2>Когда shadowing полезен</h2>
 
-    <h3>Намеренное ограничение области</h3>
-    <p>Иногда shadowing используется намеренно:</p>
+        <h3>Намеренное ограничение области</h3>
 
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    data := <span style="color:#98c379">"чувствительные данные"</span>
+        <p>Иногда shadowing используется намеренно:</p>
 
-    <span class="comment">// Обработка в изолированном блоке</span>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    data := "чувствительные данные"
+
+    // Обработка в изолированном блоке
     {
-        data := <span style="color:#98c379">"безопасная копия"</span>
-        fmt.Println(<span style="color:#98c379">"Обработка:"</span>, data)
+        data := "безопасная копия"
+        fmt.Println("Обработка:", data)
     }
 
-    fmt.Println(<span style="color:#98c379">"Оригинал:"</span>, data)  <span class="comment">// Оригинал не изменён</span>
-}</code></div>
+    fmt.Println("Оригинал:", data)  // Оригинал не изменён
+}</code></pre>
+        </div>
 
-    <h3>В коротком объявлении if</h3>
-    <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">10</span>
+        <h3>В коротком объявлении if</h3>
 
-    <span class="comment">// Новая переменная только для условия</span>
-    <span style="color:#c678dd">if</span> x := getValue(); x > <span style="color:#d19a66">5</span> {
-        fmt.Println(<span style="color:#98c379">"Значение больше 5:"</span>, x)
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 10
+
+    // Новая переменная только для условия
+    if x := getValue(); x > 5 {
+        fmt.Println("Значение больше 5:", x)
     }
 
-    fmt.Println(<span style="color:#98c379">"Исходный x:"</span>, x)  <span class="comment">// 10</span>
+    fmt.Println("Исходный x:", x)  // 10
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">getValue</span>() <span style="color:#c678dd">int</span> {
-    <span style="color:#c678dd">return</span> <span style="color:#d19a66">7</span>
-}</code></div>
+func getValue() int {
+    return 7
+}</code></pre>
+        </div>
 
-    <h2>Как избежать случайного shadowing</h2>
+        <h2>Как избежать случайного shadowing</h2>
 
-    <h3>1. Используйте разные имена</h3>
-    <div class="code-block"><code><span class="comment">// Плохо</span>
-x := <span style="color:#d19a66">10</span>
-<span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-    x := <span style="color:#d19a66">20</span>  <span class="comment">// Легко перепутать с x = 20</span>
+        <h3>1. Используйте разные имена</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">// Плохо
+x := 10
+if true {
+    x := 20  // Легко перепутать с x = 20
 }
 
-<span class="comment">// Хорошо</span>
-outerX := <span style="color:#d19a66">10</span>
-<span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-    innerX := <span style="color:#d19a66">20</span>  <span class="comment">// Явно другая переменная</span>
-}</code></div>
+// Хорошо
+outerX := 10
+if true {
+    innerX := 20  // Явно другая переменная
+}</code></pre>
+        </div>
 
-    <h3>2. Объявляйте переменные заранее</h3>
-    <div class="code-block"><code><span class="comment">// Плохо</span>
-<span style="color:#c678dd">if</span> condition {
-    result := calculate()  <span class="comment">// Можно забыть, что это новая переменная</span>
+        <h3>2. Объявляйте переменные заранее</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">// Плохо
+if condition {
+    result := calculate()  // Можно забыть, что это новая переменная
 }
 
-<span class="comment">// Хорошо</span>
-<span style="color:#c678dd">var</span> result <span style="color:#c678dd">int</span>
-<span style="color:#c678dd">if</span> condition {
-    result = calculate()  <span class="comment">// Явно присваивание</span>
-}</code></div>
+// Хорошо
+var result int
+if condition {
+    result = calculate()  // Явно присваивание
+}</code></pre>
+        </div>
 
-    <h3>3. Обращайте внимание на := vs =</h3>
-    <ul>
-        <li><code>:=</code> - создаёт новую переменную</li>
-        <li><code>=</code> - присваивает существующей</li>
-    </ul>
+        <h3>3. Обращайте внимание на := vs =</h3>
 
-    <h2>Проверь себя</h2>
+        <ul>
+            <li><code>:=</code> — создаёт новую переменную</li>
+            <li><code>=</code> — присваивает существующей</li>
+        </ul>
 
-    <h3>Вопросы</h3>
+        <h2>Проверь себя</h2>
 
-    <details class="question-card">
-        <summary>Вопрос 1: Что такое shadowing?</summary>
-        <p>Shadowing (затенение) - это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем блоке. Внутренняя переменная "скрывает" внешнюю в пределах своего блока.</p>
-    </details>
+        <h3>Вопросы</h3>
 
-    <details class="question-card">
-        <summary>Вопрос 2: Чем отличается := от = в контексте shadowing?</summary>
-        <p><code>:=</code> создаёт <strong>новую</strong> переменную, даже если переменная с таким именем уже существует (это вызывает shadowing).<br><code>=</code> присваивает значение <strong>существующей</strong> переменной (shadowing не происходит).</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что такое shadowing?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Shadowing (затенение) — это ситуация, когда переменная во внутреннем блоке имеет то же имя, что и переменная во внешнем блоке. Внутренняя переменная "скрывает" внешнюю в пределах своего блока.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 3: Изменится ли внешняя переменная при shadowing?</summary>
-        <p>Нет. При shadowing создаётся новая переменная. Внешняя переменная остаётся неизменной - она просто временно "скрыта" внутренней.</p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чем отличается := от = в контексте shadowing?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><code>:=</code> создаёт <strong>новую</strong> переменную, даже если переменная с таким именем уже существует (это вызывает shadowing).</p>
+                        <p><code>=</code> присваивает значение <strong>существующей</strong> переменной (shadowing не происходит).</p>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="question-card">
-        <summary>Вопрос 4: Как избежать случайного shadowing?</summary>
-        <p>1. Использовать разные имена для переменных в разных блоках<br>2. Объявлять переменные заранее (до блока) с помощью <code>var</code><br>3. Внимательно проверять использование <code>:=</code> vs <code>=</code></p>
-    </details>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Изменится ли внешняя переменная при shadowing?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. При shadowing создаётся новая переменная. Внешняя переменная остаётся неизменной — она просто временно "скрыта" внутренней.</p></div>
+                </details>
+            </div>
+        </div>
 
-    <h3>Задачи</h3>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Как избежать случайного shadowing?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <ol>
+                            <li>Использовать разные имена для переменных в разных блоках</li>
+                            <li>Объявлять переменные заранее (до блока) с помощью <code>var</code></li>
+                            <li>Внимательно проверять использование <code>:=</code> vs <code>=</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 1: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">5</span>
+        <h3>Задачи</h3>
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        x := <span style="color:#d19a66">10</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 5
+
+    if true {
+        x := 10
         x++
         fmt.Println(x)
     }
 
     fmt.Println(x)
-}</code></div>
-        <p><strong>Вывод:</strong></p>
-        <div class="code-block"><code><div class="output">11
-5</div></code></div>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Внешняя <code>x = 5</code></li>
-            <li>В блоке if создаётся новая <code>x = 10</code></li>
-            <li><code>x++</code> увеличивает внутреннюю <code>x</code> до 11</li>
-            <li>Выводится 11</li>
-            <li>После блока внутренняя <code>x</code> умирает</li>
-            <li>Внешняя <code>x</code> по-прежнему 5</li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Output</span></div>
+                            <pre><code>11
+5</code></pre>
+                        </div>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Внешняя <code>x = 5</code></li>
+                            <li>В блоке if создаётся новая <code>x = 10</code></li>
+                            <li><code>x++</code> увеличивает внутреннюю <code>x</code> до 11</li>
+                            <li>Выводится 11</li>
+                            <li>После блока внутренняя <code>x</code> умирает</li>
+                            <li>Внешняя <code>x</code> по-прежнему 5</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 2: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    n := <span style="color:#d19a66">1</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">0</span>; i < <span style="color:#d19a66">3</span>; i++ {
-        n := n + <span style="color:#d19a66">1</span>
-        fmt.Print(n, <span style="color:#98c379">" "</span>)
+import "fmt"
+
+func main() {
+    n := 1
+
+    for i := 0; i < 3; i++ {
+        n := n + 1
+        fmt.Print(n, " ")
     }
 
     fmt.Println(n)
-}</code></div>
-        <p><strong>Вывод:</strong> <code>2 2 2 1</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Внешняя <code>n = 1</code></li>
-            <li>Каждая итерация создаёт новую <code>n := 1 + 1 = 2</code> (используя значение внешней n)</li>
-            <li>Выводится 2 три раза</li>
-            <li>После цикла внешняя <code>n</code> по-прежнему 1</li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>2 2 2 1</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Внешняя <code>n = 1</code></li>
+                            <li>Каждая итерация: создаёт новую <code>n := 1 + 1 = 2</code> (используя значение внешней n), выводит 2</li>
+                            <li>После цикла внешняя <code>n</code> по-прежнему 1</li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 3: Исправь shadowing</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    sum := <span style="color:#d19a66">0</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Исправь shadowing</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">1</span>; i <= <span style="color:#d19a66">5</span>; i++ {
+import "fmt"
+
+func main() {
+    sum := 0
+
+    for i := 1; i <= 5; i++ {
         sum := sum + i
     }
 
-    fmt.Println(sum)  <span class="comment">// Хотим получить 15</span>
-}</code></div>
-        <p><strong>Проблема:</strong> В цикле используется <code>:=</code>, что создаёт новую локальную переменную <code>sum</code>.</p>
-        <p><strong>Исправление:</strong> Заменить <code>:=</code> на <code>=</code>:</p>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    sum := <span style="color:#d19a66">0</span>
+    fmt.Println(sum)  // Хотим получить 15
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Проблема:</strong> В цикле используется <code>:=</code>, что создаёт новую локальную переменную <code>sum</code>.</p>
+                        <p><strong>Исправление:</strong> Заменить <code>:=</code> на <code>=</code>:</p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">for</span> i := <span style="color:#d19a66">1</span>; i <= <span style="color:#d19a66">5</span>; i++ {
-        sum = sum + i  <span class="comment">// Присваивание, не объявление</span>
+import "fmt"
+
+func main() {
+    sum := 0
+
+    for i := 1; i <= 5; i++ {
+        sum = sum + i  // Присваивание, не объявление
     }
 
-    fmt.Println(sum)  <span class="comment">// 15</span>
-}</code></div>
-    </details>
+    fmt.Println(sum)  // 15
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 4: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">var</span> x = <span style="color:#d19a66">100</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
+import "fmt"
+
+var x = 100
+
+func main() {
     fmt.Println(x)
 
-    x := <span style="color:#d19a66">200</span>
+    x := 200
     fmt.Println(x)
 
     printX()
 }
 
-<span style="color:#c678dd">func</span> <span style="color:#61afef">printX</span>() {
+func printX() {
     fmt.Println(x)
-}</code></div>
-        <p><strong>Вывод:</strong></p>
-        <div class="code-block"><code><div class="output">100
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Output</span></div>
+                            <pre><code>100
 200
-100</div></code></div>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Первый вывод: глобальная <code>x = 100</code></li>
-            <li>Создаётся локальная <code>x = 200</code>, затеняет глобальную</li>
-            <li>Второй вывод: локальная <code>x = 200</code></li>
-            <li>В <code>printX()</code> локальная <code>x</code> из <code>main</code> не видна</li>
-            <li>Третий вывод: глобальная <code>x = 100</code></li>
-        </ol>
-    </details>
+100</code></pre>
+                        </div>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Первый вывод: глобальная <code>x = 100</code></li>
+                            <li>Создаётся локальная <code>x = 200</code>, затеняет глобальную</li>
+                            <li>Второй вывод: локальная <code>x = 200</code></li>
+                            <li>В <code>printX()</code> локальная <code>x</code> из <code>main</code> не видна</li>
+                            <li>Третий вывод: глобальная <code>x = 100</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 5: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    a := <span style="color:#d19a66">1</span>
-    b := <span style="color:#d19a66">2</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">if</span> <span style="color:#d19a66">true</span> {
-        a := <span style="color:#d19a66">10</span>
-        b = <span style="color:#d19a66">20</span>
+import "fmt"
+
+func main() {
+    a := 1
+    b := 2
+
+    if true {
+        a := 10
+        b = 20
         fmt.Println(a, b)
     }
 
     fmt.Println(a, b)
-}</code></div>
-        <p><strong>Вывод:</strong></p>
-        <div class="code-block"><code><div class="output">10 20
-1 20</div></code></div>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li><code>a = 1</code>, <code>b = 2</code></li>
-            <li>В блоке if: <code>a := 10</code> - создаёт новую локальную <code>a</code> (shadowing)</li>
-            <li><code>b = 20</code> - присваивает внешней <code>b</code> (НЕ shadowing)</li>
-            <li>Выводится <code>10 20</code></li>
-            <li>После блока: <code>a</code> вернулась к внешней = 1, <code>b</code> была изменена = 20</li>
-            <li>Выводится <code>1 20</code></li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Output</span></div>
+                            <pre><code>10 20
+1 20</code></pre>
+                        </div>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li><code>a = 1</code>, <code>b = 2</code></li>
+                            <li>В блоке if: <code>a := 10</code> — создаёт новую локальную <code>a</code> (shadowing); <code>b = 20</code> — присваивает внешней <code>b</code> (НЕ shadowing)</li>
+                            <li>Выводится <code>10 20</code></li>
+                            <li>После блока: <code>a</code> вернулась к внешней = 1, <code>b</code> была изменена = 20</li>
+                            <li>Выводится <code>1 20</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <details class="task-card">
-        <summary>Задача 6: Что выведет код?</summary>
-        <div class="code-block"><code><span style="color:#c678dd">func</span> <span style="color:#61afef">main</span>() {
-    x := <span style="color:#d19a66">5</span>
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">package main
 
-    <span style="color:#c678dd">for</span> x := <span style="color:#d19a66">0</span>; x < <span style="color:#d19a66">3</span>; x++ {
+import "fmt"
+
+func main() {
+    x := 5
+
+    for x := 0; x < 3; x++ {
         fmt.Print(x)
     }
 
     fmt.Println(x)
-}</code></div>
-        <p><strong>Вывод:</strong> <code>0125</code></p>
-        <p><strong>Разбор:</strong></p>
-        <ol>
-            <li>Внешняя <code>x = 5</code></li>
-            <li>В цикле создаётся новая <code>x := 0</code> (shadowing)</li>
-            <li>Цикл выводит: 0, 1, 2</li>
-            <li>После цикла внешняя <code>x = 5</code></li>
-            <li>Итого: <code>012</code> + <code>5</code> = <code>0125</code></li>
-        </ol>
-    </details>
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>0125</code></p>
+                        <p><strong>Разбор:</strong></p>
+                        <ol>
+                            <li>Внешняя <code>x = 5</code></li>
+                            <li>В цикле создаётся новая <code>x := 0</code> (shadowing)</li>
+                            <li>Цикл выводит: 0, 1, 2</li>
+                            <li>После цикла внешняя <code>x = 5</code></li>
+                            <li>Итого: <code>012</code> + <code>5</code> = <code>0125</code></li>
+                        </ol>
+                    </div>
+                </details>
+            </div>
+        </div>
 
-    <div class="summary-box">
-        <h3>Резюме</h3>
-        <p><strong>Ключевые идеи:</strong></p>
-        <ul>
-            <li>Shadowing - создание переменной с тем же именем во внутреннем блоке</li>
-            <li><code>:=</code> создаёт новую переменную, <code>=</code> присваивает существующей</li>
-            <li>Внешняя переменная при shadowing не изменяется</li>
-            <li>Случайное shadowing - частый источник багов</li>
-        </ul>
+        <h2>Резюме</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li>Shadowing — создание переменной с тем же именем во внутреннем блоке</li>
+                <li><code>:=</code> создаёт новую переменную, <code>=</code> присваивает существующей</li>
+                <li>Внешняя переменная при shadowing не изменяется</li>
+                <li>Случайное shadowing — частый источник багов</li>
+            </ul>
+        </div>
+
         <p><strong>Главная ловушка:</strong> Использовать <code>:=</code> вместо <code>=</code>, думая, что изменяешь внешнюю переменную.</p>
-        <p><strong>Правило:</strong> Если хотите изменить переменную из внешнего блока, используйте <code>=</code>, а не <code>:=</code>.</p>
-    </div>
 
-    <div class="nav-footer">
-        <a href="05-scope.html" class="nav-link">← Область видимости</a>
-        <a href="07-defer.html" class="nav-link">defer →</a>
-    </div>
+        <blockquote><p><strong>Правило:</strong> Если хотите изменить переменную из внешнего блока, используйте <code>=</code>, а не <code>:=</code>.</p></blockquote>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-vLqKjTDJw1L5Vvjcm7xPV49G/OmSEQaVZ0P7jXCuJ9n0lNwFFJ6WfKVQo/h5BdXbEUQxfvSbEQy5EGSCD84YvQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        /* global hljs */ /* global Telegram */
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-                const tg = Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                if (tg.BackButton) {
-                    tg.BackButton.show();
-                    tg.BackButton.onClick(function() {
-                        window.history.back();
-                    });
-                }
-            }
-            document.querySelectorAll('.code-block code').forEach(function(block) {
-                hljs.highlightElement(block);
-            });
+        <nav class="nav-footer">
+            <a href="05-scope.html" class="nav-link prev">
+                <span class="nav-arrow">&larr;</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">Область видимости (scope)</div>
+                </div>
+            </a>
+            <a href="07-defer.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">defer — отложенное выполнение</div>
+                </div>
+                <span class="nav-arrow">&rarr;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
         });
-    </script>
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
 </body>
 </html>
