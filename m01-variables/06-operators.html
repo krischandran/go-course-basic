@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Операторы в Go</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 15px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 32px 0 16px;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-green);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+
+        .code-block pre {
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px 20px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+
+        blockquote p {
+            font-size: 15px;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 20px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .alert-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert-important .alert-label { color: var(--accent-orange); }
+
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-num {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2) 0%, rgba(42, 241, 107, 0.05) 100%);
+            color: var(--accent-green);
+        }
+
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2) 0%, rgba(241, 161, 42, 0.05) 100%);
+            color: var(--accent-orange);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .card-body .code-block {
+            margin: 0 0 16px 0;
+        }
+
+        details {
+            margin-top: 12px;
+        }
+
+        summary {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent-green);
+            cursor: pointer;
+            padding: 10px 16px;
+            background: rgba(42, 241, 107, 0.06);
+            border-radius: 6px;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        summary::before {
+            content: '▶';
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        summary::-webkit-details-marker { display: none; }
+
+        .answer {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .answer p {
+            margin-bottom: 8px;
+        }
+
+        .answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .answer .code-block {
+            margin: 12px 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: border-color 0.2s;
+        }
+
+        .nav-link:hover {
+            border-color: var(--border-light);
+        }
+
+        .nav-link.prev { text-align: left; }
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+
+        .nav-arrow {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .nav-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="module-badge">Модуль 1 / Урок 6</div>
+        <h1>Операторы в Go</h1>
+        <p class="lead">Операторы - это символы, которые выполняют операции над значениями. В Go есть несколько категорий операторов.</p>
+
+        <!-- H2 #1 -->
+        <h2 id="philosophy">Философия операторов в Go</h2>
+
+        <p>Go намеренно ограничивает возможности операторов ради <strong>читаемости и предсказуемости</strong>. Несколько примеров:</p>
+
+        <ol>
+            <li><strong>Нет перегрузки операторов</strong> - <code>+</code> всегда означает сложение чисел или конкатенацию строк, ничего больше</li>
+            <li><strong>Нет тернарного оператора</strong> - вместо <code>x ? a : b</code> пишем явный <code>if-else</code></li>
+            <li><strong><code>++</code> только постфиксный</strong> - нет путаницы между <code>i++</code> и <code>++i</code></li>
+            <li><strong><code>++</code> не возвращает значение</strong> - нельзя написать <code>x = i++</code></li>
+        </ol>
+
+        <p>Эти ограничения кажутся неудобными после C++/JavaScript, но они делают код Go однозначным для чтения.</p>
+
+        <!-- H2 #2 -->
+        <h2 id="arithmetic">Арифметические операторы</h2>
+
+        <!-- Code block #1 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 10
+b := 3
+
+fmt.Println(a + b)   // 13 - сложение
+fmt.Println(a - b)   // 7  - вычитание
+fmt.Println(a * b)   // 30 - умножение
+fmt.Println(a / b)   // 3  - целочисленное деление
+fmt.Println(a % b)   // 1  - остаток от деления</code></pre>
+        </div>
+
+        <h3 id="integer-division">Целочисленное деление</h3>
+
+        <p>При делении целых чисел результат всегда целый (дробная часть отбрасывается):</p>
+
+        <!-- Code block #2 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">fmt.Println(10 / 3)   // 3 (не 3.33)
+fmt.Println(10 / 4)   // 2 (не 2.5)
+
+// Для дробного результата используй float
+fmt.Println(10.0 / 3.0)   // 3.3333...
+fmt.Println(float64(10) / float64(3))  // 3.3333...</code></pre>
+        </div>
+
+        <h3 id="increment">Инкремент и декремент</h3>
+
+        <p>В Go <code>++</code> и <code>--</code> - это <strong>операторы</strong>, не выражения. Они не возвращают значение:</p>
+
+        <!-- Code block #3 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 5
+a++  // a = 6
+a--  // a = 5
+
+// Только постфиксная форма!
+// ++a  // ❌ ошибка компиляции
+
+// Нельзя использовать в выражениях:
+// b := a++  // ❌ ошибка компиляции
+a++
+b := a  // ✅ OK</code></pre>
+        </div>
+
+        <h3 id="why-limited">Почему Go так ограничивает ++/--?</h3>
+
+        <p>В C/C++ это частый источник багов:</p>
+
+        <!-- Code block #4 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">C</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>// C: что здесь происходит?
+int a = 5;
+int b = a++ + ++a;  // Результат зависит от компилятора! Undefined behavior.
+
+// Ещё хуже:
+arr[i++] = arr[++i];  // Совершенно непредсказуемо</code></pre>
+        </div>
+
+        <p>В Go такой код <strong>невозможно написать</strong>. Каждая операция - отдельная строка, всё читается однозначно:</p>
+
+        <!-- Code block #5 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 5
+a++           // a = 6
+b := a + 1    // b = 7, всё очевидно</code></pre>
+        </div>
+
+        <blockquote><p>Для свитчеров: В JavaScript и C можно писать <code>x = ++a</code> или <code>x = a++</code>. В Go это запрещено - и код становится понятнее.</p></blockquote>
+
+        <!-- H2 #3 -->
+        <h2 id="comparison">Операторы сравнения</h2>
+
+        <p>Возвращают <code>bool</code> (<code>true</code> или <code>false</code>):</p>
+
+        <!-- Code block #6 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 10
+b := 20
+
+fmt.Println(a == b)  // false - равно
+fmt.Println(a != b)  // true  - не равно
+fmt.Println(a < b)   // true  - меньше
+fmt.Println(a > b)   // false - больше
+fmt.Println(a <= b)  // true  - меньше или равно
+fmt.Println(a >= b)  // false - больше или равно</code></pre>
+        </div>
+
+        <h3 id="string-comparison">Сравнение строк</h3>
+
+        <p>Строки сравниваются лексикографически (по алфавиту):</p>
+
+        <!-- Code block #7 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">fmt.Println("apple" < "banana")  // true
+fmt.Println("Go" == "Go")        // true
+fmt.Println("go" == "Go")        // false (регистр важен)</code></pre>
+        </div>
+
+        <!-- H2 #4 -->
+        <h2 id="logical">Логические операторы</h2>
+
+        <p>Работают с булевыми значениями:</p>
+
+        <!-- Code block #8 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := true
+b := false
+
+fmt.Println(a && b)  // false - И (AND)
+fmt.Println(a || b)  // true  - ИЛИ (OR)
+fmt.Println(!a)      // false - НЕ (NOT)</code></pre>
+        </div>
+
+        <h3 id="short-circuit">Short-circuit evaluation</h3>
+
+        <p>Go использует "ленивое" вычисление логических выражений:</p>
+
+        <!-- Code block #9 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := false
+b := true
+
+// && - если первое false, второе НЕ вычисляется
+result1 := a && b  // false (b даже не проверяется)
+
+// || - если первое true, второе НЕ вычисляется
+result2 := b || a  // true (a даже не проверяется)
+
+fmt.Println(result1, result2)  // false true</code></pre>
+        </div>
+
+        <p><strong>Почему это важно:</strong></p>
+        <ul>
+            <li>Экономит вычисления - не делает лишнюю работу</li>
+            <li>Позволяет безопасно комбинировать проверки</li>
+        </ul>
+
+        <!-- Code block #10 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">x := 5
+y := 0
+
+// Безопасная проверка:
+safeCheck := y != 0 && x/y > 2
+// y == 0 → первая часть false → второе НЕ вычисляется
+// Деления на ноль не происходит!
+
+fmt.Println(safeCheck)  // false</code></pre>
+        </div>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <div class="alert-label">Tip</div>
+            <p>Как использовать short-circuit с <code>if</code> для защиты от ошибок - изучим в модуле условий.</p>
+        </div>
+
+        <!-- H2 #5 -->
+        <h2 id="bitwise">Битовые операторы</h2>
+
+        <p>Работают с битами числа:</p>
+
+        <!-- Code block #11 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 5   // 0101 в двоичной
+b := 3   // 0011 в двоичной
+
+fmt.Println(a & b)   // 1 (AND)  - 0101 & 0011 = 0001
+fmt.Println(a | b)   // 7 (OR)   - 0101 | 0011 = 0111
+fmt.Println(a ^ b)   // 6 (XOR)  - 0101 ^ 0011 = 0110
+fmt.Println(a &^ b)  // 4 (AND NOT) - 0101 &^ 0011 = 0100</code></pre>
+        </div>
+
+        <h3 id="bit-shifts">Битовые сдвиги</h3>
+
+        <!-- Code block #12 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 1
+
+fmt.Println(a << 1)  // 2  (сдвиг влево: 0001 → 0010)
+fmt.Println(a << 2)  // 4  (0001 → 0100)
+fmt.Println(a << 3)  // 8  (0001 → 1000)
+
+b := 8
+fmt.Println(b >> 1)  // 4  (сдвиг вправо: 1000 → 0100)
+fmt.Println(b >> 2)  // 2  (1000 → 0010)</code></pre>
+        </div>
+
+        <h3 id="bit-flags">Применение: битовые флаги</h3>
+
+        <!-- Code block #13 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">const (
+    FlagRead   = 1 << 0  // 001
+    FlagWrite  = 1 << 1  // 010
+    FlagExec   = 1 << 2  // 100
+)
+
+permissions := FlagRead | FlagWrite  // 011 = 3
+fmt.Println("Начальные права:", permissions)  // 3
+
+// Проверка флага - результат bool
+canRead := permissions & FlagRead != 0
+fmt.Println("Чтение разрешено:", canRead)  // true
+
+// Добавление флага
+permissions |= FlagExec  // 111 = 7
+fmt.Println("После добавления Exec:", permissions)  // 7
+
+// Удаление флага
+permissions &^= FlagWrite  // 101 = 5
+fmt.Println("После удаления Write:", permissions)  // 5</code></pre>
+        </div>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <div class="alert-label">Tip</div>
+            <p>Как использовать битовые флаги с <code>if</code> для управления доступом - изучим в модуле условий.</p>
+        </div>
+
+        <!-- H2 #6 -->
+        <h2 id="assignment">Операторы присваивания</h2>
+
+        <!-- Code block #14 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">a := 10
+
+a += 5   // a = a + 5  → 15
+a -= 3   // a = a - 3  → 12
+a *= 2   // a = a * 2  → 24
+a /= 4   // a = a / 4  → 6
+a %= 4   // a = a % 4  → 2
+
+// Битовые присваивания
+a &= 1   // a = a & 1
+a |= 2   // a = a | 2
+a ^= 3   // a = a ^ 3
+a <<= 1  // a = a << 1
+a >>= 1  // a = a >> 1</code></pre>
+        </div>
+
+        <!-- H2 #7 -->
+        <h2 id="no-ternary">Почему в Go нет тернарного оператора?</h2>
+
+        <p>В C/JavaScript есть тернарный оператор:</p>
+
+        <!-- Code block #15 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">JavaScript</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>// JavaScript
+result = condition ? valueIfTrue : valueIfFalse</code></pre>
+        </div>
+
+        <p>В Go его <strong>намеренно убрали</strong>. Почему?</p>
+
+        <!-- Code block #16 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">C</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code>// C: вложенные тернарники - ад для чтения
+int result = a > b ? (a > c ? a : c) : (b > c ? b : c);</code></pre>
+        </div>
+
+        <p>В Go вместо этого используется явный <code>if-else</code> (изучим в модуле "Условия"):</p>
+
+        <!-- Code block #17 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Go: явно и читаемо
+// if a > b {
+//     result = a
+// } else {
+//     result = b
+// }</code></pre>
+        </div>
+
+        <p><strong>Кажется длиннее? Да. Но читается однозначно.</strong></p>
+
+        <p>Для простых случаев можно использовать встроенные функции (Go 1.21+):</p>
+
+        <!-- Code block #18 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Универсальный max/min
+result := max(a, max(b, c))
+smallest := min(x, y)</code></pre>
+        </div>
+
+        <div class="alert alert-tip">
+            <div class="alert-icon">✓</div>
+            <div class="alert-label">Tip</div>
+            <p>Операторы <code>&</code> и <code>*</code> для работы с указателями изучим в отдельном модуле.</p>
+        </div>
+
+        <!-- H2 #8 -->
+        <h2 id="precedence">Приоритет операторов</h2>
+
+        <p>От высшего к низшему:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Приоритет</th>
+                    <th>Операторы</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>5 (высший)</td><td><code>*</code>, <code>/</code>, <code>%</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>&</code>, <code>&^</code></td></tr>
+                <tr><td>4</td><td><code>+</code>, <code>-</code>, <code>|</code>, <code>^</code></td></tr>
+                <tr><td>3</td><td><code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td></tr>
+                <tr><td>2</td><td><code>&&</code></td></tr>
+                <tr><td>1 (низший)</td><td><code>||</code></td></tr>
+            </tbody>
+        </table>
+
+        <!-- Code block #19 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+            <pre><code class="language-go">// Пример: что вычислится первым?
+result := 2 + 3 * 4    // 14, не 20 (умножение первое)
+result := (2 + 3) * 4  // 20 (скобки меняют порядок)
+
+// Рекомендация: используй скобки для ясности
+result := a && b || c   // неочевидно
+result := (a && b) || c // ясно</code></pre>
+        </div>
+
+        <!-- H2 #9 -->
+        <h2 id="practice">Проверь себя</h2>
+
+        <h3 id="questions">Вопросы</h3>
+
+        <!-- Question #1 -->
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">1</span>
+                <span class="card-title">Почему в Go нет тернарного оператора <code>?:</code>?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>Go намеренно убрал тернарный оператор для читаемости. Вложенные тернарники (<code>a ? b : c ? d : e</code>) трудно читать. Явный <code>if-else</code> длиннее, но читается однозначно.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Question #2 -->
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">2</span>
+                <span class="card-title">Чем <code>++</code> в Go отличается от <code>++</code> в C/JavaScript?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>В Go <code>++</code> - только постфиксный (нет <code>++i</code>), и он не возвращает значение. Нельзя написать <code>x = i++</code>. Это устраняет undefined behavior как в C: <code>arr[i++] = arr[++i]</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Question #3 -->
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">3</span>
+                <span class="card-title">Что такое short-circuit evaluation?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p>"Ленивое" вычисление логических выражений. Если первая часть <code>&&</code> уже <code>false</code>, вторая не вычисляется. Если первая часть <code>||</code> уже <code>true</code>, вторая не вычисляется. Это позволяет безопасно писать: <code>if y != 0 && x/y > 2</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Question #4 -->
+        <div class="card question-card">
+            <div class="card-head">
+                <span class="card-num">4</span>
+                <span class="card-title">Что вернёт <code>10 / 3</code> в Go?</span>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><code>3</code> (не <code>3.33</code>). При делении целых чисел дробная часть отбрасывается. Для дробного результата используй float: <code>10.0 / 3.0</code> или <code>float64(10) / float64(3)</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h3 id="tasks">Задачи</h3>
+
+        <!-- Task #1 -->
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">1</span>
+                <span class="card-title">Арифметика</span>
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 12px;">Вычисли площадь и периметр прямоугольника со сторонами 5 и 3:</p>
+                <div class="code-block">
+                    <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    width := 5
+    height := 3
+    // Вычисли area и perimeter
+}</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    width := 5
+    height := 3
+
+    area := width * height
+    perimeter := 2 * (width + height)
+
+    fmt.Println("Площадь:", area)        // 15
+    fmt.Println("Периметр:", perimeter)  // 16
+}</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Task #2 -->
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">2</span>
+                <span class="card-title">Остаток от деления</span>
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 12px;">Напиши код, который определяет, является ли число чётным:</p>
+                <div class="code-block">
+                    <pre><code class="language-go">n := 7
+// Твой код - используй оператор %
+// Результат должен быть в переменной isEven типа bool</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <pre><code class="language-go">n := 7
+isEven := n % 2 == 0
+fmt.Println(isEven)  // false
+
+// Проверим с чётным числом:
+m := 4
+mIsEven := m % 2 == 0
+fmt.Println(mIsEven)  // true</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong> <code>%</code> даёт остаток от деления. Чётные числа делятся на 2 без остатка, поэтому <code>n % 2 == 0</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Task #3 -->
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">3</span>
+                <span class="card-title">Логические операторы</span>
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 12px;">Напиши код, который проверяет, находится ли число в диапазоне от 1 до 100 включительно:</p>
+                <div class="code-block">
+                    <pre><code class="language-go">n := 50
+// Твой код - используй операторы сравнения и &&
+// Результат должен быть в переменной inRange типа bool</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <pre><code class="language-go">n := 50
+inRange := n >= 1 && n <= 100
+fmt.Println(inRange)  // true
+
+// Проверим граничные случаи:
+a := 0
+aInRange := a >= 1 && a <= 100
+fmt.Println(aInRange)  // false
+
+b := 101
+bInRange := b >= 1 && b <= 100
+fmt.Println(bInRange)  // false</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong> Используем <code>&&</code> чтобы проверить ОБА условия - число >= 1 И число <= 100.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Task #4 -->
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">4</span>
+                <span class="card-title">Битовые операции</span>
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 12px;">Создай переменную <code>flags</code> с установленными флагами Read и Execute. Затем определи, установлен ли флаг Write:</p>
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    Read    = 1 << 0  // 1
+    Write   = 1 << 1  // 2
+    Execute = 1 << 2  // 4
+)
+
+// Твой код
+// Результат: hasWrite типа bool</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <pre><code class="language-go">const (
+    Read    = 1 << 0  // 1
+    Write   = 1 << 1  // 2
+    Execute = 1 << 2  // 4
+)
+
+flags := Read | Execute  // 5 (101 в двоичном)
+
+// Проверка флага:
+hasWrite := flags & Write != 0
+fmt.Println("Write установлен:", hasWrite)  // false
+
+hasRead := flags & Read != 0
+fmt.Println("Read установлен:", hasRead)    // true
+
+hasExec := flags & Execute != 0
+fmt.Println("Execute установлен:", hasExec) // true</code></pre>
+                        </div>
+                        <p><strong>Почему:</strong> Операция <code>flags & Write</code> даёт ненулевой результат только если бит Write установлен. У нас <code>flags = 101</code>, а <code>Write = 010</code>, поэтому <code>101 & 010 = 000 = 0</code>.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Task #5 -->
+        <div class="card task-card">
+            <div class="card-head">
+                <span class="card-num">5</span>
+                <span class="card-title">Порядок операций</span>
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 12px;">Что выведет этот код? Объясни порядок вычисления:</p>
+                <div class="code-block">
+                    <pre><code class="language-go">a := 2
+b := 3
+c := 4
+result := a + b * c
+fmt.Println(result)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer">
+                        <p><strong>Ответ:</strong> <code>14</code></p>
+                        <p><strong>Порядок:</strong></p>
+                        <p>1. <code>b * c = 3 * 4 = 12</code> (умножение имеет высший приоритет)</p>
+                        <p>2. <code>a + 12 = 2 + 12 = 14</code></p>
+                        <div class="code-block">
+                            <pre><code class="language-go">// Если нужно сначала сложение:
+result := (a + b) * c  // (2 + 3) * 4 = 20</code></pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- H2 #10 -->
+        <h2 id="summary">Резюме</h2>
+
+        <ul>
+            <li><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> - арифметика</li>
+            <li><code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code> - сравнение (возвращают <code>bool</code>)</li>
+            <li><code>&&</code>, <code>||</code>, <code>!</code> - логические операции (с short-circuit)</li>
+            <li><code>&</code>, <code>|</code>, <code>^</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code> - битовые операции</li>
+            <li><code>++</code>, <code>--</code> - только постфиксные, не возвращают значение</li>
+            <li>Тернарного оператора <code>?:</code> нет - используй <code>if-else</code></li>
+            <li>При делении целых результат целый</li>
+            <li>Используй скобки для явного порядка операций</li>
+        </ul>
+
+        <nav class="nav-footer">
+            <a href="05-constants-iota.html" class="nav-link prev">
+                <span class="nav-arrow">←</span>
+                <div>
+                    <div class="nav-label">Предыдущий урок</div>
+                    <div class="nav-title">Константы и iota</div>
+                </div>
+            </a>
+            <a href="07-type-conversion.html" class="nav-link next">
+                <div>
+                    <div class="nav-label">Следующий урок</div>
+                    <div class="nav-title">Преобразование типов</div>
+                </div>
+                <span class="nav-arrow">→</span>
+            </a>
+        </nav>
+    </main>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.BackButton.show();
+            tg.BackButton.onClick(() => history.back());
+        }
+
+        /* global hljs */
+        // noinspection JSUnresolvedReference
+        hljs.highlightAll();
+
+        function copyCode(btn) {
+            const code = btn.closest('.code-block').querySelector('code');
+            navigator.clipboard.writeText(code.textContent).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
