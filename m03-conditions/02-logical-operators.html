@@ -139,7 +139,10 @@
         }
         .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
         .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
-        .code-block pre { margin: 0; padding: 16px; overflow-x: auto; }
+        .hljs { background: transparent !important; }
+
+        .code-block pre {
+            background: transparent !important; margin: 0; padding: 16px; overflow-x: auto; }
         .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; background: none; padding: 0; color: var(--text-primary); }
 
         .alert {

@@ -86,7 +86,10 @@
         .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
         .copy-btn:hover { border-color: var(--border-light); color: var(--text-primary); }
         .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
-        .code-block pre { margin: 0; padding: 20px; overflow-x: auto; }
+        .hljs { background: transparent !important; }
+
+        .code-block pre {
+            background: transparent !important; margin: 0; padding: 20px; overflow-x: auto; }
         .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
 
         .alert { margin: 28px 0; padding: 20px 24px 20px 48px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color); position: relative; }
