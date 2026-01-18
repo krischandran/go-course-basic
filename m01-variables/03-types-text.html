@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Текстовые типы: string, byte, rune</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
+          integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+            integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active { background: var(--bg-tertiary); }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .ascii-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .ascii-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon { background: rgba(241, 161, 42, 0.15); color: var(--accent-orange); }
+        .alert-tip .alert-icon { background: rgba(42, 241, 107, 0.15); color: var(--accent-green); }
+        .alert-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .alert-important .alert-label { color: var(--accent-orange); }
+        .alert-tip .alert-label { color: var(--accent-green); }
+        .alert p { margin: 0; font-size: 14px; }
+
+        hr { border: none; height: 1px; background: var(--border-color); margin: 32px 0; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+        }
+        thead, tbody, tr { display: table; width: 100%; table-layout: fixed; }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code { background: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p { font-size: 14px; font-weight: 500; color: var(--text-primary); margin: 0; }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 16px; }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details { margin-top: 12px; }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        details summary::before { content: '>'; font-size: 12px; transition: transform 0.2s; }
+        details[open] summary::before { transform: rotate(90deg); }
+        details summary::-webkit-details-marker { display: none; }
+        .answer, .solution {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .solution { background: rgba(241, 161, 42, 0.03); border-left-color: var(--accent-orange); }
+        .answer p, .solution p { font-size: 14px; color: var(--text-secondary); }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 18px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 6px; font-size: 14px; }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+        }
+        .nav-link:active { background: var(--bg-tertiary); }
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 18px; color: var(--accent-green); }
+        .nav-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .nav-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    </style>
+</head>
+<body>
+
+<main>
+    <div class="module-badge">Модуль 1 / Урок 3</div>
+    <h1>Текстовые типы: string, byte, rune</h1>
+    <p class="lead">В Go работа с текстом требует понимания трёх типов: <code>string</code>, <code>byte</code> и <code>rune</code>. Они связаны, но имеют разное назначение.</p>
+
+    <hr>
+
+    <h2 id="interviews">Что спрашивают на собеседованиях</h2>
+    <blockquote><p><strong>"Что вернёт len("Привет") в Go?"</strong> — проверка понимания UTF-8.</p></blockquote>
+    <blockquote><p><strong>"Чем byte отличается от rune?"</strong> — базовое знание типов.</p></blockquote>
+    <blockquote><p><strong>"Как правильно итерировать по Unicode строке?"</strong> — практический навык.</p></blockquote>
+
+    <hr>
+
+    <h2 id="why-three">Почему три типа для текста?</h2>
+    <p>Компьютер работает с числами. Каждый символ — буква, цифра, эмодзи — это просто число в памяти.</p>
+
+    <h3>Краткая история: от ASCII к Unicode</h3>
+    <p><strong>ASCII (1963)</strong> — первая стандартная таблица. 128 символов: английские буквы, цифры, знаки препинания.</p>
+    <div class="ascii-block"><pre>A = 65, B = 66, Z = 90
+a = 97, b = 98, z = 122
+0 = 48, 9 = 57</pre></div>
+    <p><strong>Проблема:</strong> а как же кириллица? Китайский? Эмодзи? 128 символов — мало.</p>
+    <p><strong>Unicode (1991)</strong> — глобальная таблица на 143 000+ символов.</p>
+    <div class="ascii-block"><pre>А = U+0410 (кириллица)
+你 = U+4F60 (китайский)
+😀 = U+1F600 (эмодзи)</pre></div>
+    <p><strong>UTF-8</strong> — способ записи Unicode, где символы занимают от 1 до 4 байт:</p>
+    <ul>
+        <li>Английские: 1 байт</li>
+        <li>Кириллица: 2 байта</li>
+        <li>Китайские: 3 байта</li>
+        <li>Эмодзи: 4 байта</li>
+    </ul>
+
+    <h3>Зачем это знать?</h3>
+    <p>Потому что в Go:</p>
+    <ul>
+        <li><code>byte</code> — один байт (0-255), для ASCII и бинарных данных</li>
+        <li><code>rune</code> — один Unicode символ (до 4 байт), для любого текста</li>
+        <li><code>string</code> — последовательность байтов в UTF-8</li>
+    </ul>
+
+    <hr>
+
+    <h2 id="strings">Строки (string)</h2>
+    <p>Строки в Go — <strong>неизменяемые</strong> (immutable) последовательности байтов в кодировке UTF-8.</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "Hello, Go!"
+multiline := `Многострочная
+строка с "кавычками" и \n внутри`</code></pre>
+    </div>
+
+    <h3>Длина строки: байты vs символы</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "Привет"
+
+len(s)    // 12 (байты!)
+
+// Для подсчёта символов:
+runes := []rune(s)
+len(runes)  // 6 (символы)</code></pre>
+    </div>
+    <p><strong>Почему так?</strong> Каждая кириллическая буква занимает 2 байта в UTF-8.</p>
+
+    <h3>Итерация по строке</h3>
+    <div class="alert alert-tip">
+        <div class="alert-icon">✓</div>
+        <div class="alert-label">Tip</div>
+        <p>Перебор символов строки требует цикла <code>for</code>, который изучим в модуле "Циклы". <code>for range</code> даёт <strong>символы</strong>, а <code>s[i]</code> даёт <strong>байты</strong>.</p>
+    </div>
+
+    <h3>Изменение строки</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "hello"
+// s[0] = 'H'  // ❌ Ошибка компиляции!
+
+// Нельзя изменить отдельный символ
+// Подробнее — в модуле "Массивы и срезы"</code></pre>
+    </div>
+
+    <h3>Полезные функции из strings</h3>
+    <div class="alert alert-tip">
+        <div class="alert-icon">✓</div>
+        <div class="alert-label">Tip</div>
+        <p>Пакет <code>strings</code> изучим подробнее в модуле "Функции". Пока просто познакомься с возможностями.</p>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">import "strings"
+
+s := "Hello, World!"
+
+strings.Contains(s, "World")     // true
+strings.HasPrefix(s, "Hello")    // true
+strings.ToUpper(s)               // "HELLO, WORLD!"
+strings.TrimSpace("  hi  ")      // "hi"</code></pre>
+    </div>
+
+    <hr>
+
+    <h2 id="byte">byte — для байтовых данных</h2>
+    <p><code>byte</code> — это алиас для <code>uint8</code>. Хранит значения от 0 до 255.</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">// byte и uint8 — одно и то же
+var b byte = 65
+var u uint8 = 65  // эквивалентно</code></pre>
+    </div>
+
+    <h3>Зачем нужен byte, если есть uint8?</h3>
+    <p><code>byte</code> и <code>uint8</code> — одно и то же на уровне компилятора, но несут разный <strong>смысл</strong>:</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">var data uint8 = 200   // Просто число
+var b byte = 200       // Это БАЙТ — часть файла, сети, текста</code></pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">// byte хранит значения 0-255
+var b byte = 200
+fmt.Println(b)         // 200
+fmt.Println(string(b)) // È (символ с кодом 200)
+
+// Получение байта из строки
+s := "Hi"
+fmt.Println(s[0])         // 72 (код 'H')
+fmt.Println(string(s[0])) // H</code></pre>
+    </div>
+
+    <h3>Пакет unicode</h3>
+    <div class="alert alert-tip">
+        <div class="alert-icon">✓</div>
+        <div class="alert-label">Tip</div>
+        <p>Пакет <code>unicode</code> изучим подробнее позже. Пока просто познакомься с возможностями.</p>
+    </div>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">import "unicode"
+
+r := 'Ж'
+fmt.Println(unicode.IsLetter(r))  // true
+fmt.Println(unicode.IsUpper('Ж')) // true
+fmt.Println(unicode.ToLower('Ж')) // ж</code></pre>
+    </div>
+
+    <h3>[]byte и строки</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "hello"
+bytes := []byte(s)      // строка → []byte
+s2 := string(bytes)     // []byte → строка
+
+// Изменение через []byte
+bytes[0] = 'H'
+fmt.Println(string(bytes))  // "Hello"</code></pre>
+    </div>
+    <div class="alert alert-important">
+        <div class="alert-icon">!</div>
+        <div class="alert-label">Important</div>
+        <p><code>[]byte(s)</code> и <code>[]rune(s)</code> <strong>копируют</strong> данные. Для больших строк это может быть дорого.</p>
+    </div>
+
+    <hr>
+
+    <h2 id="rune">rune — для Unicode символов</h2>
+    <p><code>rune</code> — это алиас для <code>int32</code>. Представляет один Unicode символ (code point).</p>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">// rune и int32 — одно и то же
+var r rune = 'Я'
+var i int32 = 1071  // Unicode code point буквы "Я"</code></pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">// Символ в одинарных кавычках — это rune
+emoji := '😀'
+fmt.Println(emoji)         // 128512 (код)
+fmt.Println(string(emoji)) // 😀 (символ)
+
+var r rune = 'Ж'
+fmt.Println(r)         // 1046 (код)
+fmt.Println(string(r)) // Ж (символ)</code></pre>
+    </div>
+
+    <h3>[]rune и строки</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "Привет"
+
+// []byte — байтовое представление UTF-8
+bytes := []byte(s)
+fmt.Println(len(bytes))  // 12
+
+// []rune — символы
+runes := []rune(s)
+fmt.Println(len(runes))  // 6
+
+// Изменение символа в строке
+runes[0] = 'Д'
+fmt.Println(string(runes))  // "Дривет"</code></pre>
+    </div>
+
+    <h3>byte vs rune: когда что</h3>
+    <table>
+        <thead><tr><th>Задача</th><th>Используй</th></tr></thead>
+        <tbody>
+            <tr><td>Работа с ASCII текстом</td><td><code>byte</code> или <code>string</code></td></tr>
+            <tr><td>Работа с бинарными данными</td><td><code>[]byte</code></td></tr>
+            <tr><td>Подсчёт символов</td><td><code>[]rune</code> и <code>len()</code></td></tr>
+            <tr><td>Изменение Unicode символа</td><td><code>[]rune</code></td></tr>
+            <tr><td>Работа с эмодзи</td><td><code>rune</code></td></tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2 id="quiz">Проверь себя</h2>
+
+    <h3>Вопросы</h3>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">Q1</span><span class="card-title">Что вернёт len("Привет") в Go?</span></div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer"><p><code>12</code> (не 6). Функция <code>len()</code> для строк возвращает количество <strong>байт</strong>, не символов. 6 букв × 2 байта = 12.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">Q2</span><span class="card-title">Чем byte отличается от rune?</span></div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer"><p><code>byte</code> — алиас для <code>uint8</code> (8 бит, 0-255), для ASCII и бинарных данных. <code>rune</code> — алиас для <code>int32</code> (32 бита), для Unicode символов.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">Q3</span><span class="card-title">Как получить количество символов в строке "Привет"?</span></div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer"><p>Использовать <code>len([]rune(s))</code>. Вернёт <code>6</code> — количество символов (рун), а не байт.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card question-card">
+        <div class="card-head"><span class="card-num">Q4</span><span class="card-title">Почему s[0] для строки "Привет" вернёт не букву "П"?</span></div>
+        <div class="card-body">
+            <details>
+                <summary>Показать ответ</summary>
+                <div class="answer"><p>Индексация <code>s[i]</code> возвращает <strong>байт</strong>, а не символ. "П" занимает 2 байта, <code>s[0]</code> вернёт только первый байт (208).</p></div>
+            </details>
+        </div>
+    </div>
+
+    <h3>Задачи</h3>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">T1</span><span class="card-title">Что выведет?</span></div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre><code class="language-go">s := "Hello"
+fmt.Println(len(s))</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution"><p><strong>Вывод:</strong> <code>5</code></p><p>Все символы ASCII, каждый = 1 байт.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">T2</span><span class="card-title">Что выведет?</span></div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre><code class="language-go">s := "Привет"
+fmt.Println(len(s))</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution"><p><strong>Вывод:</strong> <code>12</code></p><p>6 букв × 2 байта = 12 байт.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">T3</span><span class="card-title">Что выведет?</span></div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre><code class="language-go">s := "Hi"
+fmt.Println(string(s[0]), string(s[1]))
+fmt.Println(s[0], s[1])</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution"><p><strong>Вывод:</strong> <code>H i</code> и <code>72 105</code></p><p>Для ASCII байт = символ. 'H' = 72, 'i' = 105.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <div class="card task-card">
+        <div class="card-head"><span class="card-num">T4</span><span class="card-title">Что выведет?</span></div>
+        <div class="card-body">
+            <div class="code-block">
+                <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                <pre><code class="language-go">emoji := '😀'
+fmt.Println(emoji)
+fmt.Println(string(emoji))</code></pre>
+            </div>
+            <details>
+                <summary>Показать решение</summary>
+                <div class="solution"><p><strong>Вывод:</strong> <code>128512</code> и <code>😀</code></p><p>Первый Println выводит код, <code>string(emoji)</code> преобразует код в символ.</p></div>
+            </details>
+        </div>
+    </div>
+
+    <hr>
+
+    <h2 id="errors">Частые ошибки</h2>
+
+    <h3>Ошибка 1: len() для Unicode</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "Привет"
+fmt.Println(len(s))  // 12, не 6!
+
+// Правильно — через []rune:
+runes := []rune(s)
+fmt.Println(len(runes))  // 6</code></pre>
+    </div>
+
+    <h3>Ошибка 2: Индексация Unicode строки</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">s := "Привет"
+fmt.Println(s[0])  // 208 (первый байт UTF-8, не 'П'!)
+
+// Правильно — через []rune:
+runes := []rune(s)
+fmt.Println(string(runes[0]))  // П</code></pre>
+    </div>
+
+    <h3>Ошибка 3: string(int)</h3>
+    <div class="code-block">
+        <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-go">n := 65
+s := string(n)  // НЕ "65", а "A" (Unicode code point 65)!
+
+// Правильно:
+import "strconv"
+s := strconv.Itoa(n)  // "65"</code></pre>
+    </div>
+
+    <hr>
+
+    <h2 id="summary">Резюме</h2>
+
+    <div class="summary-box">
+        <div class="summary-header">
+            <span class="summary-badge">Key</span>
+            <span class="summary-title">Ключевые моменты</span>
+        </div>
+        <ul class="summary-list">
+            <li><code>string</code> — неизменяемая последовательность байтов UTF-8</li>
+            <li><code>len(s)</code> возвращает <strong>байты</strong>, не символы</li>
+            <li><code>byte</code> — алиас <code>uint8</code>, для ASCII и бинарных данных</li>
+            <li><code>rune</code> — алиас <code>int32</code>, для Unicode символов</li>
+            <li><code>len([]rune(s))</code> — количество символов (не байт!)</li>
+            <li><code>[]byte(s)</code> и <code>[]rune(s)</code> — преобразование строки в срез</li>
+        </ul>
+    </div>
+
+    <nav class="nav-footer">
+        <a href="02-types-numeric.html" class="nav-link prev">
+            <span class="nav-arrow">←</span>
+            <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Числовые типы</div></div>
+        </a>
+        <a href="04-bool-zero-values.html" class="nav-link next">
+            <div><div class="nav-label">Следующий урок</div><div class="nav-title">Bool и нулевые значения</div></div>
+            <span class="nav-arrow">→</span>
+        </a>
+    </nav>
+</main>
+
+<script>
+    /* global hljs */
+    hljs.highlightAll();
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
