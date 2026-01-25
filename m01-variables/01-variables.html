@@ -258,60 +258,25 @@
             font-size: 12px;
         }
 
-        .memory-diagram {
-            margin: 24px 0;
-            padding: 20px;
+        .info-box {
+            margin: 20px 0;
+            padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
         }
-        .memory-label {
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
             font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            font-family: 'JetBrains Mono', monospace;
         }
-        .memory-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 8px;
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
         }
-        .memory-cell {
-            min-width: 48px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-        .memory-cell.highlight {
-            background: rgba(42, 241, 107, 0.15);
-            border-color: var(--accent-green);
+        .info-box code {
             color: var(--accent-green);
-        }
-        .memory-cell.muted {
-            color: var(--text-muted);
-        }
-        .memory-pointer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 8px;
-        }
-        .memory-pointer .arrow {
-            font-size: 16px;
-            color: var(--accent-green);
-        }
-        .memory-pointer .label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
         }
 
         .card {
@@ -392,6 +357,104 @@
             color: var(--text-secondary);
         }
 
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .memory-diagram {
+            margin: 24px 0;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .memory-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .memory-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+        }
+        .memory-cell {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+        .memory-cell.highlight {
+            background: rgba(42, 241, 107, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        .memory-pointer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .memory-pointer-arrow {
+            font-size: 16px;
+            color: var(--accent-green);
+        }
+
         .nav-footer {
             display: flex;
             flex-direction: column;
@@ -445,22 +508,19 @@
         <div class="module-badge">Модуль 1 / Урок 1</div>
 
         <h1>Переменные в Go</h1>
-        <p class="lead">Переменная - это именованный ящик для хранения данных. Научимся создавать переменные тремя способами и понимать, как Go работает с памятью.</p>
+        <p class="lead">Переменная (от англ. variable - изменяемый) - это именованная область памяти для хранения данных. У каждой переменной есть имя, тип и значение. В отличие от математики, где переменная может быть чем угодно, в программировании тип фиксирован при создании.</p>
 
-        <!-- SECTION 1: ЧТО ЭТО -->
-        <h2>Что такое переменная</h2>
+        <p>Хочешь сохранить имя пользователя? Цену товара? Количество в корзине? Без переменных программа может только выводить один и тот же результат. С переменными ты работаешь с разными данными: сегодня обрабатываешь заказ на 1500 рублей, завтра - на 3200.</p>
 
-        <p>Переменная - это <strong>именованный ящик для хранения данных</strong>. Представь коробку с этикеткой: положил что-то внутрь - можешь достать по имени.</p>
+        <h2 id="creation">Создание переменных</h2>
 
-        <p>У каждой переменной три характеристики:</p>
+        <p>Представь переменную как ящик с наклейкой. На наклейке - имя, внутри - значение, а форма ящика определяет, что можно положить (тип).</p>
 
-        <ul>
-            <li><strong>Имя</strong> - этикетка на ящике (<code>age</code>, <code>userName</code>, <code>price</code>)</li>
-            <li><strong>Тип</strong> - что можно положить (<code>int</code> для чисел, <code>string</code> для текста)</li>
-            <li><strong>Значение</strong> - что лежит внутри прямо сейчас</li>
-        </ul>
+        <p>Go предлагает три способа создать переменную.</p>
 
-        <p>Вот минимальный рабочий пример:</p>
+        <h3>Короткое объявление :=</h3>
+
+        <p>Самый частый способ внутри функций. Оператор <code>:=</code> делает две вещи сразу: создаёт переменную и кладёт в неё значение:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -471,47 +531,29 @@ import "fmt"
 func main() {
     userName := "Олег"
     age := 25
-    fmt.Println(userName, age)  // Олег 25
+    fmt.Println(userName, age)
 }</code></pre>
         </div>
 
-        <p>Две переменные: <code>userName</code> хранит имя пользователя, <code>age</code> - его возраст. Обе созданы через <code>:=</code>.</p>
-
-        <p><strong>Зачем нужны переменные?</strong> Программа без переменных может только выводить один и тот же результат. С переменными ты работаешь с разными данными: сегодня обрабатываешь заказ на 1500 рублей, завтра - на 3200.</p>
-
-        <!-- SECTION 2: КАК ИСПОЛЬЗОВАТЬ -->
-        <h2>Как работать с переменными</h2>
-
-        <h3>Три способа объявления</h3>
-
-        <p>Go предлагает три способа создать переменную. Разберём каждый.</p>
-
-        <p><strong>Способ 1: короткое объявление :=</strong></p>
-
-        <p>Самый частый способ внутри функций. Пишешь имя, двоеточие с равно, значение:</p>
-
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">age := 25              // int (от integer - целое число)
-userName := "Олег"     // string (строка текста)
-isActive := true       // bool (от boolean - логическое значение)
-price := 199.99        // float64 (от floating point - число с плавающей точкой)</code></pre>
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Олег 25</code></pre>
         </div>
 
-        <p>Оператор <code>:=</code> делает две вещи сразу: создаёт переменную и кладёт в неё значение. Тип Go определяет автоматически по тому, что справа.</p>
+        <p>Тип Go определяет автоматически по значению справа. "Олег" - это текст, значит <code>userName</code> получит тип <code>string</code> (строка). 25 - целое число, значит <code>age</code> получит тип <code>int</code> (от integer - целое число).</p>
 
-        <p><strong>Способ 2: var с выводом типа</strong></p>
+        <h3>var с выводом типа</h3>
 
-        <p>Тип определяется автоматически, но пишем ключевое слово <code>var</code>:</p>
+        <p>Иногда нужно ключевое слово <code>var</code>. Тип по-прежнему определяется автоматически:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">var age = 25           // int
 var userName = "Олег"  // string
-var price = 199.99     // float64</code></pre>
+var price = 199.99     // float64 (число с плавающей точкой)</code></pre>
         </div>
 
-        <p>Зачем нужен <code>var</code>, если есть <code>:=</code>? Короткое объявление <code>:=</code> работает только внутри функций. На уровне пакета нужен <code>var</code>:</p>
+        <p>Зачем <code>var</code>, если есть <code>:=</code>? Короткое объявление работает только внутри функций. На уровне пакета нужен <code>var</code>:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -525,9 +567,9 @@ func main() {
 }</code></pre>
         </div>
 
-        <p><strong>Способ 3: var с явным типом</strong></p>
+        <h3>var с явным типом</h3>
 
-        <p>Иногда нужно указать тип явно. Например, когда хочешь конкретный размер числа:</p>
+        <p>Когда нужен конкретный тип, указывай его явно:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -535,7 +577,7 @@ func main() {
 var temperature float32 = 36.6          // без float32 было бы float64</code></pre>
         </div>
 
-        <p>Сравнение способов:</p>
+        <p>Вот сравнение трёх способов:</p>
 
         <table>
             <thead>
@@ -564,25 +606,39 @@ var temperature float32 = 36.6          // без float32 было бы float64<
             </tbody>
         </table>
 
-        <h3>Изменение значений: = vs :=</h3>
+        <h2 id="change">Изменение значений</h2>
 
-        <p>Это важное различие. Запомни:</p>
-
-        <ul>
-            <li><code>:=</code> <strong>создаёт</strong> новую переменную</li>
-            <li><code>=</code> <strong>изменяет</strong> существующую</li>
-        </ul>
+        <p>Важное различие: <code>:=</code> создаёт новую переменную, <code>=</code> изменяет существующую.</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">price := 100     // создаём price = 100
-price = 150      // меняем на 150
-// price := 200  // ошибка: price уже существует!</code></pre>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    price := 100     // создаём price = 100
+    price = 150      // меняем на 150
+    fmt.Println(price)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>150</code></pre>
+        </div>
+
+        <p>А вот что будет при попытке повторного объявления:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">price := 100
+// price := 200  // ошибка: no new variables on left side of :=</code></pre>
         </div>
 
         <p>Почему Go запрещает повторное <code>:=</code>? Защита от опечаток. Если случайно написать <code>:=</code> вместо <code>=</code>, компилятор поймает ошибку. Иначе ты бы создал новую переменную вместо изменения старой и долго искал баг.</p>
 
-        <p>Но есть исключение. Если хотя бы одна переменная в группе новая - всё работает:</p>
+        <p>Но есть исключение. Если хотя бы одна переменная в группе новая - работает:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -590,30 +646,48 @@ price = 150      // меняем на 150
 price, discount := 150, 10  // OK - discount новая, price переиспользуется</code></pre>
         </div>
 
-        <p>Это удобно при работе с функциями, которые возвращают несколько значений:</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">data, err := loadConfig("config.json")
-// ... обработка ...
-settings, err := loadConfig("settings.json")  // OK - settings новая</code></pre>
-        </div>
-
-        <h3>Множественное объявление</h3>
+        <h2 id="multiple">Множественное объявление</h2>
 
         <p>Go позволяет работать с несколькими переменными одновременно:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">// Объявление нескольких переменных
-width, height := 1920, 1080
+            <pre><code class="language-go">package main
 
-// Обмен значений - элегантно в одну строку!
-a, b := 1, 2
-a, b = b, a  // теперь a=2, b=1</code></pre>
+import "fmt"
+
+func main() {
+    width, height := 1920, 1080
+    fmt.Println(width, height)
+}</code></pre>
         </div>
 
-        <p>Как работает обмен? Go сначала вычисляет ВСЕ значения справа (<code>b, a</code> = <code>2, 1</code>), потом присваивает их слева. Поэтому не нужна временная переменная.</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>1920 1080</code></pre>
+        </div>
+
+        <p>Особенно удобен обмен значений - в одну строку, без временной переменной:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a, b := 1, 2
+    a, b = b, a  // обмен!
+    fmt.Println(a, b)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>2 1</code></pre>
+        </div>
+
+        <p>Как это работает? Go сначала вычисляет ВСЕ значения справа (<code>b, a</code> = <code>2, 1</code>), потом присваивает их слева.</p>
 
         <p>Для группировки связанных переменных на уровне пакета используй <code>var ()</code>:</p>
 
@@ -626,7 +700,7 @@ a, b = b, a  // теперь a=2, b=1</code></pre>
 )</code></pre>
         </div>
 
-        <h3>Правила именования</h3>
+        <h2 id="naming">Правила именования</h2>
 
         <p>Несколько правил для имён переменных:</p>
 
@@ -650,12 +724,41 @@ n := 1500         // какое число?
 flag := false     // какой флаг?</code></pre>
         </div>
 
-        <!-- SECTION 3: ПОЧЕМУ -->
-        <h2>Почему Go работает именно так</h2>
+        <h2 id="zero-values">Нулевые значения</h2>
 
-        <h3>Статическая типизация</h3>
+        <p>Что лежит в переменной, если мы её создали, но ничего не положили?</p>
 
-        <p>Go - <strong>статически типизированный</strong> язык (static typing). Это значит:</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var count int
+    var name string
+    var active bool
+    fmt.Println(count, name, active)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0  false</code></pre>
+        </div>
+
+        <p>Go автоматически инициализирует переменные <strong>нулевым значением</strong> (zero value) типа:</p>
+        <ul>
+            <li>Числа: <code>0</code></li>
+            <li>Строки: <code>""</code> (пустая строка)</li>
+            <li>Логические: <code>false</code></li>
+        </ul>
+
+        <p>Это не случайность, а осознанное решение. В Go нет "мусора" в памяти - переменная всегда имеет определённое значение.</p>
+
+        <h2 id="static-typing">Статическая типизация</h2>
+
+        <p>Go - <strong>статически типизированный</strong> язык. Это значит:</p>
 
         <ol>
             <li>Тип переменной определяется при создании</li>
@@ -678,7 +781,7 @@ flag := false     // какой флаг?</code></pre>
         <p><strong>Читаемость.</strong> Тип переменной понятен из кода.</p>
 
         <div class="alert alert-tip">
-            <div class="alert-icon">i</div>
+            <div class="alert-icon">✓</div>
             <p><strong>Для знакомых с Python/JS:</strong> там переменная может хранить что угодно - сегодня число, завтра строку. В Go тип фиксирован. Это не ограничение, а защита от целого класса ошибок.</p>
         </div>
 
@@ -697,32 +800,47 @@ flag := false     // какой флаг?</code></pre>
         <div class="memory-diagram">
             <div class="memory-label">Память:</div>
             <div class="memory-row">
-                <div class="memory-cell muted">...</div>
-                <div class="memory-cell highlight">100</div>
-                <div class="memory-cell muted">...</div>
+                <span class="memory-cell">...</span>
+                <span class="memory-cell highlight">100 (8b)</span>
+                <span class="memory-cell">...</span>
             </div>
             <div class="memory-pointer">
-                <span class="arrow">↑</span>
-                <span class="label">имя "price"</span>
+                <span class="memory-pointer-arrow">^</span>
+                <span>имя "price"</span>
             </div>
         </div>
 
-        <p>Важный момент: в Go переменные <strong>копируются</strong> при присваивании:</p>
+        <p>Как видишь, переменная - это просто имя, указывающее на участок памяти.</p>
+
+        <h3>Передача по значению</h3>
+
+        <p>В Go переменные <strong>копируются</strong> при присваивании:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">originalPrice := 100
-discountedPrice := originalPrice  // копия значения
-discountedPrice = 80              // меняем копию
+            <pre><code class="language-go">package main
 
-fmt.Println(originalPrice)    // 100 - не изменился!
-fmt.Println(discountedPrice)  // 80</code></pre>
+import "fmt"
+
+func main() {
+    originalPrice := 100
+    discountedPrice := originalPrice  // копия значения
+    discountedPrice = 80              // меняем копию
+
+    fmt.Println(originalPrice)    // 100 - не изменился!
+    fmt.Println(discountedPrice)  // 80
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>100
+80</code></pre>
         </div>
 
         <p>Это называется <strong>передача по значению</strong> - фундаментальный принцип Go.</p>
 
-        <!-- SECTION 4: ПРОВЕРЬ СЕБЯ -->
-        <h2>Проверь себя</h2>
+        <h2 id="practice">Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
@@ -731,9 +849,7 @@ fmt.Println(discountedPrice)  // 80</code></pre>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Переменная - это <strong>именованная область памяти</strong> определённого типа. У неё есть имя (для обращения), тип (что можно хранить) и значение (текущее содержимое).</p>
-                    </div>
+                    <div class="answer"><p>Переменная - это <strong>именованная область памяти</strong> определённого типа. У неё есть имя (для обращения), тип (что можно хранить) и значение (текущее содержимое).</p></div>
                 </details>
             </div>
         </div>
@@ -743,10 +859,7 @@ fmt.Println(discountedPrice)  // 80</code></pre>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Функционально - обе создают переменную <code>x</code> типа <code>int</code> со значением <code>10</code>.</p>
-                        <p>Различие: <code>var</code> работает везде (включая уровень пакета), а <code>:=</code> только внутри функций. Для локальных переменных <code>:=</code> предпочтительнее - короче.</p>
-                    </div>
+                    <div class="answer"><p>Функционально обе создают переменную <code>x</code> типа <code>int</code> со значением <code>10</code>. Различие: <code>var</code> работает везде (включая уровень пакета), а <code>:=</code> только внутри функций. Для локальных переменных <code>:=</code> предпочтительнее - короче.</p></div>
                 </details>
             </div>
         </div>
@@ -756,14 +869,7 @@ fmt.Println(discountedPrice)  // 80</code></pre>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Нет. Оператор <code>:=</code> работает только внутри функций. На уровне пакета нужно использовать <code>var</code>:</p>
-                        <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span></div>
-                            <pre><code class="language-go">var appVersion = "1.0.0"  // OK
-// appVersion := "1.0.0"  // ошибка!</code></pre>
-                        </div>
-                    </div>
+                    <div class="answer"><p>Нет. Оператор <code>:=</code> работает только внутри функций. На уровне пакета нужно использовать <code>var</code>.</p></div>
                 </details>
             </div>
         </div>
@@ -773,29 +879,23 @@ fmt.Println(discountedPrice)  // 80</code></pre>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p>Защита от опечаток. Если случайно написать <code>:=</code> вместо <code>=</code>, компилятор поймает ошибку. Без этой проверки можно создать новую переменную вместо изменения существующей и долго искать баг.</p>
-                    </div>
+                    <div class="answer"><p>Защита от опечаток. Если случайно написать <code>:=</code> вместо <code>=</code>, компилятор поймает ошибку. Без этой проверки можно создать новую переменную вместо изменения существующей и долго искать баг.</p></div>
                 </details>
             </div>
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что означают названия типов int, float64, bool?</span></div>
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Какое нулевое значение у типа int? У типа string? У типа bool?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p><code>int</code> = integer (целое число)</p>
-                        <p><code>float64</code> = floating point, 64 бита (число с плавающей точкой)</p>
-                        <p><code>bool</code> = boolean (логическое значение, по имени математика Джорджа Буля)</p>
-                    </div>
+                    <div class="answer"><p><code>int</code>: <code>0</code>, <code>string</code>: <code>""</code> (пустая строка), <code>bool</code>: <code>false</code>.</p></div>
                 </details>
             </div>
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет этот код?</span></div>
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет этот код? Определи без запуска:</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -805,10 +905,7 @@ fmt.Println(a + b)</code></pre>
                 </div>
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer">
-                        <p><strong>Вывод: <code>254</code></strong></p>
-                        <p>Для строк <code>+</code> означает склеивание (конкатенацию), а не сложение чисел. Строки "25" и "4" склеиваются в "254".</p>
-                    </div>
+                    <div class="answer"><p><strong>Вывод: <code>254</code></strong>. Для строк <code>+</code> означает склеивание (конкатенацию), а не сложение чисел.</p></div>
                 </details>
             </div>
         </div>
@@ -825,10 +922,7 @@ var b int = a * 8</code></pre>
                 </div>
                 <details>
                     <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Ответ: 80</strong></p>
-                        <p><code>a</code> равно 10, умножаем на 8, получаем 80.</p>
-                    </div>
+                    <div class="answer"><p><code>b = 80</code> (10 * 8 = 80)</p></div>
                 </details>
             </div>
         </div>
@@ -843,10 +937,7 @@ a = a + 1</code></pre>
                 </div>
                 <details>
                     <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Ответ: 11</strong></p>
-                        <p>Сначала <code>a = 10</code>. Потом берём значение <code>a</code> (10), прибавляем 1, записываем обратно в <code>a</code>.</p>
-                    </div>
+                    <div class="answer"><p><code>a = 11</code> (10 + 1 = 11)</p></div>
                 </details>
             </div>
         </div>
@@ -867,12 +958,8 @@ fmt.Println(a, b)  // должно вывести: 2 1</code></pre>
                     <div class="answer">
                         <div class="code-block">
                             <div class="code-header"><span class="code-lang">Go</span></div>
-                            <pre><code class="language-go">a := 1
-b := 2
-a, b = b, a  // множественное присваивание
-fmt.Println(a, b)  // 2 1</code></pre>
+                            <pre><code class="language-go">a, b = b, a  // множественное присваивание</code></pre>
                         </div>
-                        <p>Go сначала вычисляет все значения справа (<code>b, a</code> = <code>2, 1</code>), потом присваивает их слева.</p>
                     </div>
                 </details>
             </div>
@@ -894,15 +981,13 @@ func main() {
                 <details>
                     <summary>Показать решение</summary>
                     <div class="answer">
-                        <p><strong>Проблема:</strong> <code>:=</code> не работает на уровне пакета.</p>
-                        <p><strong>Исправление:</strong></p>
                         <div class="code-block">
                             <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import "fmt"
 
-var globalCounter = 0  // используем var
+var globalCounter = 0  // используем var вместо :=
 
 func main() {
     fmt.Println(globalCounter)  // 0
@@ -926,16 +1011,7 @@ fmt.Println(c)</code></pre>
                 </div>
                 <details>
                     <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p><strong>Пошаговый разбор:</strong></p>
-                        <ol>
-                            <li><code>a = 6</code></li>
-                            <li><code>b = 6 * 8 = 48</code></li>
-                            <li><code>a = 48 - 8 = 40</code> (перезаписываем a)</li>
-                            <li><code>c = 48 + 40 = 88</code></li>
-                        </ol>
-                        <p><strong>Ответ: 88</strong></p>
-                    </div>
+                    <div class="answer"><p><code>88</code>. Пошагово: a=6, b=48, a=40, c=48+40=88.</p></div>
                 </details>
             </div>
         </div>
@@ -954,29 +1030,39 @@ fmt.Println(c)</code></pre>
                 <details>
                     <summary>Показать решение</summary>
                     <div class="answer">
-                        <p><strong>Ошибка:</strong> Переменная <code>a</code> объявляется дважды через <code>var</code>. Нельзя создавать переменную с тем же именем в той же области видимости.</p>
-                        <p><strong>Исправление:</strong></p>
+                        <p>Переменная <code>a</code> объявляется дважды через <code>var</code>. Нужно убрать <code>var</code> в третьей строке:</p>
                         <div class="code-block">
                             <div class="code-header"><span class="code-lang">Go</span></div>
-                            <pre><code class="language-go">var a int = 6
-var b int = a * 8
-a = b - 8          // убираем var - просто присваиваем
-var c int = b + a
-fmt.Println(c)     // 88</code></pre>
+                            <pre><code class="language-go">a = b - 8  // просто присваиваем, без var</code></pre>
                         </div>
                     </div>
                 </details>
             </div>
         </div>
 
+        <h2 id="summary">Резюме</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <ul class="summary-list">
+                <li><strong>Переменная</strong> - именованная область памяти с типом и значением</li>
+                <li><strong>:=</strong> создаёт переменную (только в функциях), <strong>=</strong> изменяет существующую</li>
+                <li><strong>var</strong> работает везде, включая уровень пакета</li>
+                <li>Go <strong>статически типизирован</strong> - тип фиксирован при создании</li>
+                <li><strong>Нулевые значения</strong>: числа = 0, строки = "", bool = false</li>
+                <li><strong>Множественное присваивание</strong>: <code>a, b = b, a</code> меняет значения местами</li>
+                <li>Переменные <strong>копируются</strong> при присваивании (передача по значению)</li>
+            </ul>
+        </div>
+
         <nav class="nav-footer">
             <a href="../m00-intro/06-go-playground.html" class="nav-link prev">
-                <span class="nav-arrow">&larr;</span>
+                <span class="nav-arrow">&lt;-</span>
                 <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Go Playground</div></div>
             </a>
-            <a href="02-types-numeric.html" class="nav-link next">
-                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Числовые типы</div></div>
-                <span class="nav-arrow">&rarr;</span>
+            <a href="02-int.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Целые числа</div></div>
+                <span class="nav-arrow">-&gt;</span>
             </a>
         </nav>
     </main>
@@ -1001,7 +1087,7 @@ fmt.Println(c)     // 88</code></pre>
         tg.expand();
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
-            tg.showAlert('В полной версии здесь будет список уроков');
+            history.back();
         });
     }
 </script>
