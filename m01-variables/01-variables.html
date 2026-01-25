@@ -899,13 +899,14 @@ func main() {
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
-                    <pre><code class="language-go">var a string = "25"
-var b string = "4"
-fmt.Println(a + b)</code></pre>
+                    <pre><code class="language-go">x := 10
+y := x
+y = 20
+fmt.Println(x)</code></pre>
                 </div>
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p><strong>Вывод: <code>254</code></strong>. Для строк <code>+</code> означает склеивание (конкатенацию), а не сложение чисел.</p></div>
+                    <div class="answer"><p><strong>Вывод: <code>10</code></strong>. При <code>y := x</code> создаётся копия значения <code>x</code>. Изменение <code>y</code> не влияет на оригинал - это передача по значению.</p></div>
                 </details>
             </div>
         </div>
