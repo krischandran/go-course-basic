@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Преобразование типов - Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.prev {
+            text-align: left;
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="module-badge">Модуль 1 / Урок 8</div>
+
+        <h1>Преобразование типов</h1>
+        <p class="lead">Преобразование типов (type conversion) - это явное изменение типа значения. В отличие от многих языков, Go не выполняет автоматические преобразования между типами - даже между int и int64.</p>
+
+        <h2>Преобразование между числовыми типами</h2>
+
+        <p>Go строг: нельзя просто взять и присвоить int в int64. Это разные типы, даже если оба хранят целые числа.</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    num := 200      // тип int
+    var num64 int64
+
+    // num64 = num  // ошибка! cannot use num (type int) as type int64
+    num64 = int64(num)  // OK - явное преобразование
+
+    fmt.Println(num64)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>200</code></pre>
+        </div>
+
+        <p>Синтаксис преобразования прост: <code>тип(значение)</code>. Ты как бы говоришь компилятору: "представь это значение как указанный тип".</p>
+
+        <h3>Преобразование float в int</h3>
+
+        <p>При преобразовании float в int дробная часть просто отбрасывается. Не округляется, а именно отбрасывается:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    price := 199.99
+    rounded := int(price)
+    fmt.Println(rounded)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>199</code></pre>
+        </div>
+
+        <p>Важно понимать: 199.99 становится 199, а не 200. Если нужно округление - используй math.Round из пакета math.</p>
+
+        <h3>Преобразование int в float</h3>
+
+        <p>Обратное преобразование всегда безопасно - целое число точно представляется в float:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    count := 7
+    average := float64(count) / 2
+    fmt.Println(average)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>3.5</code></pre>
+        </div>
+
+        <p>Если бы мы написали <code>7 / 2</code>, результат был бы 3 (целочисленное деление). Преобразование в float64 даёт точный результат.</p>
+
+        <h2>Переполнение при преобразовании</h2>
+
+        <p>Что если положить большое число в маленький тип? Представь стакан: если налить больше, чем он вмещает, вода перельётся.</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    num64 := int64(200)
+    num8 := int8(num64)  // 200 не влезает в int8 (максимум 127)
+    fmt.Println(num8)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>-56</code></pre>
+        </div>
+
+        <p>Почему -56? Число "переливается" через край. int8 хранит от -128 до 127. Когда мы пытаемся положить 200:</p>
+        <ul>
+            <li>200 - 128 = 72 (насколько превышаем максимум)</li>
+            <li>Идём с другого края: -128 + 72 = -56</li>
+        </ul>
+
+        <p>Go не выдаёт ошибку или предупреждение - это сделано для производительности. За переполнением следишь ты сам.</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var x int8 = 127
+    x = x + 1  // переполнение в рантайме
+    fmt.Println(x)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>-128</code></pre>
+        </div>
+
+        <p>Компилятор не может проверить это на этапе компиляции, потому что значение вычисляется во время работы программы.</p>
+
+        <h2>Преобразование строк и чисел</h2>
+
+        <p>Для преобразования между строками и числами в Go есть пакет <code>strconv</code> (от string conversion - преобразование строк).</p>
+
+        <h3>Строка в число: strconv.Atoi</h3>
+
+        <p>Функция <code>Atoi</code> (ASCII to integer) преобразует строку в int:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    str := "42"
+    num, _ := strconv.Atoi(str)
+    fmt.Println(num * 2)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>84</code></pre>
+        </div>
+
+        <p>Функция возвращает два значения: число и ошибку. Мы пока игнорируем ошибку через <code>_</code>, но в реальном коде её нужно проверять - строка может содержать не число.</p>
+
+        <h3>Число в строку: strconv.Itoa</h3>
+
+        <p>Функция <code>Itoa</code> (integer to ASCII) преобразует int в строку:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    num := 42
+    str := strconv.Itoa(num)
+    fmt.Println(str + str)  // конкатенация строк
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>4242</code></pre>
+        </div>
+
+        <p>Обрати внимание: <code>42 + 42 = 84</code>, но <code>"42" + "42" = "4242"</code>. Оператор <code>+</code> для строк означает склеивание, не сложение.</p>
+
+        <h2>Когда какое преобразование использовать</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Задача</th>
+                    <th>Преобразование</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>int в float для деления</td><td><code>float64(n)</code></td></tr>
+                <tr><td>float в int (отбросить дробь)</td><td><code>int(f)</code></td></tr>
+                <tr><td>int в int64</td><td><code>int64(n)</code></td></tr>
+                <tr><td>строка "42" в число</td><td><code>strconv.Atoi(s)</code></td></tr>
+                <tr><td>число 42 в строку</td><td><code>strconv.Itoa(n)</code></td></tr>
+            </tbody>
+        </table>
+
+        <h2>Почему Go строг к типам?</h2>
+
+        <h3>Почему Go не преобразует типы автоматически?</h3>
+
+        <p>В языках вроде JavaScript число <code>5 + "3"</code> даст <code>"53"</code>. Удобно? Иногда. Но это источник багов.</p>
+
+        <p>Go выбрал явность: ты всегда знаешь, какой тип получишь. Если видишь <code>int64(num)</code>, сразу понятно - тут преобразование. Никаких сюрпризов.</p>
+
+        <h3>Почему нет предупреждения о переполнении?</h3>
+
+        <p>Проверка переполнения при каждой операции замедляет программу. Go выбрал производительность. В большинстве программ переполнение не происходит - ты используешь int, который на 64-битной системе хранит огромные числа.</p>
+
+        <p>Если работаешь с int8 или int16 для экономии памяти - помни о границах. Но в обычном коде просто используй int.</p>
+
+        <h2>Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Можно ли в Go присвоить значение типа int переменной типа int64 напрямую?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. Нужно явное преобразование: <code>int64(num)</code>.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чему равно int(9.9) в Go?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>9</code> - дробная часть отбрасывается, не округляется.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что произойдёт при выполнении int8(200)?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Переполнение: результат будет -56. Go не предупреждает об этом.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Какая функция преобразует строку "100" в число?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>strconv.Atoi(str)</code> - возвращает число и ошибку.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Какая функция преобразует число 100 в строку?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>strconv.Itoa(num)</code> - возвращает строку.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код? a := 5.7; b := int(a); fmt.Println(b)</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>5</code> - дробная часть 0.7 отбрасывается.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Квадрат числа</span></div>
+            <div class="card-body">
+                <p>Вычисли квадрат числа 7 и выведи результат.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 7
+    fmt.Println(x * x)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>49</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Километры в метры</span></div>
+            <div class="card-body">
+                <p>Переведи 3450 метров в полные километры. Выведи результат.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    meters := 3450
+    km := meters / 1000
+    fmt.Println(km)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>3</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Раздели яблоки</span></div>
+            <div class="card-body">
+                <p>У тебя 17 яблок и 5 друзей. Сколько яблок получит каждый? Сколько останется?</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    apples := 17
+    friends := 5
+    each := apples / friends
+    left := apples % friends
+    fmt.Println("Каждому:", each)
+    fmt.Println("Осталось:", left)
+}</code></pre>
+                        </div>
+                        <p>Результат: Каждому: 3, Осталось: 2</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Пересчёт времени</span></div>
+            <div class="card-body">
+                <p>Дано 150 минут. Вычисли, сколько это полных часов и минут.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    minutes := 150
+    hours := minutes / 60
+    mins := minutes % 60
+    fmt.Println(hours, "ч", mins, "мин")
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>2 ч 30 мин</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Три последовательных числа</span></div>
+            <div class="card-body">
+                <p>Дано число 8. Выведи его и два следующих числа (8, 9, 10).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    num := 8
+    fmt.Println(num)
+    fmt.Println(num + 1)
+    fmt.Println(num + 2)
+}</code></pre>
+                        </div>
+                        <p>Результат: 8, 9, 10</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Среднее с дробной частью</span></div>
+            <div class="card-body">
+                <p>Найди среднее арифметическое чисел 5 и 4 с дробной частью (не целочисленное!).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := 5
+    b := 4
+    avg := float64(a+b) / 2
+    fmt.Println(avg)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>4.5</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2>Резюме</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
+            <ul class="summary-list">
+                <li>Go требует <strong>явного преобразования</strong> типов - автоматически не преобразует</li>
+                <li>Синтаксис: <code>тип(значение)</code> - например, <code>int64(num)</code>, <code>float64(x)</code></li>
+                <li>При <code>float -&gt; int</code> дробная часть <strong>отбрасывается</strong> (не округляется!)</li>
+                <li>При преобразовании в меньший тип возможно <strong>переполнение</strong> без предупреждения</li>
+                <li><code>strconv.Atoi(str)</code> - строка в int</li>
+                <li><code>strconv.Itoa(num)</code> - int в строку</li>
+                <li>Используй int по умолчанию - он оптимизирован и достаточно большой</li>
+            </ul>
+        </div>
+
+        <nav class="nav-footer">
+            <a href="07-text-conversion.html" class="nav-link prev">
+                <span class="nav-arrow">&lt;-</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Преобразования текстовых типов</div></div>
+            </a>
+            <a href="09-bool-zero-values.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Bool и нулевые значения</div></div>
+                <span class="nav-arrow">-&gt;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
+</body>
+</html>
