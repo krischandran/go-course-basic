@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Преобразования текстовых типов — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        .nav-link.prev {
+            text-align: left;
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="module-badge">Модуль 1 / Урок 7</div>
+
+        <h1>Преобразования текстовых типов</h1>
+        <p class="lead">Преобразование типов (от англ. type conversion - смена типа) - это превращение значения одного типа в другой. В Go типы строго разделены: нельзя сложить string и int напрямую. Для работы с текстом нужно уметь конвертировать между string, byte, rune и числами.</p>
+
+        <h2>Число в символ: string()</h2>
+
+        <p>Самое базовое преобразование - получить символ по его коду. Функция <code>string()</code> принимает число и возвращает символ с этим кодом:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(string(65))     // A
+    fmt.Println(string(1055))   // П
+    fmt.Println(string(128522)) // (эмодзи)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>A
+П
+😊</code></pre>
+        </div>
+
+        <p>Число 65 - код буквы 'A' в таблице ASCII. Число 1055 - код русской 'П' в Unicode. Функция <code>string()</code> находит символ по коду и возвращает его как строку.</p>
+
+        <p>Это работает и с переменными типа byte и rune:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var b byte = 72
+    var r rune = 1055
+
+    fmt.Println(string(b)) // H
+    fmt.Println(string(r)) // П
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>H
+П</code></pre>
+        </div>
+
+        <h2>Символ в число</h2>
+
+        <p>А как получить код символа? Мы уже знаем это из предыдущих уроков - просто используй одинарные кавычки:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println('A')  // 65
+    fmt.Println('П')  // 1055
+    fmt.Println('0')  // 48 (это код символа '0', не число 0!)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>65
+1055
+48</code></pre>
+        </div>
+
+        <p>Одинарные кавычки возвращают числовой код символа. Тип результата - rune (int32).</p>
+
+        <h2>Строка в слайс байтов: []byte()</h2>
+
+        <p>Зачем превращать строку в байты? Строки в Go неизменяемы - нельзя поменять букву напрямую. А слайс байтов - можно. Вот как это работает:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Hi"
+    bytes := []byte(s)
+
+    fmt.Println(bytes) // [72 105]
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>[72 105]</code></pre>
+        </div>
+
+        <p>Строка "Hi" превратилась в слайс из двух байтов: 72 (код 'H') и 105 (код 'i').</p>
+
+        <p>Почему это полезно? Теперь можно изменить отдельный байт:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Hello"
+    bytes := []byte(s)
+    bytes[0] = 'J'          // Меняем первый байт
+    result := string(bytes) // Обратно в строку
+
+    fmt.Println(result) // Jello
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Jello</code></pre>
+        </div>
+
+        <p>Мы изменили 'H' на 'J'. Напрямую <code>s[0] = 'J'</code> не сработало бы - строки неизменяемы.</p>
+
+        <h2>[]byte и русский текст</h2>
+
+        <p>Помнишь, русская буква занимает 2 байта? При конвертации в []byte это создаёт проблемы:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Привет"
+    bytes := []byte(s)
+
+    fmt.Println(len(bytes)) // 12 (не 6!)
+    fmt.Println(bytes[0])   // 208 (первый байт буквы П)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>12
+208</code></pre>
+        </div>
+
+        <p>Слайс содержит 12 байтов, а не 6 букв. Изменение одного байта сломает символ:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Привет"
+    bytes := []byte(s)
+    bytes[0] = 'X'          // Ломаем первый байт буквы П
+
+    fmt.Println(string(bytes)) // Xривет или мусор
+}</code></pre>
+        </div>
+
+        <p>Для работы с русским текстом нужен []rune.</p>
+
+        <h2>Строка в слайс рун: []rune()</h2>
+
+        <p>Для корректной работы с любыми символами используй []rune():</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Привет"
+    runes := []rune(s)
+
+    fmt.Println(len(runes)) // 6 (правильно!)
+    fmt.Println(runes[0])   // 1055 (код буквы П)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>6
+1055</code></pre>
+        </div>
+
+        <p>Теперь можно безопасно менять отдельные символы:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    s := "Привет"
+    runes := []rune(s)
+    runes[0] = 'П' + 1      // Следующая буква после П
+    result := string(runes)
+
+    fmt.Println(result) // Рривет
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Рривет</code></pre>
+        </div>
+
+        <p>Буква 'П' (код 1055) заменилась на 'Р' (код 1056).</p>
+
+        <h2>Слайс обратно в строку: string()</h2>
+
+        <p>Функция <code>string()</code> работает и со слайсами:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    bytes := []byte{72, 105}
+    runes := []rune{1055, 1088, 1080, 1074, 1077, 1090}
+
+    fmt.Println(string(bytes)) // Hi
+    fmt.Println(string(runes)) // Привет
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Hi
+Привет</code></pre>
+        </div>
+
+        <h2>Число и строка: strconv</h2>
+
+        <p>Как превратить строку "42" в число 42? Или число 42 в строку "42"? Для этого есть пакет strconv (от string conversion - преобразование строк).</p>
+
+        <h3>strconv.Atoi - строка в число</h3>
+
+        <p>Atoi расшифровывается как "ASCII to integer" - текст в целое число:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    s := "42"
+    n, _ := strconv.Atoi(s)
+
+    fmt.Println(n + 1) // 43
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>43</code></pre>
+        </div>
+
+        <p>Строка "42" превратилась в число 42. Теперь можно делать арифметику.</p>
+
+        <p>Обрати внимание на <code>n, _ := strconv.Atoi(s)</code>. Функция возвращает два значения: число и ошибку. Пока мы игнорируем ошибку с помощью <code>_</code>. Об обработке ошибок - в модуле про функции.</p>
+
+        <h3>strconv.Itoa - число в строку</h3>
+
+        <p>Itoa расшифровывается как "integer to ASCII" - целое число в текст:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    n := 42
+    s := strconv.Itoa(n)
+
+    fmt.Println("Ответ: " + s) // Ответ: 42
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Ответ: 42</code></pre>
+        </div>
+
+        <p>Число 42 превратилось в строку "42". Теперь можно склеивать со строками.</p>
+
+        <p>Важно не путать <code>string(число)</code> и <code>strconv.Itoa(число)</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strconv"
+)
+
+func main() {
+    n := 65
+
+    fmt.Println(string(n))       // A (символ с кодом 65!)
+    fmt.Println(strconv.Itoa(n)) // 65 (строка "65")
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>A
+65</code></pre>
+        </div>
+
+        <p><code>string(65)</code> ищет символ с кодом 65 - это буква 'A'. А <code>strconv.Itoa(65)</code> превращает число 65 в строку "65". Это разные операции!</p>
+
+        <h2>Сводная таблица преобразований</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Из</th>
+                    <th>В</th>
+                    <th>Как</th>
+                    <th>Пример</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>int/byte/rune</td><td>string (символ)</td><td><code>string(n)</code></td><td><code>string(65)</code> = "A"</td></tr>
+                <tr><td>string</td><td>[]byte</td><td><code>[]byte(s)</code></td><td><code>[]byte("Hi")</code> = [72, 105]</td></tr>
+                <tr><td>string</td><td>[]rune</td><td><code>[]rune(s)</code></td><td><code>[]rune("Привет")</code></td></tr>
+                <tr><td>[]byte</td><td>string</td><td><code>string(b)</code></td><td><code>string([]byte{72, 105})</code> = "Hi"</td></tr>
+                <tr><td>[]rune</td><td>string</td><td><code>string(r)</code></td><td><code>string([]rune{...})</code></td></tr>
+                <tr><td>string</td><td>int</td><td><code>strconv.Atoi(s)</code></td><td><code>strconv.Atoi("42")</code> = 42</td></tr>
+                <tr><td>int</td><td>string</td><td><code>strconv.Itoa(n)</code></td><td><code>strconv.Itoa(42)</code> = "42"</td></tr>
+            </tbody>
+        </table>
+
+        <h2>Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет string(66)?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Буква <code>B</code>. Число 66 - код буквы 'B' в ASCII.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чем отличается string(42) от strconv.Itoa(42)?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>string(42)</code> вернёт символ с кодом 42 (символ '*'). <code>strconv.Itoa(42)</code> вернёт строку "42".</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Почему []byte("Привет") содержит 12 элементов, а []rune("Привет") - только 6?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>[]byte</code> разбивает строку на байты. Русская буква занимает 2 байта, поэтому 6 букв = 12 байтов. <code>[]rune</code> разбивает на символы Unicode, поэтому 6 букв = 6 рун.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Как изменить первую букву в строке "hello" на заглавную?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Преобразовать в []byte или []rune, изменить первый элемент, преобразовать обратно в string: <code>b := []byte("hello"); b[0] = 'H'; result := string(b)</code></p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что такое Atoi и Itoa? Расшифруй названия.</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Atoi = "ASCII to integer" (текст в число). Itoa = "integer to ASCII" (число в текст).</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Можно ли написать "Ответ: " + 42? Почему?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. Go не конвертирует типы автоматически. Нужно <code>"Ответ: " + strconv.Itoa(42)</code>.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">fmt.Println(string(72))</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>H</code> - символ с кодом 72.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">s := "AB"
+b := []byte(s)
+fmt.Println(b[1])</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>66</code> - код буквы 'B' (второй символ строки "AB").</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">n, _ := strconv.Atoi("100")
+fmt.Println(n + 23)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>123</code> - строка "100" превратилась в число 100, плюс 23 = 123.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">fmt.Println(string(65) + string(66))</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>AB</code> - два символа склеились в строку.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">runes := []rune("Go")
+fmt.Println(len(runes))</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>2</code> - в строке "Go" два символа (обе буквы английские).</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">fmt.Println(strconv.Itoa(7) + strconv.Itoa(3))</code></pre>
+                </div>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>73</code> - строки "7" и "3" склеились (конкатенация, не сложение!).</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h2>Резюме</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Задача</th>
+                    <th>Решение</th>
+                    <th>Пример</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Код в символ</td><td><code>string(code)</code></td><td><code>string(65)</code> = "A"</td></tr>
+                <tr><td>Строка в байты</td><td><code>[]byte(s)</code></td><td>Для изменения английского текста</td></tr>
+                <tr><td>Строка в руны</td><td><code>[]rune(s)</code></td><td>Для изменения любого текста</td></tr>
+                <tr><td>Слайс в строку</td><td><code>string(slice)</code></td><td>Обратно после изменений</td></tr>
+                <tr><td>Строка в число</td><td><code>strconv.Atoi(s)</code></td><td>Ввод пользователя</td></tr>
+                <tr><td>Число в строку</td><td><code>strconv.Itoa(n)</code></td><td>Вывод результата</td></tr>
+            </tbody>
+        </table>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
+            <ul class="summary-list">
+                <li><code>string(65)</code> - символ с кодом 65, НЕ строка "65"</li>
+                <li><code>strconv.Itoa(65)</code> - строка "65"</li>
+                <li><code>[]byte</code> - для ASCII текста (английский)</li>
+                <li><code>[]rune</code> - для Unicode текста (любой язык)</li>
+                <li>Go не конвертирует типы автоматически</li>
+            </ul>
+        </div>
+
+        <nav class="nav-footer">
+            <a href="06-string.html" class="nav-link prev">
+                <span class="nav-arrow">&lt;-</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Строки (string)</div></div>
+            </a>
+            <a href="08-type-conversion.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Преобразование числовых типов</div></div>
+                <span class="nav-arrow">-&gt;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
+</body>
+</html>
