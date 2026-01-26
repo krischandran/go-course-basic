@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <title>Вещественные числа — Вводный курс Go</title>
+    <title>Вещественные числа (float) — Вводный курс Go</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,40 +188,6 @@
             color: inherit;
         }
 
-        .alert {
-            margin: 24px 0;
-            padding: 16px 16px 16px 44px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-        .alert-icon {
-            position: absolute;
-            left: 14px;
-            top: 16px;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .alert-important .alert-icon {
-            background: rgba(241, 161, 42, 0.15);
-            color: var(--accent-orange);
-        }
-        .alert-tip .alert-icon {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-        .alert p {
-            margin: 0;
-            font-size: 14px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -258,25 +224,18 @@
             font-size: 12px;
         }
 
-        .info-box {
+        blockquote {
             margin: 20px 0;
             padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
         }
-        .info-box .info-row {
-            padding: 6px 0;
-            color: var(--text-secondary);
+        blockquote p {
             font-size: 14px;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
         }
 
         .card {
@@ -395,20 +354,6 @@
             font-size: 14px;
         }
 
-        blockquote {
-            margin: 20px 0;
-            padding: 16px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
         .nav-footer {
             display: flex;
             flex-direction: column;
@@ -461,45 +406,75 @@
     <main>
         <div class="module-badge">Модуль 1 / Урок 3</div>
 
-        <h1>Вещественные числа</h1>
-        <p class="lead">Go предлагает два типа: <code>float32</code> и <code>float64</code>. По умолчанию Go выбирает <code>float64</code> - он точнее. В отличие от целых чисел, вещественные хранятся приблизительно, поэтому <code>0.1 + 0.2</code> не равно <code>0.3</code>.</p>
+        <h1>Вещественные числа (float)</h1>
+        <p class="lead">Вещественные числа - это числа с дробной частью: 3.14, 0.5, -2.7. В Go для них есть тип float (от floating point - плавающая точка). Название связано с тем, как число хранится в памяти: точка может "плавать" между цифрами.</p>
 
-        <h2>Тип float</h2>
+        <p>Go предлагает два типа: <code>float32</code> и <code>float64</code>. По умолчанию Go выбирает <code>float64</code> - он точнее. Главная особенность float - они хранят числа приблизительно, поэтому <code>0.1 + 0.2</code> не равно ровно <code>0.3</code>.</p>
 
-        <p>Для чисел с дробной частью в Go есть тип <code>float</code> (от английского floating point - плавающая точка). Название связано с тем, как число хранится в памяти - точка может "плавать" между цифрами.</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    price := 199.99
-    fmt.Println(price)
-}</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>199.99</code></pre>
-        </div>
-
-        <p>Переменная <code>price</code> автоматически получила тип <code>float64</code>. Это тип по умолчанию для дробных чисел в Go.</p>
-
-        <p>В Go есть два типа для дробных чисел:</p>
+        <h2>float32 vs float64</h2>
 
         <table>
             <thead>
-                <tr><th>Тип</th><th>Размер</th><th>Точность</th></tr>
+                <tr>
+                    <th>Тип</th>
+                    <th>Размер</th>
+                    <th>Точность</th>
+                    <th>Диапазон</th>
+                </tr>
             </thead>
             <tbody>
-                <tr><td><code>float32</code></td><td>4 байта</td><td>~7 цифр</td></tr>
-                <tr><td><code>float64</code></td><td>8 байт</td><td>~15 цифр</td></tr>
+                <tr>
+                    <td><code>float32</code></td>
+                    <td>4 байта</td>
+                    <td>~7 цифр</td>
+                    <td>до ~3.4 x 10<sup>38</sup></td>
+                </tr>
+                <tr>
+                    <td><code>float64</code></td>
+                    <td>8 байт</td>
+                    <td>~15 цифр</td>
+                    <td>до ~1.8 x 10<sup>308</sup></td>
+                </tr>
             </tbody>
         </table>
 
-        <p>Если тип не указан явно, Go выбирает <code>float64</code> - он точнее:</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    price := 199.99           // float64 (по умолчанию)
+    var ratio float32 = 0.5   // float32 (явно указан)
+
+    fmt.Println(price)  // 199.99
+    fmt.Println(ratio)  // 0.5
+}</code></pre>
+        </div>
+
+        <h3>Когда какой использовать?</h3>
+
+        <p><strong>float64</strong> - почти всегда:</p>
+        <ul>
+            <li>Стандартный выбор Go</li>
+            <li>Пакет <code>math</code> работает только с float64</li>
+            <li>Быстрее на современных 64-битных процессорах</li>
+            <li>Меньше накопление погрешности</li>
+        </ul>
+
+        <p><strong>float32</strong> - редкие случаи:</p>
+        <ul>
+            <li>Работа с GPU (графика, машинное обучение)</li>
+            <li>Огромные массивы данных где критична память</li>
+            <li>Совместимость с внешними API</li>
+        </ul>
+
+        <p>Если сомневаешься - используй float64.</p>
+
+        <h2>Арифметика</h2>
+
+        <p>Базовые операции работают так же, как с целыми числами:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -508,25 +483,19 @@ func main() {
 import "fmt"
 
 func main() {
-    a := 0.5            // float64 (по умолчанию)
-    var b float32 = 0.5 // явно указан float32
+    a := 10.0
+    b := 3.0
 
-    fmt.Println(a, b)
+    fmt.Println(a + b)   // 13
+    fmt.Println(a - b)   // 7
+    fmt.Println(a * b)   // 30
+    fmt.Println(a / b)   // 3.3333333333333335
 }</code></pre>
         </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0.5 0.5</code></pre>
-        </div>
+        <h3>Важный нюанс: деление целых чисел</h3>
 
-        <p>Важно: в Go разделитель дробной части - точка, не запятая. Это отличается от математики, где пишут <code>3,14</code>, а в коде нужно писать <code>3.14</code>.</p>
-
-        <p>Почему два типа, а не один? Дело в балансе между точностью и памятью. <code>float32</code> занимает в два раза меньше места, но и точность у него ниже. Для большинства задач используй <code>float64</code> - памяти сейчас достаточно, а точность важнее.</p>
-
-        <h2>Арифметика с float</h2>
-
-        <p>С вещественными числами работают те же операции, что и с целыми:</p>
+        <p>Это частый источник багов:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -535,37 +504,25 @@ func main() {
 import "fmt"
 
 func main() {
-    a := 5.0
-    b := 2.0
-
-    fmt.Println(a + b)  // сложение
-    fmt.Println(a - b)  // вычитание
-    fmt.Println(a * b)  // умножение
-    fmt.Println(a / b)  // деление
+    fmt.Println(5 / 2)     // 2 (целочисленное деление!)
+    fmt.Println(5.0 / 2)   // 2.5 (вещественное)
+    fmt.Println(5 / 2.0)   // 2.5 (вещественное)
+    fmt.Println(5.0 / 2.0) // 2.5 (вещественное)
 }</code></pre>
         </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>7
-3
-10
-2.5</code></pre>
-        </div>
-
-        <p>Главное отличие от целых чисел - деление. При делении двух целых чисел результат тоже целое:</p>
+        <blockquote><p><strong>Правило:</strong> если оба операнда int - результат int (дробная часть отбрасывается). Чтобы получить дробный результат, хотя бы одно число должно быть float.</p></blockquote>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span></div>
-            <pre><code class="language-go">fmt.Println(5 / 2)   // 2 (целочисленное деление!)
-fmt.Println(5.0 / 2) // 2.5 (вещественное деление)</code></pre>
+            <pre><code class="language-go">a := 5
+b := 2
+result := float64(a) / float64(b)  // 2.5</code></pre>
         </div>
 
-        <p>Чтобы получить дробный результат, хотя бы одно из чисел должно быть float.</p>
+        <h2>Погрешность вычислений</h2>
 
-        <h2>Ловушка: погрешность</h2>
-
-        <p>У float типов есть неприятная особенность - они "приблизительные". Посмотри:</p>
+        <p>Посмотри на результат:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -574,22 +531,34 @@ fmt.Println(5.0 / 2) // 2.5 (вещественное деление)</code></pr
 import "fmt"
 
 func main() {
-    f := 0.1
-    f += 0.2
-    fmt.Println(f)
+    result := 0.1 + 0.2
+    fmt.Println(result)
+    fmt.Println(result == 0.3)
 }</code></pre>
         </div>
 
+        <p>Результат:</p>
+
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0.30000000000000004</code></pre>
+            <pre><code>0.30000000000000004
+false</code></pre>
         </div>
 
-        <p>Вместо ровных <code>0.3</code> получаем число с "хвостом"!</p>
+        <h3>Почему так происходит?</h3>
 
-        <p>Это не баг Go - так работают float во всех языках программирования. Причина в том, как компьютер хранит дробные числа в двоичной системе. Некоторые десятичные дроби (например, 0.1) невозможно точно представить в двоичном виде - получается бесконечная дробь, которую приходится округлять.</p>
+        <p>Компьютер хранит числа в двоичной системе. Число 0.5 представляется точно (это 1/2). А вот 0.1 в двоичной системе - бесконечная дробь:</p>
 
-        <p>Ещё пример:</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0.1 (десятичное) = 0.0001100110011... (двоичное, бесконечно)</code></pre>
+        </div>
+
+        <p>Компьютер обрезает эту дробь, и появляется небольшая погрешность. При сложении погрешности накапливаются.</p>
+
+        <h3>Не используй float для денег!</h3>
+
+        <p>Это правило номер один при работе с финансами. Погрешности накапливаются:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -598,39 +567,21 @@ func main() {
 import "fmt"
 
 func main() {
-    f := 5.8
-    fmt.Println(f - 5.0)
+    // ПЛОХО - погрешность накапливается
+    balance := 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1 + 0.1
+    fmt.Println(balance)  // 0.9999999999999999, а не 1.0
+
+    // ХОРОШО - храни в копейках как int
+    balanceKopecks := 10 + 10 + 10 + 10 + 10 + 10 + 10 + 10 + 10 + 10  // 100 копеек
+    fmt.Println(float64(balanceKopecks) / 100)  // 1
 }</code></pre>
         </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0.7999999999999998</code></pre>
-        </div>
-
-        <p>Это фундаментальное ограничение представления чисел в компьютере. Чем больше целая часть числа, тем больше может быть погрешность.</p>
-
-        <div class="alert alert-important">
-            <div class="alert-icon">!</div>
-            <p><strong>Не используй float для денег!</strong> Для финансовых расчётов используют целые числа (копейки вместо рублей) или специальные библиотеки для точных вычислений.</p>
-        </div>
+        <p>Для финансовых расчетов используй целые числа (копейки, центы) или библиотеку <code>shopspring/decimal</code>.</p>
 
         <h2>Пакет math</h2>
 
-        <p>Go предоставляет пакет <code>math</code> с математическими функциями. Вот самые полезные:</p>
-
-        <table>
-            <thead>
-                <tr><th>Функция</th><th>Действие</th></tr>
-            </thead>
-            <tbody>
-                <tr><td><code>math.Abs(x)</code></td><td>Модуль числа</td></tr>
-                <tr><td><code>math.Sqrt(x)</code></td><td>Квадратный корень</td></tr>
-                <tr><td><code>math.Pow(x, n)</code></td><td>Возведение в степень</td></tr>
-                <tr><td><code>math.Max(a, b)</code></td><td>Максимум из двух</td></tr>
-                <tr><td><code>math.Min(a, b)</code></td><td>Минимум из двух</td></tr>
-            </tbody>
-        </table>
+        <p>Go предоставляет пакет <code>math</code> с математическими функциями. Все они работают с <code>float64</code>:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -642,31 +593,27 @@ import (
 )
 
 func main() {
-    fmt.Println(math.Abs(-9))     // 9
-    fmt.Println(math.Sqrt(16))    // 4
-    fmt.Println(math.Pow(2, 10))  // 1024
+    fmt.Println(math.Abs(-5.5))      // 5.5 (модуль)
+    fmt.Println(math.Sqrt(16))       // 4 (квадратный корень)
+    fmt.Println(math.Pow(2, 10))     // 1024 (степень)
+    fmt.Println(math.Round(3.7))     // 4 (округление)
+    fmt.Println(math.Floor(3.7))     // 3 (вниз)
+    fmt.Println(math.Ceil(3.2))      // 4 (вверх)
 }</code></pre>
         </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>9
-4
-1024</code></pre>
-        </div>
-
-        <p>Важно: функции из <code>math</code> работают только с <code>float64</code>. Если передать <code>int</code>, будет ошибка компиляции.</p>
+        <p>Если у тебя int - нужно преобразование:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span></div>
-            <pre><code class="language-go">var n int = 16
-// math.Sqrt(n)  // ошибка! нужен float64
-math.Sqrt(float64(n))  // OK</code></pre>
+            <pre><code class="language-go">n := 16
+root := math.Sqrt(float64(n))  // OK
+// math.Sqrt(n)  // Ошибка компиляции!</code></pre>
         </div>
 
         <h3>Встроенные min и max</h3>
 
-        <p>Начиная с Go 1.21 появились встроенные функции <code>min</code> и <code>max</code>, которые работают без импорта <code>math</code>:</p>
+        <p>С Go 1.21 появились встроенные функции без импорта <code>math</code>:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -675,24 +622,27 @@ math.Sqrt(float64(n))  // OK</code></pre>
 import "fmt"
 
 func main() {
-    fmt.Println(max(8, 4))     // 8
-    fmt.Println(min(8, 4))     // 4
-    fmt.Println(max(3.5, 7.2)) // 7.2
+    fmt.Println(min(3, 7))       // 3
+    fmt.Println(max(3, 7))       // 7
+    fmt.Println(min(3.5, 2.1))   // 2.1
+    fmt.Println(max(1, 2, 3, 4)) // 4 (можно несколько аргументов)
 }</code></pre>
         </div>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>8
-4
-7.2</code></pre>
-        </div>
+        <p>Эти функции работают и с int, и с float - удобнее чем <code>math.Min</code>/<code>math.Max</code>.</p>
 
-        <p>Эти функции удобнее - работают и с int, и с float, без приведения типов.</p>
+        <h3>Полезные константы</h3>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">fmt.Println(math.Pi)           // 3.141592653589793
+fmt.Println(math.E)            // 2.718281828459045
+fmt.Println(math.MaxFloat64)   // 1.7976931348623157e+308</code></pre>
+        </div>
 
         <h2>Нулевое значение</h2>
 
-        <p>Если объявить переменную float без начального значения, она получит значение <code>0</code>:</p>
+        <p>Неинициализированный float равен <code>0</code>:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -701,37 +651,17 @@ func main() {
 import "fmt"
 
 func main() {
-    var price float64
-    fmt.Println(price)
+    var f float64
+    fmt.Println(f)  // 0
 }</code></pre>
         </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0</code></pre>
-        </div>
-
-        <h2>Почему float неточен?</h2>
-
-        <p>Давай разберёмся, откуда берётся погрешность.</p>
-
-        <p>Компьютер хранит числа в двоичной системе. Число 0.5 в двоичной системе - это ровно 0.1 (одна вторая). А вот 0.1 в десятичной системе превращается в бесконечную двоичную дробь:</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Text</span></div>
-            <pre><code>0.1 (десятичное) = 0.0001100110011... (двоичное, бесконечно)</code></pre>
-        </div>
-
-        <p>Компьютеру приходится обрезать эту дробь, и получается небольшая погрешность. При сложении погрешности накапливаются.</p>
-
-        <p>Это не проблема Go - так работает IEEE 754 (международный стандарт представления чисел с плавающей точкой), который используют все современные процессоры и языки программирования.</p>
 
         <h2>Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">01</span><span class="card-title">Какой тип получит переменная x в коде x := 3.14?</span></div>
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Какой тип получит переменная x := 3.14?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
@@ -741,57 +671,41 @@ func main() {
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чему равно 5 / 2 в Go? А 5.0 / 2?</span></div>
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чему равно выражение 7 / 2 в Go?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p><code>5 / 2 = 2</code> (целочисленное деление), <code>5.0 / 2 = 2.5</code> (вещественное).</p></div>
+                    <div class="answer"><p><code>3</code> - это целочисленное деление, дробная часть отбрасывается. Оба операнда int, поэтому результат тоже int.</p></div>
                 </details>
             </div>
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">03</span><span class="card-title">Почему 0.1 + 0.2 не равно ровно 0.3?</span></div>
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Почему 0.1 + 0.2 != 0.3 в Go?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p>Из-за погрешности представления десятичных дробей в двоичной системе.</p></div>
+                    <div class="answer"><p>Числа 0.1 и 0.2 нельзя точно представить в двоичной системе - получаются бесконечные дроби, которые компьютер обрезает. Погрешности накапливаются при сложении. Это свойство IEEE 754, не баг Go.</p></div>
                 </details>
             </div>
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">04</span><span class="card-title">Какое нулевое значение у типа float64?</span></div>
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Можно ли хранить цену товара в float64?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p><code>0</code> - нулевое значение для всех числовых типов.</p></div>
+                    <div class="answer"><p>Технически можно, но не рекомендуется для финансовых расчетов. Из-за погрешности float могут накапливаться ошибки. Лучше хранить цену в копейках как <code>int</code> или использовать библиотеку <code>decimal</code>.</p></div>
                 </details>
             </div>
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Можно ли использовать math.Sqrt с переменной типа int?</span></div>
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код: var f float64; fmt.Println(f == 0)?</span></div>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p>Нет напрямую. Нужно преобразовать: <code>math.Sqrt(float64(n))</code>.</p></div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код? Определи без запуска:</span></div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
-                    <pre><code class="language-go">a := 7.0
-b := 2.0
-fmt.Println(a / b)</code></pre>
-                </div>
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p><code>3.5</code> - деление двух float даёт точный результат.</p></div>
+                    <div class="answer"><p><code>true</code> - нулевое значение для float64 это 0, и сравнение с нулем работает корректно.</p></div>
                 </details>
             </div>
         </div>
@@ -799,9 +713,9 @@ fmt.Println(a / b)</code></pre>
         <h3>Задачи</h3>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">01</span><span class="card-title">Площадь круга</span></div>
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Среднее арифметическое</span></div>
             <div class="card-body">
-                <p>Вычисли площадь круга с радиусом 5. Используй формулу S = π × r². Для π используй значение 3.14.</p>
+                <p>Найди среднее арифметическое чисел 10, 20 и 35.</p>
                 <details>
                     <summary>Показать решение</summary>
                     <div class="answer">
@@ -812,98 +726,21 @@ fmt.Println(a / b)</code></pre>
 import "fmt"
 
 func main() {
-    r := 5.0
-    pi := 3.14
-    s := pi * r * r
-    fmt.Println(s)
-}</code></pre>
-                        </div>
-                        <p>Результат: <code>78.5</code></p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">02</span><span class="card-title">Среднее арифметическое</span></div>
-            <div class="card-body">
-                <p>Найди среднее арифметическое чисел 10 и 15.</p>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    a := 10.0
-    b := 15.0
-    avg := (a + b) / 2
+    a, b, c := 10.0, 20.0, 35.0
+    avg := (a + b + c) / 3
     fmt.Println(avg)
 }</code></pre>
                         </div>
-                        <p>Результат: <code>12.5</code></p>
+                        <p>Результат: <code>21.666666666666668</code></p>
                     </div>
                 </details>
             </div>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">03</span><span class="card-title">Перевод температуры</span></div>
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Площадь круга</span></div>
             <div class="card-body">
-                <p>Переведи 100 градусов Фаренгейта в Цельсии. Формула: C = 5/9 × (F - 32).</p>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    f := 100.0
-    c := 5.0 / 9.0 * (f - 32)
-    fmt.Println(c)
-}</code></pre>
-                        </div>
-                        <p>Результат: <code>37.77777777777778</code></p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">04</span><span class="card-title">Дробная часть</span></div>
-            <div class="card-body">
-                <p>Дано число 7.85. Выведи его дробную часть (0.85).</p>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer">
-                        <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    x := 7.85
-    frac := x - float64(int(x))
-    fmt.Println(frac)
-}</code></pre>
-                        </div>
-                        <p>Результат: <code>0.8500000000000005</code> (с погрешностью!)</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Гипотенуза</span></div>
-            <div class="card-body">
-                <p>Найди гипотенузу прямоугольного треугольника с катетами 3 и 4. Используй теорему Пифагора и math.Sqrt.</p>
+                <p>Вычисли площадь круга с радиусом 5. Используй <code>math.Pi</code>.</p>
                 <details>
                     <summary>Показать решение</summary>
                     <div class="answer">
@@ -917,8 +754,35 @@ import (
 )
 
 func main() {
-    a := 3.0
-    b := 4.0
+    r := 5.0
+    area := math.Pi * r * r
+    fmt.Println(area)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>78.53981633974483</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Гипотенуза</span></div>
+            <div class="card-body">
+                <p>Найди гипотенузу прямоугольного треугольника с катетами 3 и 4.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    a, b := 3.0, 4.0
     c := math.Sqrt(a*a + b*b)
     fmt.Println(c)
 }</code></pre>
@@ -930,9 +794,9 @@ func main() {
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Расстояние между точками</span></div>
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Целая и дробная часть</span></div>
             <div class="card-body">
-                <p>Найди расстояние между точками A(1, 2) и B(4, 6). Формула: d = √((x2-x1)² + (y2-y1)²).</p>
+                <p>Дано число 7.85. Выведи отдельно целую часть (7) и дробную (0.85).</p>
                 <details>
                     <summary>Показать решение</summary>
                     <div class="answer">
@@ -946,13 +810,40 @@ import (
 )
 
 func main() {
-    x1, y1 := 1.0, 2.0
-    x2, y2 := 4.0, 6.0
-    d := math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
-    fmt.Println(d)
+    x := 7.85
+    integer, frac := math.Modf(x)
+    fmt.Println("Целая:", integer)   // Целая: 7
+    fmt.Println("Дробная:", frac)    // Дробная: 0.8500000000000005
 }</code></pre>
                         </div>
-                        <p>Результат: <code>5</code></p>
+                        <p>Обрати внимание: дробная часть выводится с погрешностью - это особенность float!</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Сумма в копейках</span></div>
+            <div class="card-body">
+                <p>У тебя 3 товара по 19.99 рублей. Посчитай сумму, храня цены в копейках.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    priceKopecks := 1999  // 19.99 рублей = 1999 копеек
+    quantity := 3
+    totalKopecks := priceKopecks * quantity
+
+    fmt.Println("Итого копеек:", totalKopecks)                    // 5997
+    fmt.Println("Итого рублей:", float64(totalKopecks)/100)       // 59.97
+}</code></pre>
+                        </div>
                     </div>
                 </details>
             </div>
@@ -961,26 +852,26 @@ func main() {
         <h2>Резюме</h2>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Что запомнить</span></div>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
             <ul class="summary-list">
-                <li><strong>float64</strong> - основной тип для дробных чисел, выбирается по умолчанию</li>
-                <li><strong>float32</strong> - занимает меньше памяти, но менее точен</li>
-                <li>Разделитель дробной части - точка: <code>3.14</code>, не запятая</li>
-                <li>При делении двух int результат int: <code>5 / 2 = 2</code></li>
-                <li>Float типы "приблизительные" - <strong>не используй для денег!</strong></li>
-                <li>Пакет <code>math</code> содержит Abs, Sqrt, Pow, Max, Min</li>
-                <li>Встроенные <code>min</code>/<code>max</code> работают без импорта (Go 1.21+)</li>
-                <li>Нулевое значение для float = 0</li>
+                <li><strong>float64</strong> - основной тип, выбирается по умолчанию</li>
+                <li><strong>float32</strong> - только для GPU, больших массивов, совместимости</li>
+                <li>Деление <code>5 / 2 = 2</code>, для дробного результата нужен float: <code>5.0 / 2</code></li>
+                <li><code>0.1 + 0.2 != 0.3</code> - это нормально, свойство IEEE 754</li>
+                <li><strong>Не храни деньги в float!</strong> Используй int (копейки) или decimal</li>
+                <li>Пакет <code>math</code> работает только с float64</li>
+                <li>Встроенные <code>min</code>/<code>max</code> работают с любыми числами (Go 1.21+)</li>
+                <li>Нулевое значение = 0</li>
             </ul>
         </div>
 
         <nav class="nav-footer">
             <a href="02-int.html" class="nav-link prev">
                 <span class="nav-arrow">&lt;-</span>
-                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Целые числа</div></div>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Целые числа (int)</div></div>
             </a>
             <a href="04-byte.html" class="nav-link next">
-                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Тип byte</div></div>
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Байт (byte)</div></div>
                 <span class="nav-arrow">-&gt;</span>
             </a>
         </nav>
