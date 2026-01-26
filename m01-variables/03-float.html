@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Вещественные числа — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        main {
+            max-width: 100%;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin: 24px 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
+            color: var(--text-secondary);
+        }
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by JS - copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .alert {
+            margin: 24px 0;
+            padding: 16px 16px 16px 44px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .alert-icon {
+            position: absolute;
+            left: 14px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .alert-important .alert-icon {
+            background: rgba(241, 161, 42, 0.15);
+            color: var(--accent-orange);
+        }
+        .alert-tip .alert-icon {
+            background: rgba(42, 241, 107, 0.15);
+            color: var(--accent-green);
+        }
+        .alert p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .info-box {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+        .info-box .info-row {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .info-box .info-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-box code {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .card {
+            margin: 16px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .card-body {
+            padding: 16px;
+        }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
+
+        details {
+            margin-top: 12px;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        /* Used by HTML - details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        blockquote {
+            margin: 20px 0;
+            padding: 16px;
+            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
+            border-left: 2px solid var(--accent-green);
+            border-radius: 0 6px 6px 0;
+        }
+        blockquote p {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .nav-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-link:active {
+            background: var(--bg-tertiary);
+        }
+        /* Used by HTML - navigation link alignment (prev) */
+        .nav-link.prev {
+            text-align: left;
+        }
+        /* Used by HTML - navigation link alignment (next) */
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <div class="module-badge">Модуль 1 / Урок 3</div>
+
+        <h1>Вещественные числа</h1>
+        <p class="lead">Go предлагает два типа: <code>float32</code> и <code>float64</code>. По умолчанию Go выбирает <code>float64</code> - он точнее. В отличие от целых чисел, вещественные хранятся приблизительно, поэтому <code>0.1 + 0.2</code> не равно <code>0.3</code>.</p>
+
+        <h2>Тип float</h2>
+
+        <p>Для чисел с дробной частью в Go есть тип <code>float</code> (от английского floating point - плавающая точка). Название связано с тем, как число хранится в памяти - точка может "плавать" между цифрами.</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    price := 199.99
+    fmt.Println(price)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>199.99</code></pre>
+        </div>
+
+        <p>Переменная <code>price</code> автоматически получила тип <code>float64</code>. Это тип по умолчанию для дробных чисел в Go.</p>
+
+        <p>В Go есть два типа для дробных чисел:</p>
+
+        <table>
+            <thead>
+                <tr><th>Тип</th><th>Размер</th><th>Точность</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>float32</code></td><td>4 байта</td><td>~7 цифр</td></tr>
+                <tr><td><code>float64</code></td><td>8 байт</td><td>~15 цифр</td></tr>
+            </tbody>
+        </table>
+
+        <p>Если тип не указан явно, Go выбирает <code>float64</code> - он точнее:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := 0.5            // float64 (по умолчанию)
+    var b float32 = 0.5 // явно указан float32
+
+    fmt.Println(a, b)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0.5 0.5</code></pre>
+        </div>
+
+        <p>Важно: в Go разделитель дробной части - точка, не запятая. Это отличается от математики, где пишут <code>3,14</code>, а в коде нужно писать <code>3.14</code>.</p>
+
+        <p>Почему два типа, а не один? Дело в балансе между точностью и памятью. <code>float32</code> занимает в два раза меньше места, но и точность у него ниже. Для большинства задач используй <code>float64</code> - памяти сейчас достаточно, а точность важнее.</p>
+
+        <h2>Арифметика с float</h2>
+
+        <p>С вещественными числами работают те же операции, что и с целыми:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := 5.0
+    b := 2.0
+
+    fmt.Println(a + b)  // сложение
+    fmt.Println(a - b)  // вычитание
+    fmt.Println(a * b)  // умножение
+    fmt.Println(a / b)  // деление
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>7
+3
+10
+2.5</code></pre>
+        </div>
+
+        <p>Главное отличие от целых чисел - деление. При делении двух целых чисел результат тоже целое:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">fmt.Println(5 / 2)   // 2 (целочисленное деление!)
+fmt.Println(5.0 / 2) // 2.5 (вещественное деление)</code></pre>
+        </div>
+
+        <p>Чтобы получить дробный результат, хотя бы одно из чисел должно быть float.</p>
+
+        <h2>Ловушка: погрешность</h2>
+
+        <p>У float типов есть неприятная особенность - они "приблизительные". Посмотри:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    f := 0.1
+    f += 0.2
+    fmt.Println(f)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0.30000000000000004</code></pre>
+        </div>
+
+        <p>Вместо ровных <code>0.3</code> получаем число с "хвостом"!</p>
+
+        <p>Это не баг Go - так работают float во всех языках программирования. Причина в том, как компьютер хранит дробные числа в двоичной системе. Некоторые десятичные дроби (например, 0.1) невозможно точно представить в двоичном виде - получается бесконечная дробь, которую приходится округлять.</p>
+
+        <p>Ещё пример:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    f := 5.8
+    fmt.Println(f - 5.0)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0.7999999999999998</code></pre>
+        </div>
+
+        <p>Это фундаментальное ограничение представления чисел в компьютере. Чем больше целая часть числа, тем больше может быть погрешность.</p>
+
+        <div class="alert alert-important">
+            <div class="alert-icon">!</div>
+            <p><strong>Не используй float для денег!</strong> Для финансовых расчётов используют целые числа (копейки вместо рублей) или специальные библиотеки для точных вычислений.</p>
+        </div>
+
+        <h2>Пакет math</h2>
+
+        <p>Go предоставляет пакет <code>math</code> с математическими функциями. Вот самые полезные:</p>
+
+        <table>
+            <thead>
+                <tr><th>Функция</th><th>Действие</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>math.Abs(x)</code></td><td>Модуль числа</td></tr>
+                <tr><td><code>math.Sqrt(x)</code></td><td>Квадратный корень</td></tr>
+                <tr><td><code>math.Pow(x, n)</code></td><td>Возведение в степень</td></tr>
+                <tr><td><code>math.Max(a, b)</code></td><td>Максимум из двух</td></tr>
+                <tr><td><code>math.Min(a, b)</code></td><td>Минимум из двух</td></tr>
+            </tbody>
+        </table>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    fmt.Println(math.Abs(-9))     // 9
+    fmt.Println(math.Sqrt(16))    // 4
+    fmt.Println(math.Pow(2, 10))  // 1024
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>9
+4
+1024</code></pre>
+        </div>
+
+        <p>Важно: функции из <code>math</code> работают только с <code>float64</code>. Если передать <code>int</code>, будет ошибка компиляции.</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">var n int = 16
+// math.Sqrt(n)  // ошибка! нужен float64
+math.Sqrt(float64(n))  // OK</code></pre>
+        </div>
+
+        <h3>Встроенные min и max</h3>
+
+        <p>Начиная с Go 1.21 появились встроенные функции <code>min</code> и <code>max</code>, которые работают без импорта <code>math</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    fmt.Println(max(8, 4))     // 8
+    fmt.Println(min(8, 4))     // 4
+    fmt.Println(max(3.5, 7.2)) // 7.2
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>8
+4
+7.2</code></pre>
+        </div>
+
+        <p>Эти функции удобнее - работают и с int, и с float, без приведения типов.</p>
+
+        <h2>Нулевое значение</h2>
+
+        <p>Если объявить переменную float без начального значения, она получит значение <code>0</code>:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    var price float64
+    fmt.Println(price)
+}</code></pre>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>0</code></pre>
+        </div>
+
+        <h2>Почему float неточен?</h2>
+
+        <p>Давай разберёмся, откуда берётся погрешность.</p>
+
+        <p>Компьютер хранит числа в двоичной системе. Число 0.5 в двоичной системе - это ровно 0.1 (одна вторая). А вот 0.1 в десятичной системе превращается в бесконечную двоичную дробь:</p>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Text</span></div>
+            <pre><code>0.1 (десятичное) = 0.0001100110011... (двоичное, бесконечно)</code></pre>
+        </div>
+
+        <p>Компьютеру приходится обрезать эту дробь, и получается небольшая погрешность. При сложении погрешности накапливаются.</p>
+
+        <p>Это не проблема Go - так работает IEEE 754 (международный стандарт представления чисел с плавающей точкой), который используют все современные процессоры и языки программирования.</p>
+
+        <h2>Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Какой тип получит переменная x в коде x := 3.14?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>float64</code> - Go по умолчанию выбирает float64 для дробных чисел.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Чему равно 5 / 2 в Go? А 5.0 / 2?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>5 / 2 = 2</code> (целочисленное деление), <code>5.0 / 2 = 2.5</code> (вещественное).</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Почему 0.1 + 0.2 не равно ровно 0.3?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Из-за погрешности представления десятичных дробей в двоичной системе.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Какое нулевое значение у типа float64?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>0</code> - нулевое значение для всех числовых типов.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Можно ли использовать math.Sqrt с переменной типа int?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет напрямую. Нужно преобразовать: <code>math.Sqrt(float64(n))</code>.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код? Определи без запуска:</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">a := 7.0
+b := 2.0
+fmt.Println(a / b)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>3.5</code> - деление двух float даёт точный результат.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Площадь круга</span></div>
+            <div class="card-body">
+                <p>Вычисли площадь круга с радиусом 5. Используй формулу S = π × r². Для π используй значение 3.14.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    r := 5.0
+    pi := 3.14
+    s := pi * r * r
+    fmt.Println(s)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>78.5</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Среднее арифметическое</span></div>
+            <div class="card-body">
+                <p>Найди среднее арифметическое чисел 10 и 15.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    a := 10.0
+    b := 15.0
+    avg := (a + b) / 2
+    fmt.Println(avg)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>12.5</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Перевод температуры</span></div>
+            <div class="card-body">
+                <p>Переведи 100 градусов Фаренгейта в Цельсии. Формула: C = 5/9 × (F - 32).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    f := 100.0
+    c := 5.0 / 9.0 * (f - 32)
+    fmt.Println(c)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>37.77777777777778</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Дробная часть</span></div>
+            <div class="card-body">
+                <p>Дано число 7.85. Выведи его дробную часть (0.85).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    x := 7.85
+    frac := x - float64(int(x))
+    fmt.Println(frac)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>0.8500000000000005</code> (с погрешностью!)</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Гипотенуза</span></div>
+            <div class="card-body">
+                <p>Найди гипотенузу прямоугольного треугольника с катетами 3 и 4. Используй теорему Пифагора и math.Sqrt.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    a := 3.0
+    b := 4.0
+    c := math.Sqrt(a*a + b*b)
+    fmt.Println(c)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>5</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Расстояние между точками</span></div>
+            <div class="card-body">
+                <p>Найди расстояние между точками A(1, 2) и B(4, 6). Формула: d = √((x2-x1)² + (y2-y1)²).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <div class="code-block">
+                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math"
+)
+
+func main() {
+    x1, y1 := 1.0, 2.0
+    x2, y2 := 4.0, 6.0
+    d := math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
+    fmt.Println(d)
+}</code></pre>
+                        </div>
+                        <p>Результат: <code>5</code></p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <h2>Резюме</h2>
+
+        <div class="summary-box">
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Что запомнить</span></div>
+            <ul class="summary-list">
+                <li><strong>float64</strong> - основной тип для дробных чисел, выбирается по умолчанию</li>
+                <li><strong>float32</strong> - занимает меньше памяти, но менее точен</li>
+                <li>Разделитель дробной части - точка: <code>3.14</code>, не запятая</li>
+                <li>При делении двух int результат int: <code>5 / 2 = 2</code></li>
+                <li>Float типы "приблизительные" - <strong>не используй для денег!</strong></li>
+                <li>Пакет <code>math</code> содержит Abs, Sqrt, Pow, Max, Min</li>
+                <li>Встроенные <code>min</code>/<code>max</code> работают без импорта (Go 1.21+)</li>
+                <li>Нулевое значение для float = 0</li>
+            </ul>
+        </div>
+
+        <nav class="nav-footer">
+            <a href="02-int.html" class="nav-link prev">
+                <span class="nav-arrow">&lt;-</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Целые числа</div></div>
+            </a>
+            <a href="04-byte.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Тип byte</div></div>
+                <span class="nav-arrow">-&gt;</span>
+            </a>
+        </nav>
+    </main>
+
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
+
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+        });
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
+</body>
+</html>
