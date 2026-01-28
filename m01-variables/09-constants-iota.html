@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Константы и iota</title>
+    <title>Константы и iota | Go Курс</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root {
             --bg-primary: #070709;
-            --bg-secondary: #0f0f13;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
-            --accent-red: #ff6b6b;
-            --border-color: #2a2a3a;
-            --code-bg: #1a1a2e;
         }
 
         * {
@@ -27,12 +32,13 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.7;
             padding: 16px;
             padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
@@ -42,21 +48,44 @@
 
         h1 {
             font-size: 1.75rem;
-            margin-bottom: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
             color: var(--text-primary);
-            border-bottom: 2px solid var(--accent-green);
-            padding-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .module-badge {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            color: var(--accent-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .lead {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         h2 {
             font-size: 1.35rem;
-            margin: 2rem 0 1rem;
-            color: var(--accent-green);
+            font-weight: 600;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
 
         h3 {
-            font-size: 1.15rem;
-            margin: 1.5rem 0 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 1.75rem 0 0.75rem;
             color: var(--text-primary);
         }
 
@@ -65,52 +94,113 @@
             color: var(--text-secondary);
         }
 
-        .intro {
-            font-size: 1.05rem;
+        strong {
             color: var(--text-primary);
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 3px solid var(--accent-green);
+            font-weight: 500;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin: 0.5rem 0;
         }
 
         .code-block {
-            background: var(--code-bg);
+            background: var(--bg-secondary);
             border-radius: 8px;
             margin: 1rem 0;
-            overflow-x: auto;
+            overflow: hidden;
             border: 1px solid var(--border-color);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-lang {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        /* Used by JS — copy button state after click */
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
         }
 
         .code-block pre {
             margin: 0;
             padding: 1rem;
+            overflow-x: auto;
         }
 
         .code-block code {
-            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            background: transparent;
+            padding: 0;
+            color: inherit;
         }
 
         .code-result {
             background: var(--bg-tertiary);
-            border-radius: 0 0 8px 8px;
             padding: 0.75rem 1rem;
             border-top: 1px dashed var(--border-color);
-            font-family: 'SF Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
             color: var(--accent-green);
         }
 
         .code-result::before {
-            content: "Результат: ";
-            color: var(--text-secondary);
+            content: "Вывод: ";
+            color: var(--text-muted);
         }
 
-        code {
-            font-family: 'SF Mono', 'Fira Code', monospace;
+        .code-error {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-top: 1px dashed var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #ff6b6b;
+        }
+
+        .code-error::before {
+            content: "Ошибка: ";
+            color: var(--text-muted);
+        }
+
+        code:not(pre code) {
+            font-family: 'JetBrains Mono', monospace;
             background: var(--bg-tertiary);
             padding: 0.15rem 0.4rem;
             border-radius: 4px;
@@ -134,15 +224,11 @@
         th {
             background: var(--bg-secondary);
             color: var(--accent-green);
-            font-weight: 600;
+            font-weight: 500;
         }
 
         td {
             color: var(--text-secondary);
-        }
-
-        tr:hover {
-            background: var(--bg-secondary);
         }
 
         hr {
@@ -151,119 +237,99 @@
             margin: 2rem 0;
         }
 
-        /* Questions Section */
-        .section-title {
-            font-size: 1.35rem;
-            color: var(--accent-green);
-            margin: 2rem 0 1rem;
-        }
-
-        .question-card {
+        /* Card System */
+        .card {
+            margin: 16px 0;
             background: var(--bg-secondary);
-            border-radius: 12px;
-            margin: 1rem 0;
-            overflow: hidden;
             border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
         }
-
-        .question-header {
-            padding: 1rem;
-            cursor: pointer;
+        .card-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .question-header:hover {
+            gap: 12px;
+            padding: 12px 16px;
             background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .question-title {
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        /* Used by HTML — question card number styling */
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        /* Used by HTML — task card number styling */
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
             color: var(--text-primary);
-            font-weight: 500;
-            flex: 1;
-            padding-right: 1rem;
         }
-
-        .question-toggle {
-            color: var(--accent-green);
-            font-size: 1.25rem;
-            transition: transform 0.3s;
+        .card-body {
+            padding: 16px;
         }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
 
-        .question-card.open .question-toggle {
-            transform: rotate(45deg);
+        details {
+            margin-top: 12px;
         }
-
-        .question-answer {
-            display: none;
-            padding: 0 1rem 1rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .question-card.open .question-answer {
-            display: block;
-            padding-top: 1rem;
-        }
-
-        /* Tasks Section */
-        .task-card {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            margin: 1rem 0;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .task-header {
-            padding: 1rem;
+        details summary {
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .task-header:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .task-title {
-            color: var(--accent-orange);
+            color: var(--accent-green);
+            font-size: 13px;
             font-weight: 500;
-            flex: 1;
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .task-toggle {
-            color: var(--accent-orange);
-            font-size: 1.25rem;
-            transition: transform 0.3s;
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
         }
-
-        .task-card.open .task-toggle {
-            transform: rotate(45deg);
+        /* Used by HTML — details open state */
+        details[open] summary::before {
+            transform: rotate(90deg);
         }
-
-        .task-content {
-            padding: 0 1rem;
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
             color: var(--text-secondary);
         }
-
-        .task-solution {
-            display: none;
-            padding: 0 1rem 1rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
+        .answer ul, .answer ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            font-size: 14px;
         }
-
-        .task-card.open .task-solution {
-            display: block;
-            padding-top: 1rem;
+        .answer li {
+            margin: 0.25rem 0;
+            color: var(--text-secondary);
         }
 
         /* Summary Box */
         .summary-box {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            background: var(--bg-secondary);
             border: 1px solid var(--accent-green);
             border-radius: 12px;
             padding: 1.5rem;
@@ -274,11 +340,20 @@
             color: var(--accent-green);
             margin-top: 0;
             margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .summary-box h3 {
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
         }
 
         .summary-box ul {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
 
         .summary-box li {
@@ -295,13 +370,18 @@
             color: var(--accent-green);
         }
 
+        .summary-box table {
+            margin-top: 0;
+        }
+
         /* Navigation */
         .nav-footer {
             display: flex;
             justify-content: space-between;
             margin-top: 2rem;
-            padding-top: 1rem;
+            padding-top: 1.5rem;
             border-top: 1px solid var(--border-color);
+            gap: 1rem;
         }
 
         .nav-link {
@@ -310,15 +390,18 @@
             padding: 0.75rem 1rem;
             border-radius: 8px;
             background: var(--bg-secondary);
-            transition: background 0.2s;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
         }
 
         .nav-link:hover {
             background: var(--bg-tertiary);
+            border-color: var(--accent-green);
         }
 
         .nav-link.disabled {
-            color: var(--text-secondary);
+            color: var(--text-muted);
             pointer-events: none;
             opacity: 0.5;
         }
@@ -326,20 +409,20 @@
 </head>
 <body>
     <div class="container">
+        <span class="module-badge">Модуль 1: Переменные</span>
         <h1>Константы и iota</h1>
 
-        <div class="intro">
-            <p>Константа (от англ. constant - постоянный) - это значение, которое не изменяется во время работы программы. Число пи всегда 3.14159, количество дней в неделе всегда 7, максимальное количество попыток входа - 3. Такие значения логично сделать константами.</p>
-            <p>Зачем нужны константы, если есть переменные? Представь: ты написал <code>maxRetries = 3</code> как переменную. Через 100 строк кода кто-то случайно написал <code>maxRetries = 0</code>. Программа сломалась, но ошибку найти сложно - компилятор ничего не сказал. С константой компилятор сразу бы остановил сборку с ошибкой. Константы защищают важные значения от случайного изменения.</p>
-        </div>
-
-        <hr>
+        <p class="lead">Константа - это значение, которое не изменяется во время работы программы. Число пи всегда 3.14159, количество дней в неделе всегда 7, максимальное количество попыток входа - 3. Такие значения логично сделать константами. С константой компилятор сразу остановит сборку с ошибкой при попытке изменения. Константы защищают важные значения от случайного изменения.</p>
 
         <h2>Объявление констант</h2>
 
         <p>Константы создаются с помощью ключевого слова <code>const</code>:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -354,13 +437,16 @@ func main() {
         <p>А что если попробовать изменить константу? Давай посмотрим:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+            </div>
             <pre><code class="language-go">package main
 
 func main() {
     const pi = 3.14159
     pi = 3.14 // Ошибка компиляции!
 }</code></pre>
-            <div class="code-result" style="color: var(--accent-red);">cannot assign to pi</div>
+            <div class="code-error">cannot assign to pi</div>
         </div>
 
         <p>Компилятор не позволяет изменить константу - именно для этого они и нужны. Это защита на уровне языка, а не договорённость между программистами.</p>
@@ -368,6 +454,10 @@ func main() {
         <p>Тип константы можно указать явно, но обычно это не требуется:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -386,6 +476,10 @@ func main() {
         <p>В чём польза? Одну константу можно использовать с переменными разных типов:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -409,13 +503,17 @@ func main() {
         <h2>Что можно хранить в константах</h2>
 
         <p>В константах можно хранить только простые значения:</p>
-        <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+        <ul>
             <li>Числа (целые и дробные)</li>
             <li>Строки</li>
             <li>Булевы значения (true/false)</li>
         </ul>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -440,6 +538,10 @@ func main() {
         <p>Когда констант много, их удобно объединять в группу с помощью круглых скобок:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -459,6 +561,10 @@ func main() {
         <p>Если константа объявлена без значения, Go повторяет выражение из предыдущей строки:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -489,6 +595,10 @@ func main() {
         <p>В Go есть элегантное решение - <code>iota</code> (от греческой буквы йота, обозначающей наименьшую величину). Это специальный счётчик, который начинается с 0 и увеличивается на 1 для каждой строки в блоке const:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -506,7 +616,7 @@ func main() {
         </div>
 
         <p>Как это работает?</p>
-        <ol style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+        <ol>
             <li><code>Red = iota</code> - Go подставляет текущее значение iota (0)</li>
             <li><code>Green</code> - значение не указано, Go <strong>повторяет выражение</strong> <code>iota</code>, но iota уже стала 1</li>
             <li><code>Blue</code> - снова повторяет <code>iota</code>, которая теперь 2</li>
@@ -521,6 +631,10 @@ func main() {
         <p>Иногда первое значение (0) не нужно. Например, хочешь начать нумерацию дней недели с 1, а не с 0. Для этого используй пустой идентификатор <code>_</code>:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -552,6 +666,10 @@ func main() {
         <p>iota можно использовать в математических выражениях. Например, нужны значения, начинающиеся не с 0, а с 5:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -574,6 +692,10 @@ func main() {
         <p>Ещё пример - умножение:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -598,6 +720,10 @@ func main() {
         <p>Важный нюанс: iota сбрасывается в 0 в каждом новом блоке const:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -628,6 +754,10 @@ func main() {
         <p>В Go константы именуются так же, как переменные - в camelCase:</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
             <pre><code class="language-go">const maxRetries = 3       // локальная константа (маленькая буква)
 const MaxConnections = 100 // экспортируемая константа (большая буква)</code></pre>
         </div>
@@ -635,6 +765,9 @@ const MaxConnections = 100 // экспортируемая константа (�
         <p>Можно встретить стиль с заглавными буквами и подчёркиваниями (как в языке C):</p>
 
         <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">Go</span>
+            </div>
             <pre><code class="language-go">const MAX_RETRIES = 3 // работает, но не принято в Go</code></pre>
         </div>
 
@@ -642,79 +775,81 @@ const MaxConnections = 100 // экспортируемая константа (�
 
         <hr>
 
-        <h2 class="section-title">Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 1: Чем константа отличается от переменной?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Константу нельзя изменить после объявления, переменную - можно. Константы вычисляются при компиляции, переменные - во время выполнения.</p>
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 2: Что произойдёт при попытке изменить значение константы?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Ошибка компиляции. Программа не соберётся.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Чем константа отличается от переменной?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Константу нельзя изменить после объявления, переменную - можно. Константы вычисляются при компиляции, переменные - во время выполнения.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 3: С какого числа начинается iota?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>С нуля (0).</p>
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 4: Что произойдёт с iota в новом блоке const?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>iota сбрасывается в 0. Каждый блок const начинает счёт заново.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что произойдёт при попытке изменить значение константы?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Ошибка компиляции. Программа не соберётся.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 5: Как пропустить первое значение iota?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Использовать пустой идентификатор: <code>_ = iota</code>.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">С какого числа начинается iota?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>С нуля (0).</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 6: Какие типы данных можно хранить в константах?</span>
-                <span class="question-toggle">+</span>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что произойдёт с iota в новом блоке const?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>iota сбрасывается в 0. Каждый блок const начинает счёт заново.</p></div>
+                </details>
             </div>
-            <div class="question-answer">
-                <p>Числа (целые и дробные), строки, булевы значения (true/false).</p>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Как пропустить первое значение iota?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Использовать пустой идентификатор: <code>_ = iota</code>.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Какие типы данных можно хранить в константах?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Числа (целые и дробные), строки, булевы значения (true/false).</p></div>
+                </details>
             </div>
         </div>
 
         <h3>Задачи</h3>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 1: Базовая iota</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Базовая iota</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     a = iota
     b
@@ -722,20 +857,25 @@ const MaxConnections = 100 // экспортируемая константа (�
 )
 fmt.Println(a, b, c)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>0 1 2</code></p>
-                <p>iota начинается с 0 и увеличивается на 1 для каждой строки.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>0 1 2</code></p>
+                        <p>iota начинается с 0 и увеличивается на 1 для каждой строки.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 2: iota с выражением</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">iota с выражением</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     x = iota + 10
     y
@@ -743,20 +883,25 @@ fmt.Println(a, b, c)</code></pre>
 )
 fmt.Println(x, y, z)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>10 11 12</code></p>
-                <p>Выражение <code>iota + 10</code> повторяется для каждой строки: 0+10=10, 1+10=11, 2+10=12.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>10 11 12</code></p>
+                        <p>Выражение <code>iota + 10</code> повторяется для каждой строки: 0+10=10, 1+10=11, 2+10=12.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 3: Пропуск значения</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Пропуск значения</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     _ = iota
     first
@@ -764,20 +909,25 @@ fmt.Println(x, y, z)</code></pre>
 )
 fmt.Println(first, second)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>1 2</code></p>
-                <p>Первое значение (0) пропущено с помощью <code>_</code>. first получает 1, second получает 2.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>1 2</code></p>
+                        <p>Первое значение (0) пропущено с помощью <code>_</code>. first получает 1, second получает 2.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 4: Повтор без iota</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Повтор без iota</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     a = 5
     b
@@ -785,20 +935,25 @@ fmt.Println(first, second)</code></pre>
 )
 fmt.Println(a, b, c)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>5 5 5</code></p>
-                <p>Здесь нет iota! Go повторяет выражение <code>5</code> для b и c. Все три константы равны 5.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>5 5 5</code></p>
+                        <p>Здесь нет iota! Go повторяет выражение <code>5</code> для b и c. Все три константы равны 5.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 5: Два блока const</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Два блока const</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     x = iota
     y
@@ -808,20 +963,25 @@ const (
 )
 fmt.Println(x, y, z)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>0 1 0</code></p>
-                <p>z находится в новом блоке const, где iota сбрасывается в 0.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>0 1 0</code></p>
+                        <p>z находится в новом блоке const, где iota сбрасывается в 0.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 6: Умножение iota</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Умножение iota</span></div>
+            <div class="card-body">
+                <p>Что выведет этот код?</p>
                 <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-lang">Go</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
                     <pre><code class="language-go">const (
     a = iota * 2
     b
@@ -829,10 +989,13 @@ fmt.Println(x, y, z)</code></pre>
 )
 fmt.Println(a, b, c)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><strong>Вывод:</strong> <code>0 2 4</code></p>
-                <p>Выражение <code>iota * 2</code> повторяется: 0*2=0, 1*2=2, 2*2=4.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer">
+                        <p><strong>Вывод:</strong> <code>0 2 4</code></p>
+                        <p>Выражение <code>iota * 2</code> повторяется: 0*2=0, 1*2=2, 2*2=4.</p>
+                    </div>
+                </details>
             </div>
         </div>
 
@@ -876,11 +1039,11 @@ fmt.Println(a, b, c)</code></pre>
                     </tr>
                 </tbody>
             </table>
-            <h3 style="margin-top: 1.5rem; color: var(--text-primary);">Ключевые моменты:</h3>
+            <h3>Ключевые моменты:</h3>
             <ul>
-                <li>const (от constant - постоянный) создаёт неизменяемое значение</li>
+                <li>const создаёт неизменяемое значение</li>
                 <li>В константах можно хранить числа, строки и bool</li>
-                <li>iota (греческая буква, "наименьшая величина") - счётчик с 0</li>
+                <li>iota - счётчик, начинающийся с 0</li>
                 <li>iota увеличивается на 1 для каждой строки в блоке</li>
                 <li>iota сбрасывается в 0 в каждом новом блоке const</li>
                 <li>Пустой идентификатор _ пропускает ненужное значение</li>
@@ -893,18 +1056,26 @@ fmt.Println(a, b, c)</code></pre>
         </nav>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            hljs.highlightAll();
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
 
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-            }
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
         });
-    </script>
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
+</script>
+
 </body>
 </html>

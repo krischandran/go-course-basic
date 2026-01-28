@@ -3,416 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Строки (string)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <title>Строки (string) — Вводный курс Go</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <style>
         :root {
             --bg-primary: #070709;
-            --bg-secondary: #0f0f13;
-            --bg-tertiary: #1a1a24;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
+            --bg-secondary: #0d0d0f;
+            --bg-tertiary: #111113;
+            --text-primary: #ffffff;
+            --text-secondary: #dddddd;
+            --text-muted: #a7a7a7;
+            --border-color: #1a1a1c;
+            --border-light: #363636;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
-            --accent-red: #ff6b6b;
-            --border-color: #2a2a3a;
-            --code-bg: #1a1a2e;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: var(--bg-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
             color: var(--text-primary);
-            line-height: 1.7;
-            padding: 16px;
-            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+            background-color: var(--bg-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        .container {
+        main {
             max-width: 100%;
-            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+
+        .module-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
         }
 
         h1 {
-            font-size: 1.75rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            border-bottom: 2px solid var(--accent-green);
-            padding-bottom: 0.5rem;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
         }
 
         h2 {
-            font-size: 1.35rem;
-            margin: 2rem 0 1rem;
-            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 40px 0 20px;
+            scroll-margin-top: 20px;
+        }
+        h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 2px;
+            flex-shrink: 0;
         }
 
         h3 {
-            font-size: 1.15rem;
-            margin: 1.5rem 0 0.75rem;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
             color: var(--text-primary);
-        }
-
-        h4 {
-            font-size: 1rem;
-            margin: 1rem 0 0.5rem;
-            color: var(--text-secondary);
+            margin: 24px 0 12px;
         }
 
         p {
-            margin-bottom: 1rem;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 20px;
             color: var(--text-secondary);
         }
-
-        .intro {
-            font-size: 1.05rem;
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 3px solid var(--accent-green);
-        }
-
-        .code-block {
-            background: var(--code-bg);
-            border-radius: 8px;
-            margin: 1rem 0;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        .code-block pre {
-            margin: 0;
-            padding: 1rem;
-        }
-
-        .code-block code {
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-
-        .code-result {
-            background: var(--bg-tertiary);
-            border-radius: 0 0 8px 8px;
-            padding: 0.75rem 1rem;
-            border-top: 1px dashed var(--border-color);
-            font-family: 'SF Mono', monospace;
-            font-size: 0.875rem;
-            color: var(--accent-green);
-        }
-
-        .code-result::before {
-            content: "Результат: ";
-            color: var(--text-secondary);
+        li {
+            margin-bottom: 6px;
+            line-height: 1.6;
+            font-size: 15px;
         }
 
         code {
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            background: var(--bg-tertiary);
-            padding: 0.15rem 0.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.875rem;
-            color: var(--accent-orange);
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .code-block {
+            margin: 20px 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .code-lang {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .copy-btn:active {
+            background: var(--bg-tertiary);
+        }
+        .copy-btn.copied {
+            border-color: var(--accent-green);
+            background: rgba(42, 241, 107, 0.1);
+            color: var(--accent-green);
+        }
+        .code-block pre {
+            margin: 0;
+            padding: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: transparent;
+            padding: 0;
+            color: inherit;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 0.9rem;
+            margin: 20px 0;
+            font-size: 14px;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
-        th, td {
-            padding: 0.75rem;
+        thead, tbody, tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
-
-        th {
-            background: var(--bg-secondary);
-            color: var(--accent-green);
-            font-weight: 600;
-        }
-
         td {
+            padding: 12px;
             color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
         }
-
-        tr:hover {
+        td code {
             background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
         }
 
-        hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 2rem 0;
-        }
-
-        /* Questions Section */
-        .section-title {
-            font-size: 1.35rem;
-            color: var(--accent-green);
-            margin: 2rem 0 1rem;
-        }
-
-        .question-card {
+        .card {
+            margin: 16px 0;
             background: var(--bg-secondary);
-            border-radius: 12px;
-            margin: 1rem 0;
-            overflow: hidden;
             border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
         }
-
-        .question-header {
-            padding: 1rem;
-            cursor: pointer;
+        .card-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .question-header:hover {
+            gap: 12px;
+            padding: 12px 16px;
             background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
         }
-
-        .question-title {
+        .card-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .question-card .card-num {
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
+            color: var(--accent-green);
+        }
+        .task-card .card-num {
+            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+            color: var(--accent-orange);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
             color: var(--text-primary);
-            font-weight: 500;
-            flex: 1;
-            padding-right: 1rem;
         }
-
-        .question-toggle {
-            color: var(--accent-green);
-            font-size: 1.25rem;
-            transition: transform 0.3s;
+        .card-body {
+            padding: 16px;
         }
+        .card-body p { margin-bottom: 10px; }
+        .card-body p:last-child { margin-bottom: 0; }
 
-        .question-card.open .question-toggle {
-            transform: rotate(45deg);
+        details {
+            margin-top: 12px;
         }
-
-        .question-answer {
-            display: none;
-            padding: 0 1rem 1rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .question-card.open .question-answer {
-            display: block;
-            padding-top: 1rem;
-        }
-
-        /* Tasks Section */
-        .task-card {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            margin: 1rem 0;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        .task-header {
-            padding: 1rem;
+        details summary {
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .task-header:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .task-title {
-            color: var(--accent-orange);
+            color: var(--accent-green);
+            font-size: 13px;
             font-weight: 500;
-            flex: 1;
-        }
-
-        .task-toggle {
-            color: var(--accent-orange);
-            font-size: 1.25rem;
-            transition: transform 0.3s;
-        }
-
-        .task-card.open .task-toggle {
-            transform: rotate(45deg);
-        }
-
-        .task-content {
-            padding: 0 1rem;
-            color: var(--text-secondary);
-        }
-
-        .task-solution {
-            display: none;
-            padding: 0 1rem 1rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .task-card.open .task-solution {
-            display: block;
-            padding-top: 1rem;
-        }
-
-        /* Summary Box */
-        .summary-box {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-            border: 1px solid var(--accent-green);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .summary-box h2 {
-            color: var(--accent-green);
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        .summary-box ul {
+            padding: 8px 0;
             list-style: none;
-            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .summary-box li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
+        details summary::before {
+            content: '>';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .answer {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(42, 241, 107, 0.03);
+            border-radius: 6px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .answer p {
+            font-size: 14px;
             color: var(--text-secondary);
         }
 
-        .summary-box li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--accent-green);
+        .summary-box {
+            margin: 28px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
+            border: 1px solid rgba(42, 241, 107, 0.2);
+            border-radius: 12px;
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .summary-badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .summary-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .summary-list li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
-        /* Navigation */
         .nav-footer {
             display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            padding-top: 1rem;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
             border-top: 1px solid var(--border-color);
         }
-
         .nav-link {
-            color: var(--accent-green);
-            text-decoration: none;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
             background: var(--bg-secondary);
-            transition: background 0.2s;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        .nav-link:hover {
+        .nav-link:active {
             background: var(--bg-tertiary);
         }
-
-        .nav-link.disabled {
-            color: var(--text-secondary);
-            pointer-events: none;
-            opacity: 0.5;
+        .nav-link.prev {
+            text-align: left;
+        }
+        .nav-link.next {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        .nav-arrow {
+            font-size: 18px;
+            color: var(--accent-green);
+        }
+        .nav-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .nav-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
-        /* Memory diagram */
-        .memory-diagram {
+        .diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
             background: var(--bg-secondary);
+            padding: 16px;
             border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
+            border: 1px solid var(--border-color);
             overflow-x: auto;
-        }
-
-        .memory-row {
-            display: flex;
-            justify-content: center;
-            margin: 0.5rem 0;
-        }
-
-        .memory-cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--accent-green);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.75rem;
-        }
-
-        .memory-cell .value {
-            color: var(--accent-orange);
-        }
-
-        .memory-cell .char {
-            color: var(--text-secondary);
-            font-size: 0.65rem;
-        }
-
-        .memory-label {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-
-        .memory-wide {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0;
-        }
-
-        .memory-pair {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .memory-pair-cells {
-            display: flex;
-        }
-
-        .memory-pair .char-label {
-            color: var(--text-secondary);
-            font-size: 0.7rem;
-            margin-top: 2px;
+            white-space: pre;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <main>
+        <div class="module-badge">Модуль 1 / Урок 6</div>
+
         <h1>Строки (string)</h1>
-
-        <div class="intro">
-            <p>Строка (от англ. string - нить, последовательность) - это текст, состоящий из символов. Имя пользователя, адрес email, сообщение в чате - всё это строки. В Go строка записывается в двойных кавычках.</p>
-            <p>Как это работает? Строка - это последовательность байтов. Ты уже знаешь что байт - это числовой код символа. Строка "Hi" состоит из двух байтов: 72 (код 'H') и 105 (код 'i'). Для русского текста используются руны - каждая русская буква занимает 2 байта.</p>
-            <p>Зачем это нужно? Практически любая программа работает с текстом: выводит сообщения, читает ввод пользователя, обрабатывает данные. Строки - один из самых используемых типов.</p>
-        </div>
-
-        <hr>
+        <p class="lead">Строка (от англ. string - нить, последовательность) - это текст, состоящий из символов. Имя пользователя, адрес email, сообщение в чате - всё это строки. В Go строка записывается в двойных кавычках и является последовательностью байтов в кодировке UTF-8.</p>
 
         <h2>Создание строк</h2>
 
         <p>Давай создадим первую строку:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -421,12 +419,17 @@ func main() {
     s := "Hello, Go!"
     fmt.Println(s)
 }</code></pre>
-            <div class="code-result">Hello, Go!</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Hello, Go!</code></pre>
         </div>
 
         <p>Строку можно объявить несколькими способами:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -445,18 +448,23 @@ func main() {
     fmt.Println(city)  // Москва
     fmt.Println(empty) // (пустая строка)
 }</code></pre>
-            <div class="code-result">Анна<br>Москва<br></div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Анна
+Москва
+</code></pre>
         </div>
 
         <p>Нулевое значение для string - это пустая строка <code>""</code>. Она занимает 0 байт текста.</p>
-
-        <hr>
 
         <h2>Конкатенация строк</h2>
 
         <p>Часто нужно склеить несколько строк в одну. Для этого используем оператор <code>+</code>:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -467,14 +475,19 @@ func main() {
     fullName := firstName + " " + lastName
     fmt.Println(fullName)
 }</code></pre>
-            <div class="code-result">Иван Петров</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Иван Петров</code></pre>
         </div>
 
         <p>Такое склеивание называется конкатенацией (от англ. concatenation - связывание).</p>
 
-        <p>Порядок имеет значение. Посмотри:</p>
+        <p>Порядок имеет значение:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -486,18 +499,22 @@ func main() {
     fmt.Println(a + b) // Hello world!
     fmt.Println(b + a) // world!Hello
 }</code></pre>
-            <div class="code-result">Hello world!<br>world!Hello </div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Hello world!
+world!Hello </code></pre>
         </div>
 
         <p>При сложении чисел порядок не важен: 5 + 3 = 3 + 5. Со строками иначе: <code>"Hello " + "world!"</code> и <code>"world!" + "Hello "</code> дают разный результат.</p>
-
-        <hr>
 
         <h2>Многострочный текст</h2>
 
         <p>Для текста с переносами строк используй обратные кавычки (клавиша с буквой Ё в английской раскладке):</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -508,18 +525,23 @@ func main() {
 Третья строка`
     fmt.Println(text)
 }</code></pre>
-            <div class="code-result">Первая строка<br>Вторая строка<br>Третья строка</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>Первая строка
+Вторая строка
+Третья строка</code></pre>
         </div>
 
         <p>Обратные кавычки сохраняют текст как есть - со всеми переносами и пробелами.</p>
-
-        <hr>
 
         <h2>Длина строки</h2>
 
         <p>Функция <code>len()</code> возвращает длину строки:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -528,14 +550,19 @@ func main() {
     s := "Hello, World!"
     fmt.Println(len(s))
 }</code></pre>
-            <div class="code-result">13</div>
         </div>
 
-        <p>Пробел и знаки препинания тоже считаются. В строке "Hello, World!" 13 символов: 5 букв + запятая + пробел + 5 букв + восклицательный знак.</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>13</code></pre>
+        </div>
 
-        <p>Но будь внимателен: <code>len()</code> считает байты, не буквы. Вот неожиданный результат:</p>
+        <p>Пробел и знаки препинания тоже считаются. В строке "Hello, World!" 13 символов.</p>
+
+        <p>Но будь внимателен: <code>len()</code> считает байты, не буквы:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -544,42 +571,34 @@ func main() {
     fmt.Println(len("Hi"))     // 2
     fmt.Println(len("Привет")) // 12
 }</code></pre>
-            <div class="code-result">2<br>12</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>2
+12</code></pre>
         </div>
 
         <p>Почему "Привет" - это 12, а не 6? Вспомни урок про byte и rune: русская буква не влезает в один байт. В UTF-8 разные символы занимают разное количество байтов:</p>
 
         <table>
             <thead>
-                <tr>
-                    <th>Символы</th>
-                    <th>Байтов на символ</th>
-                    <th>Пример</th>
-                </tr>
+                <tr><th>Символы</th><th>Байтов на символ</th><th>Пример</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Английские буквы, цифры</td>
-                    <td>1</td>
-                    <td>"Hi" = 2 байта</td>
-                </tr>
-                <tr>
-                    <td>Русские буквы</td>
-                    <td>2</td>
-                    <td>"Привет" = 6 x 2 = 12 байт</td>
-                </tr>
+                <tr><td>Английские буквы, цифры</td><td>1</td><td>"Hi" = 2 байта</td></tr>
+                <tr><td>Русские буквы</td><td>2</td><td>"Привет" = 6 x 2 = 12 байт</td></tr>
             </tbody>
         </table>
 
         <p>Функция <code>len()</code> считает байты, а не буквы. Для английского текста это одно и то же (1 буква = 1 байт). Для русского - нет.</p>
-
-        <hr>
 
         <h2>Доступ к символам по индексу</h2>
 
         <p>Символы в строке пронумерованы с нуля. Получить символ по номеру можно через квадратные скобки:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -589,14 +608,20 @@ func main() {
     fmt.Println(s[0]) // 72 - код буквы H
     fmt.Println(s[1]) // 105 - код буквы i
 }</code></pre>
-            <div class="code-result">72<br>105</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>72
+105</code></pre>
         </div>
 
         <p>Индекс 0 - первый символ, индекс 1 - второй. Последний индекс = длина строки минус 1.</p>
 
-        <p>Обрати внимание: <code>s[0]</code> вернул 72, а не "H". Индексация возвращает байт - числовой код символа (вспомни урок про byte). Чтобы получить саму букву, преобразуй в строку:</p>
+        <p>Обрати внимание: <code>s[0]</code> вернул 72, а не "H". Индексация возвращает байт - числовой код символа. Чтобы получить саму букву, преобразуй в строку:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -606,35 +631,33 @@ func main() {
     fmt.Println(string(s[0])) // H
     fmt.Println(string(s[1])) // i
 }</code></pre>
-            <div class="code-result">H<br>i</div>
         </div>
 
-        <p>Каждая буква имеет свой числовой код. Буква 'H' = 72, буква 'i' = 105. Компьютер работает с числами, не с буквами напрямую.</p>
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>H
+i</code></pre>
+        </div>
+
+        <p>Каждая буква имеет свой числовой код. Буква 'H' = 72, буква 'i' = 105.</p>
 
         <p>Ещё одна опасность - выход за границы. Если обратиться к индексу за пределами строки, программа упадёт:</p>
 
         <div class="code-block">
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    s := "Hi"
-    // fmt.Println(s[2]) // Паника! Индекс 2 не существует
-    fmt.Println(len(s)) // 2, значит допустимые индексы: 0 и 1
-}</code></pre>
-            <div class="code-result">2</div>
+            <div class="code-header"><span class="code-lang">Go</span></div>
+            <pre><code class="language-go">s := "Hi"
+// fmt.Println(s[2]) // Паника! Индекс 2 не существует
+fmt.Println(len(s)) // 2, значит допустимые индексы: 0 и 1</code></pre>
         </div>
 
         <p>В строке "Hi" два байта. Допустимые индексы: 0 и 1. Индекс 2 вызовет панику (аварийное завершение программы).</p>
-
-        <hr>
 
         <h2>Строки неизменяемы</h2>
 
         <p>Строки в Go нельзя изменить напрямую:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span></div>
             <pre><code class="language-go">s := "hello"
 // s[0] = 'H'  // Ошибка компиляции!</code></pre>
         </div>
@@ -645,13 +668,12 @@ func main() {
 
         <p>Как тогда изменить букву? Через преобразование в другой тип. Как это сделать - в уроке про преобразования текстовых типов.</p>
 
-        <hr>
-
         <h2>Сравнение строк</h2>
 
         <p>Строки можно сравнивать операторами <code>==</code> и <code>!=</code>:</p>
 
         <div class="code-block">
+            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -663,326 +685,259 @@ func main() {
     fmt.Println(a == b) // false
     fmt.Println(a != b) // true
 }</code></pre>
-            <div class="code-result">false<br>true</div>
+        </div>
+
+        <div class="code-block">
+            <div class="code-header"><span class="code-lang">Output</span></div>
+            <pre><code>false
+true</code></pre>
         </div>
 
         <p>Сравнение учитывает регистр: "HELLO" и "Hello" - разные строки. Буква 'H' и буква 'h' имеют разные коды.</p>
-
-        <hr>
 
         <h2>Как строка хранится в памяти</h2>
 
         <p>Строка - это последовательность байтов. Вот как "Hi" выглядит в памяти:</p>
 
-        <div class="memory-diagram">
-            <div class="memory-row">
-                <div class="memory-cell">
-                    <span class="value">72</span>
-                    <span class="char">'H'</span>
-                </div>
-                <div class="memory-cell">
-                    <span class="value">105</span>
-                    <span class="char">'i'</span>
-                </div>
-            </div>
-            <div class="memory-label">2 байта</div>
-        </div>
+        <div class="diagram">┌─────┬─────┐
+│  72 │ 105 │  2 байта
+│ 'H' │ 'i' │
+└─────┴─────┘</div>
 
         <p>Каждый английский символ занимает 1 байт. Строка "Hi" = 2 байта.</p>
 
         <p>А вот строка "Привет" в памяти:</p>
 
-        <div class="memory-diagram">
-            <div class="memory-wide">
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">208</span></div>
-                        <div class="memory-cell"><span class="value">159</span></div>
-                    </div>
-                    <span class="char-label">П</span>
-                </div>
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">209</span></div>
-                        <div class="memory-cell"><span class="value">128</span></div>
-                    </div>
-                    <span class="char-label">р</span>
-                </div>
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">208</span></div>
-                        <div class="memory-cell"><span class="value">184</span></div>
-                    </div>
-                    <span class="char-label">и</span>
-                </div>
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">208</span></div>
-                        <div class="memory-cell"><span class="value">178</span></div>
-                    </div>
-                    <span class="char-label">в</span>
-                </div>
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">208</span></div>
-                        <div class="memory-cell"><span class="value">181</span></div>
-                    </div>
-                    <span class="char-label">е</span>
-                </div>
-                <div class="memory-pair">
-                    <div class="memory-pair-cells">
-                        <div class="memory-cell"><span class="value">209</span></div>
-                        <div class="memory-cell"><span class="value">130</span></div>
-                    </div>
-                    <span class="char-label">т</span>
-                </div>
-            </div>
-            <div class="memory-label">12 байт (каждая русская буква = 2 байта)</div>
-        </div>
+        <div class="diagram">┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│ 208 │ 159 │ 209 │ 128 │ 208 │ 184 │ 208 │ 178 │ 208 │ 181 │ 209 │ 130 │
+│    П      │    р      │    и      │    в      │    е      │    т      │
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+12 байт (каждая русская буква = 2 байта)</div>
 
         <p>Каждая русская буква занимает 2 байта. Поэтому <code>len("Привет")</code> = 12, а <code>s[0]</code> = 208 (первый байт буквы П, не сама буква).</p>
 
-        <p>Это следствие кодировки UTF-8. UTF-8 (от Unicode Transformation Format, 8-bit) - способ кодирования символов, где разные символы занимают от 1 до 4 байтов.</p>
+        <p>Это следствие кодировки UTF-8 - способа кодирования символов, где разные символы занимают от 1 до 4 байтов.</p>
 
-        <hr>
-
-        <h2 class="section-title">Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 1: Почему len("Go") = 2, а len("Го") = 4?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p><code>len()</code> считает байты. Английские буквы = 1 байт, русские = 2 байта. "Go" = 2 x 1 = 2, "Го" = 2 x 2 = 4.</p>
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 2: Что вернёт "Hello"[0] - букву или число?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Число (код символа). Чтобы получить букву: <code>string("Hello"[0])</code>.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Почему len("Go") = 2, а len("Го") = 4?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>len()</code> считает байты. Английские буквы = 1 байт, русские = 2 байта. "Go" = 2 x 1 = 2, "Го" = 2 x 2 = 4.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 3: Можно ли изменить символ в строке через s[0] = 'X'?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Нет. Строки неизменяемы. Это ошибка компиляции.</p>
-            </div>
-        </div>
-
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 4: Чем отличаются двойные кавычки от обратных?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Двойные <code>"..."</code> - обычная строка. Обратные <code>`...`</code> - многострочная строка с сохранением форматирования.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что вернёт "Hello"[0] - букву или число?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Число (код символа). Чтобы получить букву: <code>string("Hello"[0])</code>.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 5: Что произойдёт при обращении к s[10] для строки длиной 5?</span>
-                <span class="question-toggle">+</span>
-            </div>
-            <div class="question-answer">
-                <p>Паника (программа упадёт). Индекс за пределами строки.</p>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Можно ли изменить символ в строке через s[0] = 'X'?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Нет. Строки неизменяемы. Это ошибка компиляции.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="question-card">
-            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="question-title">Вопрос 6: Что выведет код a := "Go"; b := "Go"; fmt.Println(a == b)?</span>
-                <span class="question-toggle">+</span>
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Чем отличаются двойные кавычки от обратных?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Двойные <code>"..."</code> - обычная строка. Обратные <code>`...`</code> - многострочная строка с сохранением форматирования.</p></div>
+                </details>
             </div>
-            <div class="question-answer">
-                <p><code>true</code> - строки с одинаковым содержимым равны.</p>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что произойдёт при обращении к s[10] для строки длиной 5?</span></div>
+            <div class="card-body">
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p>Паника (программа упадёт). Индекс за пределами строки.</p></div>
+                </details>
+            </div>
+        </div>
+
+        <div class="card question-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
+            <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">a := "Go"
+b := "Go"
+fmt.Println(a == b)</code></pre>
+                </div>
+                <details>
+                    <summary>Показать ответ</summary>
+                    <div class="answer"><p><code>true</code> - строки с одинаковым содержимым равны.</p></div>
+                </details>
             </div>
         </div>
 
         <h3>Задачи</h3>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 1: Что выведет?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Длина строки</span></div>
+            <div class="card-body">
+                <p>Что выведет?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">s := "ab"
 fmt.Println(len(s))</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><code>2</code> - две английские буквы по 1 байту.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>2</code> - две английские буквы по 1 байту.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 2: Что выведет?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Русская строка</span></div>
+            <div class="card-body">
+                <p>Что выведет?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">s := "Да"
 fmt.Println(len(s))</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><code>4</code> - две русские буквы по 2 байта.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>4</code> - две русские буквы по 2 байта.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 3: Что выведет?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Конкатенация</span></div>
+            <div class="card-body">
+                <p>Что выведет?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">a := "World"
 b := "Hello "
 fmt.Println(b + a)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><code>Hello World</code> - конкатенация в порядке b + a.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>Hello World</code> - конкатенация в порядке b + a.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 4: Что выведет?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Индексация</span></div>
+            <div class="card-body">
+                <p>Что выведет?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">s := "Go"
 fmt.Println(s[0])</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><code>71</code> - код буквы 'G'.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>71</code> - код буквы 'G'.</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 5: Что выведет?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Символ по индексу</span></div>
+            <div class="card-body">
+                <p>Что выведет?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">s := "ABC"
 fmt.Println(string(s[2]))</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p><code>C</code> - третий символ строки (индекс 2).</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p><code>C</code> - третий символ строки (индекс 2).</p></div>
+                </details>
             </div>
         </div>
 
-        <div class="task-card">
-            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
-                <span class="task-title">Задача 6: Скомпилируется ли код?</span>
-                <span class="task-toggle">+</span>
-            </div>
-            <div class="task-content">
+        <div class="card task-card">
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Неизменяемость</span></div>
+            <div class="card-body">
+                <p>Скомпилируется ли код?</p>
                 <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">s := "hello"
 s[0] = 'H'
 fmt.Println(s)</code></pre>
                 </div>
-            </div>
-            <div class="task-solution">
-                <p>Нет. Ошибка компиляции: строки неизменяемы.</p>
+                <details>
+                    <summary>Показать решение</summary>
+                    <div class="answer"><p>Нет. Ошибка компиляции: строки неизменяемы.</p></div>
+                </details>
             </div>
         </div>
 
-        <hr>
+        <h2>Резюме</h2>
 
         <div class="summary-box">
-            <h2>Резюме</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Что</th>
-                        <th>Как</th>
-                        <th>Пример</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Создать строку</td>
-                        <td>Двойные кавычки</td>
-                        <td><code>s := "Hello"</code></td>
-                    </tr>
-                    <tr>
-                        <td>Многострочная</td>
-                        <td>Обратные кавычки</td>
-                        <td><code>s := `line1\nline2`</code></td>
-                    </tr>
-                    <tr>
-                        <td>Склеить</td>
-                        <td>Оператор +</td>
-                        <td><code>a + " " + b</code></td>
-                    </tr>
-                    <tr>
-                        <td>Длина в байтах</td>
-                        <td><code>len(s)</code></td>
-                        <td><code>len("Hi")</code> = 2</td>
-                    </tr>
-                    <tr>
-                        <td>Символ по индексу</td>
-                        <td><code>s[i]</code></td>
-                        <td><code>s[0]</code> = код первого символа</td>
-                    </tr>
-                    <tr>
-                        <td>Сравнить</td>
-                        <td><code>==</code>, <code>!=</code></td>
-                        <td><code>a == b</code></td>
-                    </tr>
-                </tbody>
-            </table>
-            <h3 style="margin-top: 1.5rem; color: var(--text-primary);">Ключевые моменты:</h3>
-            <ul>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Строки (string)</span></div>
+            <ul class="summary-list">
                 <li>Строки записываются в двойных кавычках</li>
-                <li>len() возвращает байты, не буквы</li>
+                <li><code>len()</code> возвращает байты, не буквы</li>
                 <li>Русская буква = 2 байта, английская = 1 байт</li>
-                <li>s[i] возвращает код символа (число), не букву</li>
+                <li><code>s[i]</code> возвращает код символа (число), не букву</li>
                 <li>Строки неизменяемы</li>
+                <li>Обратные кавычки для многострочного текста</li>
             </ul>
         </div>
 
         <nav class="nav-footer">
-            <a href="05-rune.html" class="nav-link">← Руны</a>
-            <a href="07-type-conversion.html" class="nav-link">Преобразование типов →</a>
+            <a href="05-rune.html" class="nav-link prev">
+                <span class="nav-arrow">&larr;</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Руны (rune)</div></div>
+            </a>
+            <a href="07-type-conversion.html" class="nav-link next">
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Преобразование типов</div></div>
+                <span class="nav-arrow">&rarr;</span>
+            </a>
         </nav>
-    </div>
+    </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            hljs.highlightAll();
+<script>
+    /* global hljs */
+    // noinspection JSUnresolvedReference
+    hljs.highlightAll();
 
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-            }
+    function copyCode(btn) {
+        const code = btn.closest('.code-block').querySelector('code');
+        navigator.clipboard.writeText(code.textContent).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
         });
-    </script>
+    }
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            tg.showAlert('В полной версии здесь будет список уроков');
+        });
+    }
+</script>
+
 </body>
 </html>
