@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Константы и iota</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0f0f13;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+            --accent-red: #ff6b6b;
+            --border-color: #2a2a3a;
+            --code-bg: #1a1a2e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 16px;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent-green);
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .intro {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .code-block code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .code-result {
+            background: var(--bg-tertiary);
+            border-radius: 0 0 8px 8px;
+            padding: 0.75rem 1rem;
+            border-top: 1px dashed var(--border-color);
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent-green);
+        }
+
+        .code-result::before {
+            content: "Результат: ";
+            color: var(--text-secondary);
+        }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: var(--accent-orange);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* Questions Section */
+        .section-title {
+            font-size: 1.35rem;
+            color: var(--accent-green);
+            margin: 2rem 0 1rem;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .question-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .question-title {
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+            padding-right: 1rem;
+        }
+
+        .question-toggle {
+            color: var(--accent-green);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .question-card.open .question-toggle {
+            transform: rotate(45deg);
+        }
+
+        .question-answer {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .question-card.open .question-answer {
+            display: block;
+            padding-top: 1rem;
+        }
+
+        /* Tasks Section */
+        .task-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .task-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .task-title {
+            color: var(--accent-orange);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .task-toggle {
+            color: var(--accent-orange);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .task-card.open .task-toggle {
+            transform: rotate(45deg);
+        }
+
+        .task-content {
+            padding: 0 1rem;
+            color: var(--text-secondary);
+        }
+
+        .task-solution {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .task-card.open .task-solution {
+            display: block;
+            padding-top: 1rem;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box h2 {
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .summary-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        /* Navigation */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-green);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.disabled {
+            color: var(--text-secondary);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Константы и iota</h1>
+
+        <div class="intro">
+            <p>Константа (от англ. constant - постоянный) - это значение, которое не изменяется во время работы программы. Число пи всегда 3.14159, количество дней в неделе всегда 7, максимальное количество попыток входа - 3. Такие значения логично сделать константами.</p>
+            <p>Зачем нужны константы, если есть переменные? Представь: ты написал <code>maxRetries = 3</code> как переменную. Через 100 строк кода кто-то случайно написал <code>maxRetries = 0</code>. Программа сломалась, но ошибку найти сложно - компилятор ничего не сказал. С константой компилятор сразу бы остановил сборку с ошибкой. Константы защищают важные значения от случайного изменения.</p>
+        </div>
+
+        <hr>
+
+        <h2>Объявление констант</h2>
+
+        <p>Константы создаются с помощью ключевого слова <code>const</code>:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const pi = 3.14159
+    fmt.Println(pi)
+}</code></pre>
+            <div class="code-result">3.14159</div>
+        </div>
+
+        <p>А что если попробовать изменить константу? Давай посмотрим:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+func main() {
+    const pi = 3.14159
+    pi = 3.14 // Ошибка компиляции!
+}</code></pre>
+            <div class="code-result" style="color: var(--accent-red);">cannot assign to pi</div>
+        </div>
+
+        <p>Компилятор не позволяет изменить константу - именно для этого они и нужны. Это защита на уровне языка, а не договорённость между программистами.</p>
+
+        <p>Тип константы можно указать явно, но обычно это не требуется:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const pi float64 = 3.14159 // с явным типом
+    const e = 2.71828          // без типа
+
+    fmt.Println(pi, e)
+}</code></pre>
+            <div class="code-result">3.14159 2.71828</div>
+        </div>
+
+        <p>Константа без явного типа называется "нетипизированной" (от англ. untyped - без типа). Это просто число, которое пока не привязано к конкретному типу.</p>
+
+        <p>В чём польза? Одну константу можно использовать с переменными разных типов:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const maxSize = 100 // нетипизированная константа
+
+    var i32 int32 = maxSize   // OK
+    var i64 int64 = maxSize   // OK
+    var f64 float64 = maxSize // OK - та же константа!
+
+    fmt.Println(i32, i64, f64)
+}</code></pre>
+            <div class="code-result">100 100 100</div>
+        </div>
+
+        <p>Как это работает? При каждом присваивании Go проверяет: "Можно ли значение 100 представить как int32? как int64? как float64?" Да - значит всё работает. Сама константа при этом не меняется - она остаётся просто числом 100.</p>
+
+        <hr>
+
+        <h2>Что можно хранить в константах</h2>
+
+        <p>В константах можно хранить только простые значения:</p>
+        <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Числа (целые и дробные)</li>
+            <li>Строки</li>
+            <li>Булевы значения (true/false)</li>
+        </ul>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const maxRetries = 3          // целое число
+    const pi = 3.14159            // дробное число
+    const appName = "MyApp"       // строка
+    const debugMode = true        // булево значение
+
+    fmt.Println(maxRetries, pi, appName, debugMode)
+}</code></pre>
+            <div class="code-result">3 3.14159 MyApp true</div>
+        </div>
+
+        <p>Почему только простые значения? Константы вычисляются на этапе компиляции, до запуска программы. Компилятор должен знать значение заранее. Массивы и другие сложные структуры создаются во время выполнения - их значения компилятор заранее не знает.</p>
+
+        <hr>
+
+        <h2>Группы констант</h2>
+
+        <p>Когда констант много, их удобно объединять в группу с помощью круглых скобок:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        statusPending  = 0
+        statusActive   = 1
+        statusComplete = 2
+    )
+
+    fmt.Println(statusPending, statusActive, statusComplete)
+}</code></pre>
+            <div class="code-result">0 1 2</div>
+        </div>
+
+        <p>Если константа объявлена без значения, Go повторяет выражение из предыдущей строки:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        a = 1
+        b = 5.5
+        c      // c = 5.5 (повторяет выражение b)
+        d      // d = 5.5 (тоже повторяет)
+    )
+
+    fmt.Println(a, b, c, d)
+}</code></pre>
+            <div class="code-result">1 5.5 5.5 5.5</div>
+        </div>
+
+        <p>Почему c и d тоже равны 5.5? Go берёт выражение из предыдущей строки (<code>5.5</code>) и подставляет его заново. Получается <code>c = 5.5</code>, <code>d = 5.5</code>.</p>
+
+        <p>Это важно понять для iota - там тоже повторяется выражение, а не значение.</p>
+
+        <hr>
+
+        <h2>iota - автоматическая нумерация</h2>
+
+        <p>Часто нужны константы с последовательными значениями: 0, 1, 2, 3... Можно прописать вручную, но это неудобно - легко ошибиться или забыть обновить при добавлении новой константы.</p>
+
+        <p>В Go есть элегантное решение - <code>iota</code> (от греческой буквы йота, обозначающей наименьшую величину). Это специальный счётчик, который начинается с 0 и увеличивается на 1 для каждой строки в блоке const:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        Red   = iota // 0
+        Green        // 1
+        Blue         // 2
+    )
+
+    fmt.Println(Red, Green, Blue)
+}</code></pre>
+            <div class="code-result">0 1 2</div>
+        </div>
+
+        <p>Как это работает?</p>
+        <ol style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li><code>Red = iota</code> - Go подставляет текущее значение iota (0)</li>
+            <li><code>Green</code> - значение не указано, Go <strong>повторяет выражение</strong> <code>iota</code>, но iota уже стала 1</li>
+            <li><code>Blue</code> - снова повторяет <code>iota</code>, которая теперь 2</li>
+        </ol>
+
+        <p>Ключевой момент: Go не копирует значение 0, а повторяет само выражение <code>iota</code>. Поэтому каждая константа получает новое значение.</p>
+
+        <hr>
+
+        <h2>Пропуск значений</h2>
+
+        <p>Иногда первое значение (0) не нужно. Например, хочешь начать нумерацию дней недели с 1, а не с 0. Для этого используй пустой идентификатор <code>_</code>:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        _        = iota // 0 - пропускаем
+        Monday          // 1
+        Tuesday         // 2
+        Wednesday       // 3
+        Thursday        // 4
+        Friday          // 5
+        Saturday        // 6
+        Sunday          // 7
+    )
+
+    fmt.Println("Понедельник:", Monday)
+    fmt.Println("Воскресенье:", Sunday)
+}</code></pre>
+            <div class="code-result">Понедельник: 1<br>Воскресенье: 7</div>
+        </div>
+
+        <p>Нижнее подчёркивание <code>_</code> - это специальный идентификатор в Go, который означает "это значение мне не нужно, выброси его". iota всё равно увеличивается (становится 1, 2, 3...), но значение 0 никуда не записывается.</p>
+
+        <hr>
+
+        <h2>Выражения с iota</h2>
+
+        <p>iota можно использовать в математических выражениях. Например, нужны значения, начинающиеся не с 0, а с 5:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        a = iota + 5 // 0 + 5 = 5
+        b            // 1 + 5 = 6
+        c            // 2 + 5 = 7
+        d            // 3 + 5 = 8
+    )
+
+    fmt.Println(a, b, c, d)
+}</code></pre>
+            <div class="code-result">5 6 7 8</div>
+        </div>
+
+        <p>Почему получилось 5, 6, 7, 8? Компилятор подставляет <code>iota + 5</code> для каждой строки. iota увеличивается: 0+5=5, 1+5=6, 2+5=7, 3+5=8.</p>
+
+        <p>Ещё пример - умножение:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        a = iota * 10 // 0 * 10 = 0
+        b             // 1 * 10 = 10
+        c             // 2 * 10 = 20
+        d             // 3 * 10 = 30
+    )
+
+    fmt.Println(a, b, c, d)
+}</code></pre>
+            <div class="code-result">0 10 20 30</div>
+        </div>
+
+        <hr>
+
+        <h2>Сброс iota в новом блоке</h2>
+
+        <p>Важный нюанс: iota сбрасывается в 0 в каждом новом блоке const:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">package main
+
+import "fmt"
+
+func main() {
+    const (
+        a = iota // 0
+        b        // 1
+    )
+
+    const (
+        c = iota // 0 (сброс!)
+        d        // 1
+    )
+
+    fmt.Println("Первый блок:", a, b)
+    fmt.Println("Второй блок:", c, d)
+}</code></pre>
+            <div class="code-result">Первый блок: 0 1<br>Второй блок: 0 1</div>
+        </div>
+
+        <p>Почему так? Каждый блок const - это отдельная группа констант. iota "живёт" только внутри своего блока. Это логично: цвета и дни недели - разные перечисления, и их нумерация не должна зависеть друг от друга.</p>
+
+        <hr>
+
+        <h2>Стиль именования</h2>
+
+        <p>В Go константы именуются так же, как переменные - в camelCase:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">const maxRetries = 3       // локальная константа (маленькая буква)
+const MaxConnections = 100 // экспортируемая константа (большая буква)</code></pre>
+        </div>
+
+        <p>Можно встретить стиль с заглавными буквами и подчёркиваниями (как в языке C):</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">const MAX_RETRIES = 3 // работает, но не принято в Go</code></pre>
+        </div>
+
+        <p>Это работает, но не соответствует стилю Go. Придерживайся camelCase для локальных и PascalCase для экспортируемых констант.</p>
+
+        <hr>
+
+        <h2 class="section-title">Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 1: Чем константа отличается от переменной?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Константу нельзя изменить после объявления, переменную - можно. Константы вычисляются при компиляции, переменные - во время выполнения.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 2: Что произойдёт при попытке изменить значение константы?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Ошибка компиляции. Программа не соберётся.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 3: С какого числа начинается iota?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>С нуля (0).</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 4: Что произойдёт с iota в новом блоке const?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>iota сбрасывается в 0. Каждый блок const начинает счёт заново.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 5: Как пропустить первое значение iota?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Использовать пустой идентификатор: <code>_ = iota</code>.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 6: Какие типы данных можно хранить в константах?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Числа (целые и дробные), строки, булевы значения (true/false).</p>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 1: Базовая iota</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    a = iota
+    b
+    c
+)
+fmt.Println(a, b, c)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>0 1 2</code></p>
+                <p>iota начинается с 0 и увеличивается на 1 для каждой строки.</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 2: iota с выражением</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    x = iota + 10
+    y
+    z
+)
+fmt.Println(x, y, z)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>10 11 12</code></p>
+                <p>Выражение <code>iota + 10</code> повторяется для каждой строки: 0+10=10, 1+10=11, 2+10=12.</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 3: Пропуск значения</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    _ = iota
+    first
+    second
+)
+fmt.Println(first, second)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>1 2</code></p>
+                <p>Первое значение (0) пропущено с помощью <code>_</code>. first получает 1, second получает 2.</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 4: Повтор без iota</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    a = 5
+    b
+    c
+)
+fmt.Println(a, b, c)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>5 5 5</code></p>
+                <p>Здесь нет iota! Go повторяет выражение <code>5</code> для b и c. Все три константы равны 5.</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 5: Два блока const</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    x = iota
+    y
+)
+const (
+    z = iota
+)
+fmt.Println(x, y, z)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>0 1 0</code></p>
+                <p>z находится в новом блоке const, где iota сбрасывается в 0.</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 6: Умножение iota</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">const (
+    a = iota * 2
+    b
+    c
+)
+fmt.Println(a, b, c)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>0 2 4</code></p>
+                <p>Выражение <code>iota * 2</code> повторяется: 0*2=0, 1*2=2, 2*2=4.</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="summary-box">
+            <h2>Резюме</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Что</th>
+                        <th>Как</th>
+                        <th>Пример</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Объявить константу</td>
+                        <td><code>const name = value</code></td>
+                        <td><code>const pi = 3.14</code></td>
+                    </tr>
+                    <tr>
+                        <td>Группа констант</td>
+                        <td><code>const ( ... )</code></td>
+                        <td><code>const ( a = 1; b = 2 )</code></td>
+                    </tr>
+                    <tr>
+                        <td>Автонумерация</td>
+                        <td><code>iota</code></td>
+                        <td><code>const ( a = iota; b; c )</code></td>
+                    </tr>
+                    <tr>
+                        <td>Пропуск значения</td>
+                        <td><code>_ = iota</code></td>
+                        <td><code>const ( _ = iota; first )</code></td>
+                    </tr>
+                    <tr>
+                        <td>Выражение с iota</td>
+                        <td><code>iota + N</code> или <code>iota * N</code></td>
+                        <td><code>const ( a = iota + 5 )</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="margin-top: 1.5rem; color: var(--text-primary);">Ключевые моменты:</h3>
+            <ul>
+                <li>const (от constant - постоянный) создаёт неизменяемое значение</li>
+                <li>В константах можно хранить числа, строки и bool</li>
+                <li>iota (греческая буква, "наименьшая величина") - счётчик с 0</li>
+                <li>iota увеличивается на 1 для каждой строки в блоке</li>
+                <li>iota сбрасывается в 0 в каждом новом блоке const</li>
+                <li>Пустой идентификатор _ пропускает ненужное значение</li>
+            </ul>
+        </div>
+
+        <nav class="nav-footer">
+            <a href="08-bool-zero-values.html" class="nav-link">← Тип bool и нулевые значения</a>
+            <span class="nav-link disabled">Конец модуля</span>
+        </nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+            }
+        });
+    </script>
+</body>
+</html>

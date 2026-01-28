@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Тип bool и нулевые значения</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        :root {
+            --bg-primary: #070709;
+            --bg-secondary: #0f0f13;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-green: #2af16b;
+            --accent-orange: #f1a12a;
+            --accent-red: #ff6b6b;
+            --border-color: #2a2a3a;
+            --code-bg: #1a1a2e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 16px;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent-green);
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .intro {
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .code-block code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .code-result {
+            background: var(--bg-tertiary);
+            border-radius: 0 0 8px 8px;
+            padding: 0.75rem 1rem;
+            border-top: 1px dashed var(--border-color);
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent-green);
+        }
+
+        .code-result::before {
+            content: "Результат: ";
+            color: var(--text-secondary);
+        }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: var(--accent-orange);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .note {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent-orange);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        /* Questions Section */
+        .section-title {
+            font-size: 1.35rem;
+            color: var(--accent-green);
+            margin: 2rem 0 1rem;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .question-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .question-title {
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+            padding-right: 1rem;
+        }
+
+        .question-toggle {
+            color: var(--accent-green);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .question-card.open .question-toggle {
+            transform: rotate(45deg);
+        }
+
+        .question-answer {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .question-card.open .question-answer {
+            display: block;
+            padding-top: 1rem;
+        }
+
+        /* Tasks Section */
+        .task-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .task-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .task-title {
+            color: var(--accent-orange);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .task-toggle {
+            color: var(--accent-orange);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .task-card.open .task-toggle {
+            transform: rotate(45deg);
+        }
+
+        .task-content {
+            padding: 0 1rem;
+            color: var(--text-secondary);
+        }
+
+        .task-solution {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .task-card.open .task-solution {
+            display: block;
+            padding-top: 1rem;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box h2 {
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .summary-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        /* Navigation */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-green);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.disabled {
+            color: var(--text-secondary);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Тип bool и нулевые значения</h1>
+
+        <div class="intro">
+            <p>Зачем компьютеру знать, что переменная хранит "да или нет"? Потому что это позволяет проверять условия: пользователь авторизован? товар в наличии? платёж прошёл?</p>
+            <p>Тип bool (от Boolean, в честь математика Джорджа Буля) хранит только два значения: true или false. А нулевые значения решают проблему "мусора в памяти" из C/C++.</p>
+        </div>
+
+        <hr>
+
+        <h2>Тип bool</h2>
+
+        <h3>Что это такое</h3>
+
+        <p>bool хранит логическое значение: истина или ложь.</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">var isReady bool = true
+var isDone = false
+active := true</code></pre>
+        </div>
+
+        <p>Зачем отдельный тип? В реальных программах постоянно нужны флаги:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">var isLoggedIn bool    // пользователь вошёл?
+var hasDiscount bool   // есть скидка?
+var isAdmin bool       // это админ?</code></pre>
+        </div>
+
+        <h3>Как работает</h3>
+
+        <p>В Go нет "правдивых" и "ложных" значений как в JavaScript или Python. Только true и false.</p>
+
+        <p>Попробуем написать так:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">count := 5
+// if count { }  // хотим проверить "count не ноль"</code></pre>
+        </div>
+
+        <p>Компилятор выдаст ошибку:</p>
+
+        <div class="code-block">
+            <pre><code>non-boolean condition in if statement</code></pre>
+        </div>
+
+        <p>Почему? Go требует явного сравнения. Не "если count", а "если count больше нуля":</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">// Когда изучим if в модуле "Условия":
+// if count > 0 { }     // явно: count больше нуля?
+// if name != "" { }    // явно: name не пустая?
+// if isReady { }       // уже bool - можно напрямую</code></pre>
+        </div>
+
+        <h3>Почему Go отказался от truthy/falsy</h3>
+
+        <p>В JavaScript <code>if (value)</code> может означать шесть разных вещей: value не null? не undefined? не пустая строка? не 0? не false? не NaN?</p>
+
+        <p>Читая чужой код, ты гадаешь что проверяется. Go убрал эту неоднозначность: хочешь проверить - напиши явно.</p>
+
+        <p><strong>Trade-off:</strong> больше символов в коде, но читается однозначно.</p>
+
+        <hr>
+
+        <h2>Логические операции</h2>
+
+        <p>Go поддерживает три логических оператора:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">a := true
+b := false
+
+fmt.Println(a && b)  // false - AND: оба должны быть true
+fmt.Println(a || b)  // true  - OR: хотя бы один true
+fmt.Println(!a)      // false - NOT: инвертирует</code></pre>
+            <div class="code-result">false<br>true<br>false</div>
+        </div>
+
+        <p>Операторы <code>&&</code> и <code>||</code> читаются как "и" и "или". Оператор <code>!</code> читается как "не".</p>
+
+        <div class="note">
+            <strong>Tip:</strong> Подробнее о логических операциях, приоритетах и коротком вычислении - в модуле "Условия".
+        </div>
+
+        <h3>Сравнение возвращает bool</h3>
+
+        <p>Любое сравнение в Go возвращает bool:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">x := 10
+y := 20
+
+isEqual := x == y    // false
+isGreater := x > y   // false
+isLess := x < y      // true
+
+fmt.Println(isEqual, isGreater, isLess)  // false false true</code></pre>
+            <div class="code-result">false false true</div>
+        </div>
+
+        <hr>
+
+        <h2>Нулевые значения</h2>
+
+        <h3>Что это такое</h3>
+
+        <p>В Go каждая переменная всегда имеет значение. Если не инициализировал - там будет нулевое значение типа.</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">var count int       // 0
+var price float64   // 0.0
+var name string     // "" (пустая строка)
+var active bool     // false</code></pre>
+        </div>
+
+        <h3>Как это работает</h3>
+
+        <p>Вот таблица нулевых значений для базовых типов:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Тип</th>
+                    <th>Нулевое значение</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>int</code>, <code>int8</code>, <code>int64</code>...</td>
+                    <td><code>0</code></td>
+                </tr>
+                <tr>
+                    <td><code>float32</code>, <code>float64</code></td>
+                    <td><code>0.0</code></td>
+                </tr>
+                <tr>
+                    <td><code>bool</code></td>
+                    <td><code>false</code></td>
+                </tr>
+                <tr>
+                    <td><code>string</code></td>
+                    <td><code>""</code> (пустая строка)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Практический пример - можно сразу использовать переменную:</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">var total int
+var message string
+
+total = total + 10  // 0 + 10 = 10
+
+fmt.Println(total)    // 10
+fmt.Println(message)  // (пустая строка - ничего не видно)</code></pre>
+            <div class="code-result">10<br></div>
+        </div>
+
+        <h3>Почему это важно</h3>
+
+        <p><strong>Проблема C/C++:</strong> неинициализированная переменная содержит "мусор" - случайные байты из памяти. Это источник трудноуловимых багов: программа может работать на твоём компьютере и падать на сервере.</p>
+
+        <p><strong>Проблема JavaScript:</strong> переменная может быть <code>undefined</code> или <code>null</code> - два разных способа сказать "ничего".</p>
+
+        <p><strong>Решение Go:</strong> переменная всегда инициализирована. Никаких сюрпризов.</p>
+
+        <h3>Проверка на "пустоту"</h3>
+
+        <p>Для базовых типов проверка - это сравнение с нулевым значением:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Тип</th>
+                    <th>Проверка</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>int</code></td>
+                    <td><code>count == 0</code></td>
+                </tr>
+                <tr>
+                    <td><code>string</code></td>
+                    <td><code>name == ""</code></td>
+                </tr>
+                <tr>
+                    <td><code>bool</code></td>
+                    <td><code>!active</code> или <code>active == false</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong>Tip:</strong> Нулевые значения для сложных типов (указатели, срезы, карты) изучим в соответствующих модулях.
+        </div>
+
+        <hr>
+
+        <h2>Связь bool и zero values</h2>
+
+        <p>Заметил закономерность? Нулевое значение bool - это <code>false</code>. Это не случайно.</p>
+
+        <div class="code-block">
+            <pre><code class="language-go">var found bool      // false - "пока не нашли"
+var isValid bool    // false - "пока не проверили"
+var hasError bool   // false - "ошибок нет"</code></pre>
+        </div>
+
+        <p>По умолчанию флаги "выключены". Это удобно: не нужно явно писать <code>= false</code>.</p>
+
+        <hr>
+
+        <h2 class="section-title">Проверь себя</h2>
+
+        <h3>Вопросы</h3>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 1: Почему в Go нельзя написать проверку if count где count - это int?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>В Go условие требует значения типа bool. Числа и строки не приводятся к bool автоматически (нет truthy/falsy). Нужно явное сравнение: <code>count > 0</code> или <code>count != 0</code>.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 2: Какое нулевое значение у типа string?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Пустая строка <code>""</code>. Не nil, не null, не undefined - именно пустая строка нулевой длины.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 3: Чем подход Go к неинициализированным переменным отличается от C/C++?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>В C/C++ неинициализированная переменная содержит "мусор" - случайные байты из памяти. В Go переменная всегда инициализируется нулевым значением своего типа. Это исключает целый класс багов.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 4: Что выведет код: var b bool; fmt.Println(b)?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Выведет <code>false</code>. Это нулевое значение для типа bool.</p>
+            </div>
+        </div>
+
+        <h3>Задачи</h3>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 1: Определи вывод</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">var i int
+var b bool
+var s string
+
+fmt.Println(i, b, s)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>0 false </code></p>
+                <p>Все переменные объявлены без инициализации, поэтому содержат нулевые значения. Пустая строка не видна в выводе, но она там есть (после false идёт пробел и пустая строка).</p>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 2: Что в переменных?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">a := 5 > 3
+b := 10 == 10
+c := "Go" != "go"
+
+fmt.Println(a, b, c)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong> <code>true true true</code></p>
+                <ul style="color: var(--text-secondary); margin-left: 1rem;">
+                    <li><code>5 > 3</code> - true (5 больше 3)</li>
+                    <li><code>10 == 10</code> - true (равны)</li>
+                    <li><code>"Go" != "go"</code> - true (строки разные, сравнение с учётом регистра)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 3: Логические операции</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">a := true
+b := false
+
+fmt.Println(a && b)
+fmt.Println(a || b)
+fmt.Println(!b)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong></p>
+                <div class="code-block">
+                    <pre><code>false
+true
+true</code></pre>
+                </div>
+                <ul style="color: var(--text-secondary); margin-left: 1rem;">
+                    <li><code>true && false</code> - false (AND требует оба true)</li>
+                    <li><code>true || false</code> - true (OR - хотя бы один true)</li>
+                    <li><code>!false</code> - true (NOT инвертирует)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 4: Нулевые значения в действии</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
+                <div class="code-block">
+                    <pre><code class="language-go">var a, b bool
+c := true
+
+fmt.Println(a && c)
+fmt.Println(b || c)
+fmt.Println(!a && c)</code></pre>
+                </div>
+            </div>
+            <div class="task-solution">
+                <p><strong>Вывод:</strong></p>
+                <div class="code-block">
+                    <pre><code>false
+true
+true</code></pre>
+                </div>
+                <p>Переменные a и b не инициализированы, значит равны false.</p>
+                <ol style="color: var(--text-secondary); margin-left: 1rem;">
+                    <li><code>false && true</code> - false</li>
+                    <li><code>false || true</code> - true</li>
+                    <li><code>!false && true</code> - <code>true && true</code> - true</li>
+                </ol>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="summary-box">
+            <h2>Резюме</h2>
+            <ul>
+                <li><code>bool</code> хранит только <code>true</code> или <code>false</code></li>
+                <li>В Go нет truthy/falsy - всегда явные сравнения</li>
+                <li>Каждый тип имеет нулевое значение: <code>0</code>, <code>0.0</code>, <code>""</code>, <code>false</code></li>
+                <li>Переменные в Go всегда инициализированы - никакого "мусора" из памяти</li>
+                <li>Нулевое значение bool = false - флаги по умолчанию "выключены"</li>
+            </ul>
+        </div>
+
+        <nav class="nav-footer">
+            <a href="07-type-conversion.html" class="nav-link">← Преобразование типов</a>
+            <a href="09-constants-iota.html" class="nav-link">Константы и iota →</a>
+        </nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -61,66 +61,20 @@
             margin-bottom: 12px;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-            margin-bottom: 12px;
-        }
-
-        .lead {
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-        }
+        h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+        .lead { font-size: 16px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 32px; }
 
         h2 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin: 40px 0 20px;
-            scroll-margin-top: 20px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-muted); margin: 40px 0 20px; scroll-margin-top: 20px;
         }
-        h2::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
+        h2::before { content: ''; width: 6px; height: 6px; background: var(--accent-green); border-radius: 2px; flex-shrink: 0; }
 
-        h3 {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            color: var(--text-primary);
-            margin: 24px 0 12px;
-        }
-
-        p {
-            font-size: 15px;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-
-        ul, ol {
-            margin: 0 0 16px 20px;
-            color: var(--text-secondary);
-        }
-        li {
-            margin-bottom: 6px;
-            line-height: 1.6;
-            font-size: 15px;
-        }
+        h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); margin: 24px 0 12px; }
+        p { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 16px; }
+        ul, ol { margin: 0 0 16px 20px; color: var(--text-secondary); }
+        li { margin-bottom: 6px; line-height: 1.6; font-size: 15px; }
 
         code {
             font-family: 'JetBrains Mono', monospace;
@@ -131,329 +85,56 @@
             color: var(--accent-green);
         }
 
-        .code-block {
-            margin: 20px 0;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .code-lang {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .copy-btn:active {
-            background: var(--bg-tertiary);
-        }
-        /* Used by JS - copy button state after click */
-        .copy-btn.copied {
-            border-color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.1);
-            color: var(--accent-green);
-        }
-        .code-block pre {
-            margin: 0;
-            padding: 16px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .code-block code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            background: transparent;
-            padding: 0;
-            color: inherit;
-        }
+        .code-block { margin: 20px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .code-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .code-lang { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .copy-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .copy-btn:active { background: var(--bg-tertiary); }
+        .copy-btn.copied { border-color: var(--accent-green); background: rgba(42, 241, 107, 0.1); color: var(--accent-green); }
+        .code-block pre { margin: 0; padding: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .code-block code { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; background: transparent; padding: 0; color: inherit; }
 
-        .alert {
-            margin: 24px 0;
-            padding: 16px 16px 16px 44px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-        .alert-icon {
-            position: absolute;
-            left: 14px;
-            top: 16px;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .alert-important .alert-icon {
-            background: rgba(241, 161, 42, 0.15);
-            color: var(--accent-orange);
-        }
-        .alert-tip .alert-icon {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-        .alert p {
-            margin: 0;
-            font-size: 14px;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        thead, tbody, tr { display: table; width: 100%; table-layout: fixed; }
+        th { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); background: var(--bg-secondary); padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        td { padding: 12px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+        td code { background: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        thead, tbody, tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-        th {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            background: var(--bg-secondary);
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        td {
-            padding: 12px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        td code {
-            background: var(--bg-secondary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .info-box {
-            margin: 20px 0;
-            padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-        .info-box .info-row {
-            padding: 6px 0;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
-        }
-
-        .card {
-            margin: 16px 0;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .card-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-        .question-card .card-num {
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
-            color: var(--accent-green);
-        }
-        .task-card .card-num {
-            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
-            color: var(--accent-orange);
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .card-body {
-            padding: 16px;
-        }
+        .card { margin: 16px 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .card-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-tertiary); border-bottom: 1px solid var(--border-color); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+        .question-card .card-num { background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05)); color: var(--accent-green); }
+        .task-card .card-num { background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05)); color: var(--accent-orange); }
+        .card-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .card-body { padding: 16px; }
         .card-body p { margin-bottom: 10px; }
         .card-body p:last-child { margin-bottom: 0; }
 
-        details {
-            margin-top: 12px;
-        }
-        details summary {
-            cursor: pointer;
-            color: var(--accent-green);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 0;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        details summary::before {
-            content: '>';
-            font-size: 12px;
-            transition: transform 0.2s;
-        }
-        /* Used by HTML - details open state */
-        details[open] summary::before {
-            transform: rotate(90deg);
-        }
+        details { margin-top: 12px; }
+        details summary { cursor: pointer; color: var(--accent-green); font-size: 13px; font-weight: 500; padding: 8px 0; list-style: none; display: flex; align-items: center; gap: 6px; -webkit-tap-highlight-color: transparent; }
+        details summary::before { content: '>'; font-size: 12px; transition: transform 0.2s; }
+        details[open] summary::before { transform: rotate(90deg); }
         details summary::-webkit-details-marker { display: none; }
-        .answer {
-            margin-top: 10px;
-            padding: 12px;
-            background: rgba(42, 241, 107, 0.03);
-            border-radius: 6px;
-            border-left: 2px solid var(--accent-green);
-        }
-        .answer p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
+        .answer { margin-top: 10px; padding: 12px; background: rgba(42, 241, 107, 0.03); border-radius: 6px; border-left: 2px solid var(--accent-green); }
+        .answer p { font-size: 14px; color: var(--text-secondary); }
 
-        .summary-box {
-            margin: 28px 0;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
-            border: 1px solid rgba(42, 241, 107, 0.2);
-            border-radius: 12px;
-        }
-        .summary-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        .summary-badge {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 3px 8px;
-            background: var(--accent-green);
-            color: var(--bg-primary);
-            border-radius: 4px;
-        }
-        .summary-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .summary-list {
-            margin: 0;
-            padding-left: 18px;
-        }
-        .summary-list li {
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
+        .summary-box { margin: 28px 0; padding: 20px; background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%); border: 1px solid rgba(42, 241, 107, 0.2); border-radius: 12px; }
+        .summary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .summary-badge { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 8px; background: var(--accent-green); color: var(--bg-primary); border-radius: 4px; }
+        .summary-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .summary-list { margin: 0; padding-left: 18px; }
+        .summary-list li { color: var(--text-secondary); margin-bottom: 6px; font-size: 14px; }
 
-        blockquote {
-            margin: 20px 0;
-            padding: 16px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin: 0;
-        }
+        .nav-footer { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+        .nav-link:active { background: var(--bg-tertiary); }
+        .nav-link.prev { text-align: left; }
+        .nav-link.next { justify-content: flex-end; text-align: right; }
+        .nav-arrow { font-size: 18px; color: var(--accent-green); }
+        .nav-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .nav-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
 
-        .nav-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 40px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            text-decoration: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .nav-link:active {
-            background: var(--bg-tertiary);
-        }
-        /* Used by HTML - navigation link alignment (prev) */
-        .nav-link.prev {
-            text-align: left;
-        }
-        /* Used by HTML - navigation link alignment (next) */
-        .nav-link.next {
-            justify-content: flex-end;
-            text-align: right;
-        }
-        .nav-arrow {
-            font-size: 18px;
-            color: var(--accent-green);
-        }
-        .nav-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
-        .nav-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
+        .diagram { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.4; color: var(--text-secondary); background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); overflow-x: auto; white-space: pre; margin: 20px 0; }
     </style>
 </head>
 <body>
@@ -462,13 +143,9 @@
         <div class="module-badge">Модуль 1 / Урок 4</div>
 
         <h1>Байты (byte)</h1>
-        <p class="lead">Байт (от англ. byte - единица информации из 8 бит) - это тип для работы с отдельными символами: английскими буквами, цифрами, знаками препинания.</p>
+        <p class="lead">Байт (от англ. byte - единица информации из 8 бит) - это тип для работы с отдельными символами: английскими буквами, цифрами, знаками препинания. Каждому символу присвоен числовой код от 0 до 255. Тип byte хранит именно эти коды.</p>
 
-        <p>Как это работает? Компьютер не понимает буквы напрямую - он работает только с числами. Каждому символу присвоен числовой код от 0 до 255. Буква 'A' = 65, буква 'a' = 97, цифра '0' = 48. Тип byte хранит именно эти коды. Эта система кодирования называется ASCII (American Standard Code for Information Interchange) - таблица из 128 символов: только английские буквы, цифры и базовые знаки. Других языков и эмодзи в ASCII нет - для них нужен Unicode (об этом в уроке про rune).</p>
-
-        <p>Зачем это нужно? Понимание кодов символов открывает возможности: превратить 'A' в 'B' (просто прибавить 1), проверить заглавная ли буква (сравнить коды), извлечь цифру из символа ('5' - '0' = 5). Это основа работы с текстом на низком уровне.</p>
-
-        <h2 id="what-is-byte">Что такое byte</h2>
+        <h2>Что такое byte</h2>
 
         <p>Тип byte - это алиас (от англ. alias - другое имя) для uint8. А что такое uint8? Это unsigned int 8 bit - беззнаковое целое число размером 8 бит, хранит значения от 0 до 255. byte и uint8 - один и тот же тип с двумя именами:</p>
 
@@ -499,32 +176,7 @@ H</code></pre>
             <li>byte говорит: "здесь код символа"</li>
         </ul>
 
-        <p>Вот почему byte удобнее для работы с текстом:</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var code uint8 = 65  // Непонятно - это что?
-    var letter byte = 65 // Понятно - это символ
-
-    fmt.Println(string(code))   // A
-    fmt.Println(string(letter)) // A
-}</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>A
-A</code></pre>
-        </div>
-
-        <p>Результат одинаковый, но byte сразу говорит читателю кода: "это символ".</p>
-
-        <h2 id="ascii-quotes">Таблица ASCII и одинарные кавычки</h2>
+        <h2>Таблица ASCII и одинарные кавычки</h2>
 
         <p>Как узнать код символа, не заглядывая в таблицу? В Go одинарные кавычки возвращают код символа:</p>
 
@@ -555,9 +207,7 @@ func main() {
         <p>ASCII (American Standard Code for Information Interchange) - таблица, где каждому символу присвоен номер. Вот основные диапазоны:</p>
 
         <table>
-            <thead>
-                <tr><th>Символы</th><th>Коды</th><th>Пример</th></tr>
-            </thead>
+            <thead><tr><th>Символы</th><th>Коды</th><th>Пример</th></tr></thead>
             <tbody>
                 <tr><td>Цифры '0'-'9'</td><td>48-57</td><td>'0' = 48, '5' = 53</td></tr>
                 <tr><td>Заглавные 'A'-'Z'</td><td>65-90</td><td>'A' = 65, 'Z' = 90</td></tr>
@@ -567,30 +217,7 @@ func main() {
 
         <p>Важное свойство: символы идут подряд. Буква 'b' на 1 больше 'a'. Цифра '5' на 5 больше '0'. Это позволяет делать арифметику с символами.</p>
 
-        <p>Когда объявляешь byte через символ, Go автоматически подставляет код:</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    var b byte = 'H'       // То же самое что var b byte = 72
-    fmt.Println(b)         // 72
-    fmt.Println(string(b)) // H
-}</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>72
-H</code></pre>
-        </div>
-
-        <p>Писать <code>'H'</code> удобнее, чем запоминать число 72.</p>
-
-        <h2 id="byte-limit">Ограничение byte: только ASCII</h2>
+        <h2>Ограничение byte: только ASCII</h2>
 
         <p>byte хранит числа от 0 до 255, но ASCII использует только коды 0-127. Что насчёт остальных символов?</p>
 
@@ -617,7 +244,7 @@ func main() {
 
         <p>byte подходит только для английского текста, цифр и базовых символов. Для работы с любыми символами мира есть тип rune - он хранит коды до 1 114 111.</p>
 
-        <h2 id="arithmetic">Арифметика с байтами</h2>
+        <h2>Арифметика с байтами</h2>
 
         <p>Раз символы идут подряд в таблице, можно делать арифметику. Хочешь следующую букву? Прибавь 1:</p>
 
@@ -644,13 +271,9 @@ c
 d</code></pre>
         </div>
 
-        <p>Код 'a' = 97. Добавляем 1, получаем 98 = 'b'. Добавляем 2, получаем 99 = 'c'.</p>
+        <h2>Получение цифры из символа</h2>
 
-        <h2 id="digit-extraction">Получение цифры из символа</h2>
-
-        <p>Часто нужно превратить символ цифры в число. Например, '5' превратить в 5. Как это сделать?</p>
-
-        <p>Символы цифр идут подряд: '0' = 48, '1' = 49, ..., '9' = 57. Значит, разница между любой цифрой и '0' даёт само число:</p>
+        <p>Часто нужно превратить символ цифры в число. Например, '5' превратить в 5. Символы цифр идут подряд: '0' = 48, '1' = 49, ..., '9' = 57. Значит, разница между любой цифрой и '0' даёт само число:</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -672,29 +295,7 @@ func main() {
 
         <p>'5' - '0' = 53 - 48 = 5. Вычитая код нуля, получаем само число.</p>
 
-        <p>Это работает для любой цифры:</p>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-            <pre><code class="language-go">package main
-
-import "fmt"
-
-func main() {
-    fmt.Println('0' - '0') // 0
-    fmt.Println('3' - '0') // 3
-    fmt.Println('9' - '0') // 9
-}</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0
-3
-9</code></pre>
-        </div>
-
-        <h2 id="comparison">Сравнение символов</h2>
+        <h2>Сравнение символов</h2>
 
         <p>Можно ли сравнивать символы? Да, сравниваются их коды:</p>
 
@@ -722,15 +323,14 @@ true</code></pre>
 
         <p>Почему разница между 'A' и 'a' всегда 32? Это не случайность:</p>
 
-        <div class="info-box">
-            <div class="info-row"><code>'A'</code> = 65 = 01000001</div>
-            <div class="info-row"><code>'a'</code> = 97 = 01100001</div>
-            <div class="info-row">Отличается 1 бит (разница = 32)</div>
-        </div>
+        <div class="diagram">'A' = 65 = 01000001
+'a' = 97 = 01100001
+           ↑
+           Отличается 1 бит (разница = 32)</div>
 
         <p>ASCII спроектирована для быстрого переключения регистра - достаточно изменить один бит.</p>
 
-        <h2 id="practice">Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
@@ -749,7 +349,7 @@ true</code></pre>
             <div class="card-body">
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p>Потому что сравниваются коды: 'A' = 65, 'a' = 97. 65 < 97.</p></div>
+                    <div class="answer"><p>Потому что сравниваются коды: 'A' = 65, 'a' = 97. 65 &lt; 97.</p></div>
                 </details>
             </div>
         </div>
@@ -802,7 +402,7 @@ fmt.Println(b)</code></pre>
         <h3>Задачи</h3>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">01</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -816,7 +416,7 @@ fmt.Println(b)</code></pre>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">02</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -830,7 +430,7 @@ fmt.Println(b)</code></pre>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">03</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -844,7 +444,7 @@ fmt.Println(b)</code></pre>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">04</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -858,7 +458,7 @@ fmt.Println(b)</code></pre>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -872,7 +472,7 @@ fmt.Println(b)</code></pre>
         </div>
 
         <div class="card task-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Задача: Что выведет?</span></div>
+            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет?</span></div>
             <div class="card-body">
                 <div class="code-block">
                     <div class="code-header"><span class="code-lang">Go</span></div>
@@ -885,25 +485,12 @@ fmt.Println(b)</code></pre>
             </div>
         </div>
 
-        <h2 id="summary">Резюме</h2>
-
-        <table>
-            <thead>
-                <tr><th>Что</th><th>Как</th><th>Пример</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Объявить byte</td><td><code>var b byte = 'A'</code></td><td><code>var b byte = 65</code></td></tr>
-                <tr><td>Код символа</td><td>Одинарные кавычки</td><td><code>'A'</code> = 65</td></tr>
-                <tr><td>Символ из кода</td><td><code>string(code)</code></td><td><code>string(65)</code> = "A"</td></tr>
-                <tr><td>Цифра из символа</td><td><code>char - '0'</code></td><td><code>'5' - '0'</code> = 5</td></tr>
-                <tr><td>Следующий символ</td><td><code>char + 1</code></td><td><code>'A' + 1</code> = 'B'</td></tr>
-            </tbody>
-        </table>
+        <h2>Резюме</h2>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Байты (byte)</span></div>
             <ul class="summary-list">
-                <li>byte = uint8, но говорит "это символ"</li>
+                <li><strong>byte = uint8</strong>, но говорит "это символ"</li>
                 <li>Символы в одинарных кавычках: 'A', '0', '#'</li>
                 <li>ASCII: цифры 48-57, заглавные 65-90, строчные 97-122</li>
                 <li>Символы идут подряд - можно делать арифметику</li>
@@ -914,19 +501,18 @@ fmt.Println(b)</code></pre>
 
         <nav class="nav-footer">
             <a href="03-float.html" class="nav-link prev">
-                <span class="nav-arrow">&lt;-</span>
-                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Вещественные числа</div></div>
+                <span class="nav-arrow">&larr;</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Вещественные числа (float)</div></div>
             </a>
             <a href="05-rune.html" class="nav-link next">
                 <div><div class="nav-label">Следующий урок</div><div class="nav-title">Руны (rune)</div></div>
-                <span class="nav-arrow">-&gt;</span>
+                <span class="nav-arrow">&rarr;</span>
             </a>
         </nav>
     </main>
 
 <script>
     /* global hljs */
-    // noinspection JSUnresolvedReference
     hljs.highlightAll();
 
     function copyCode(btn) {
@@ -943,9 +529,7 @@ fmt.Println(b)</code></pre>
         tg.ready();
         tg.expand();
         tg.BackButton.show();
-        tg.BackButton.onClick(() => {
-            tg.showAlert('В полной версии здесь будет список уроков');
-        });
+        tg.BackButton.onClick(() => { tg.showAlert('В полной версии здесь будет список уроков'); });
     }
 </script>
 

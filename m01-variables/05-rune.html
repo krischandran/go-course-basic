@@ -3,498 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Руны (rune)</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <title>Руны (rune) — Вводный курс Go</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" integrity="sha512-Jk4AqjWsdSzSWCSuQTfYRIF84Rq/eV0G2+tu07byYwHcbTGfdmLrHjUSwvzp5HvbiqK4ibmNwdcG49Y5RGYPTg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js" integrity="sha512-5fby2A9Cgu49xHMsMCsKPBRMIlKPVXO/WBYvpWpQJpJH3lFJ4oEiJBWqVIXqXk6hqPoHpsBwQqEYbLhnL8IWCg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <style>
         :root {
             --bg-primary: #070709;
-            --bg-secondary: #0d0d0f;
-            --bg-tertiary: #111113;
-            --text-primary: #ffffff;
-            --text-secondary: #dddddd;
-            --text-muted: #a7a7a7;
-            --border-color: #1a1a1c;
-            --border-light: #363636;
+            --bg-secondary: #0f0f13;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
             --accent-green: #2af16b;
             --accent-orange: #f1a12a;
+            --accent-red: #ff6b6b;
+            --border-color: #2a2a3a;
+            --code-bg: #1a1a2e;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 16px;
-            line-height: 1.65;
-            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background-color: var(--bg-primary);
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-        }
-
-        main {
-            max-width: 100%;
+            color: var(--text-primary);
+            line-height: 1.7;
             padding: 16px;
-            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
         }
 
-        .module-badge {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.1);
-            padding: 4px 10px;
-            border-radius: 4px;
-            margin-bottom: 12px;
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
         }
 
         h1 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-            margin-bottom: 12px;
-        }
-
-        .lead {
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 32px;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 0.5rem;
         }
 
         h2 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin: 40px 0 20px;
-            scroll-margin-top: 20px;
-        }
-        h2::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 2px;
-            flex-shrink: 0;
+            font-size: 1.35rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent-green);
         }
 
         h3 {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
+            font-size: 1.15rem;
+            margin: 1.5rem 0 0.75rem;
             color: var(--text-primary);
-            margin: 24px 0 12px;
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1rem 0 0.5rem;
+            color: var(--text-secondary);
         }
 
         p {
-            font-size: 15px;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-
-        ul, ol {
-            margin: 0 0 16px 20px;
+            margin-bottom: 1rem;
             color: var(--text-secondary);
         }
-        li {
-            margin-bottom: 6px;
-            line-height: 1.6;
-            font-size: 15px;
-        }
 
-        code {
-            font-family: 'JetBrains Mono', monospace;
+        .intro {
+            font-size: 1.05rem;
+            color: var(--text-primary);
             background: var(--bg-secondary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: var(--accent-green);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--accent-green);
         }
 
         .code-block {
-            margin: 20px 0;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: var(--code-bg);
             border-radius: 8px;
-            overflow: hidden;
-        }
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .code-lang {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .copy-btn:active {
-            background: var(--bg-tertiary);
-        }
-        /* Used by JS - copy button state after click */
-        .copy-btn.copied {
-            border-color: var(--accent-green);
-            background: rgba(42, 241, 107, 0.1);
-            color: var(--accent-green);
-        }
-        .code-block pre {
-            margin: 0;
-            padding: 16px;
+            margin: 1rem 0;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .code-block code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            background: transparent;
-            padding: 0;
-            color: inherit;
+            border: 1px solid var(--border-color);
         }
 
-        .alert {
-            margin: 24px 0;
-            padding: 16px 16px 16px 44px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            position: relative;
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
         }
-        .alert-icon {
-            position: absolute;
-            left: 14px;
-            top: 16px;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: 700;
+
+        .code-block code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
-        .alert-important .alert-icon {
-            background: rgba(241, 161, 42, 0.15);
-            color: var(--accent-orange);
-        }
-        .alert-tip .alert-icon {
-            background: rgba(42, 241, 107, 0.15);
+
+        .code-result {
+            background: var(--bg-tertiary);
+            border-radius: 0 0 8px 8px;
+            padding: 0.75rem 1rem;
+            border-top: 1px dashed var(--border-color);
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
             color: var(--accent-green);
         }
-        .alert p {
-            margin: 0;
-            font-size: 14px;
+
+        .code-result::before {
+            content: "Результат: ";
+            color: var(--text-secondary);
+        }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: var(--accent-orange);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 14px;
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+            font-size: 0.9rem;
         }
-        thead, tbody, tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-        th {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            background: var(--bg-secondary);
-            padding: 10px 12px;
+
+        th, td {
+            padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
         td {
-            padding: 12px;
             color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        td code {
-            background: var(--bg-secondary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
         }
 
-        .info-box {
-            margin: 20px 0;
-            padding: 16px;
+        tr:hover {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-        .info-box .info-row {
-            padding: 6px 0;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
         }
 
-        .card {
-            margin: 16px 0;
+        .note {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
+            border-left: 3px solid var(--accent-orange);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
         }
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .card-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-        .question-card .card-num {
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.2), rgba(42, 241, 107, 0.05));
-            color: var(--accent-green);
-        }
-        .task-card .card-num {
-            background: linear-gradient(135deg, rgba(241, 161, 42, 0.2), rgba(241, 161, 42, 0.05));
+
+        .note-title {
             color: var(--accent-orange);
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .card-body {
-            padding: 16px;
-        }
-        .card-body p { margin-bottom: 10px; }
-        .card-body p:last-child { margin-bottom: 0; }
-
-        details {
-            margin-top: 12px;
-        }
-        details summary {
-            cursor: pointer;
-            color: var(--accent-green);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 0;
-            list-style: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        details summary::before {
-            content: '>';
-            font-size: 12px;
-            transition: transform 0.2s;
-        }
-        /* Used by HTML - details open state */
-        details[open] summary::before {
-            transform: rotate(90deg);
-        }
-        details summary::-webkit-details-marker { display: none; }
-        .answer {
-            margin-top: 10px;
-            padding: 12px;
-            background: rgba(42, 241, 107, 0.03);
-            border-radius: 6px;
-            border-left: 2px solid var(--accent-green);
-        }
-        .answer p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .summary-box {
-            margin: 28px 0;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(42, 241, 107, 0.08) 0%, rgba(42, 241, 107, 0.02) 100%);
-            border: 1px solid rgba(42, 241, 107, 0.2);
-            border-radius: 12px;
-        }
-        .summary-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        .summary-badge {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 3px 8px;
-            background: var(--accent-green);
-            color: var(--bg-primary);
-            border-radius: 4px;
-        }
-        .summary-title {
-            font-size: 15px;
             font-weight: 600;
-            color: var(--text-primary);
-        }
-        .summary-list {
-            margin: 0;
-            padding-left: 18px;
-        }
-        .summary-list li {
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            font-size: 14px;
+            margin-bottom: 0.5rem;
         }
 
-        blockquote {
-            margin: 20px 0;
-            padding: 16px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin: 0;
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
         }
 
-        .nav-footer {
+        /* Questions Section */
+        .section-title {
+            font-size: 1.35rem;
+            color: var(--accent-green);
+            margin: 2rem 0 1rem;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .question-header {
+            padding: 1rem;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 40px;
-            padding-top: 24px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .question-title {
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+            padding-right: 1rem;
+        }
+
+        .question-toggle {
+            color: var(--accent-green);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .question-card.open .question-toggle {
+            transform: rotate(45deg);
+        }
+
+        .question-answer {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
             border-top: 1px solid var(--border-color);
         }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            text-decoration: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .nav-link:active {
-            background: var(--bg-tertiary);
-        }
-        /* Used by HTML - navigation link alignment (prev) */
-        .nav-link.prev {
-            text-align: left;
-        }
-        /* Used by HTML - navigation link alignment (next) */
-        .nav-link.next {
-            justify-content: flex-end;
-            text-align: right;
-        }
-        .nav-arrow {
-            font-size: 18px;
-            color: var(--accent-green);
-        }
-        .nav-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 2px;
-        }
-        .nav-title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
+
+        .question-card.open .question-answer {
+            display: block;
+            padding-top: 1rem;
         }
 
-        .diagram-box {
-            margin: 20px 0;
-            padding: 16px;
+        /* Tasks Section */
+        .task-card {
             background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        .diagram-box .diagram-row {
-            white-space: nowrap;
+
+        .task-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .task-title {
+            color: var(--accent-orange);
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .task-toggle {
+            color: var(--accent-orange);
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+        }
+
+        .task-card.open .task-toggle {
+            transform: rotate(45deg);
+        }
+
+        .task-content {
+            padding: 0 1rem;
             color: var(--text-secondary);
         }
-        .diagram-box .diagram-header {
-            color: var(--text-muted);
-            margin-bottom: 8px;
+
+        .task-solution {
+            display: none;
+            padding: 0 1rem 1rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
         }
-        .diagram-box .diagram-divider {
-            color: var(--border-light);
-            margin: 4px 0;
+
+        .task-card.open .task-solution {
+            display: block;
+            padding-top: 1rem;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box h2 {
+            color: var(--accent-green);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .summary-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        /* Navigation */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            color: var(--accent-green);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.disabled {
+            color: var(--text-secondary);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* ASCII diagram conversion */
+        .diagram {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--text-secondary);
         }
     </style>
 </head>
 <body>
-
-    <main>
-        <div class="module-badge">Модуль 1 / Урок 5</div>
-
+    <div class="container">
         <h1>Руны (rune)</h1>
-        <p class="lead">Руна (от англ. rune - древний символ письменности) - это тип для работы с любыми символами Unicode: русскими буквами, китайскими иероглифами, эмодзи. Тип rune - это алиас (псевдоним) к int32. Он хранит код символа Unicode - число от 0 до 1 114 111.</p>
+
+        <div class="intro">
+            <p>Руна (от англ. rune - древний символ письменности) - это тип для работы с любыми символами Unicode: русскими буквами, китайскими иероглифами, эмодзи. В предыдущем уроке мы видели, что byte не справляется с русским текстом. Тип rune решает эту проблему.</p>
+            <p>Как это работает? Тип rune - это алиас (псевдоним) к int32. Он хранит код символа Unicode - число от 0 до 1 114 111. Каждому символу в мире присвоен уникальный код: 'A' = 65, 'П' = 1055, '中' = 20013, '😊' = 128522. Символ записывается в одинарных кавычках.</p>
+            <p>Зачем отдельный тип? В мире тысячи алфавитов и миллионы символов. Английских букв всего 26, они влезают в byte (0-255). Но русских букв 33, китайских иероглифов тысячи, а ещё есть эмодзи. Для всего этого нужен тип побольше - rune.</p>
+        </div>
+
+        <hr>
 
         <h2>Что такое rune</h2>
 
         <p>Тип rune - это алиас (псевдоним) к типу int32. Переменная rune всегда занимает 4 байта и хранит код символа Unicode (code point) - число от 0 до 1 114 111.</p>
 
         <p>Важно различать:</p>
-        <ul>
+        <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
             <li><strong>rune</strong> - фиксированный размер 4 байта, хранит код символа</li>
             <li><strong>UTF-8</strong> - кодировка в строках, переменный размер 1-4 байта на символ</li>
         </ul>
@@ -502,7 +382,6 @@
         <p>Когда символ лежит в переменной rune, он занимает 4 байта. Когда тот же символ лежит в строке, он закодирован в UTF-8 и занимает от 1 до 4 байтов в зависимости от кода:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -512,21 +391,18 @@ func main() {
     fmt.Println(r)         // 1055
     fmt.Println(string(r)) // П
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>1055
-П</code></pre>
+            <div class="code-result">1055<br>П</div>
         </div>
 
         <p>Число 1055 - это код буквы "П" в таблице Unicode.</p>
 
         <p>rune и int32 - одно и то же. Разница в намерении:</p>
-        <ul>
+        <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1rem;">
             <li>int32 говорит: "здесь просто число"</li>
             <li>rune говорит: "здесь символ Unicode"</li>
         </ul>
+
+        <hr>
 
         <h2>Unicode: один стандарт для всех символов</h2>
 
@@ -541,10 +417,26 @@ func main() {
                 </tr>
             </thead>
             <tbody>
-                <tr><td>A</td><td>65</td><td>Латинская заглавная</td></tr>
-                <tr><td>П</td><td>1055</td><td>Русская заглавная</td></tr>
-                <tr><td>中</td><td>20013</td><td>Китайский иероглиф "середина"</td></tr>
-                <tr><td>😊</td><td>128522</td><td>Эмодзи "улыбка"</td></tr>
+                <tr>
+                    <td>A</td>
+                    <td>65</td>
+                    <td>Латинская заглавная</td>
+                </tr>
+                <tr>
+                    <td>П</td>
+                    <td>1055</td>
+                    <td>Русская заглавная</td>
+                </tr>
+                <tr>
+                    <td>中</td>
+                    <td>20013</td>
+                    <td>Китайский иероглиф "середина"</td>
+                </tr>
+                <tr>
+                    <td>😊</td>
+                    <td>128522</td>
+                    <td>Эмодзи "улыбка"</td>
+                </tr>
             </tbody>
         </table>
 
@@ -553,7 +445,6 @@ func main() {
         <p>Давай проверим коды разных символов:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -564,24 +455,18 @@ func main() {
     fmt.Println('中') // 20013 - китайский иероглиф
     fmt.Println('😊') // 128522 - эмодзи
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>65
-1055
-20013
-128522</code></pre>
+            <div class="code-result">65<br>1055<br>20013<br>128522</div>
         </div>
 
         <p>Видишь разницу в кодах? Английская буква - двузначное число, русская - четырёхзначное, иероглиф - пятизначное, эмодзи - шестизначное. Чем "экзотичнее" символ, тем больше его код.</p>
+
+        <hr>
 
         <h2>Символ в одинарных кавычках</h2>
 
         <p>Как и с byte, символ записывается в одинарных кавычках. Go автоматически определяет тип:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -593,12 +478,7 @@ func main() {
     fmt.Println(a) // 65
     fmt.Println(п) // 1055
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>65
-1055</code></pre>
+            <div class="code-result">65<br>1055</div>
         </div>
 
         <p>Важный момент: когда ты пишешь <code>'A'</code> без указания типа, Go создаёт rune, а не byte. Даже для английских букв.</p>
@@ -606,7 +486,6 @@ func main() {
         <p>Если нужен именно byte, укажи тип явно:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -618,15 +497,12 @@ func main() {
     fmt.Println(b) // 65
     fmt.Println(r) // 65
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>65
-65</code></pre>
+            <div class="code-result">65<br>65</div>
         </div>
 
         <p>Результат одинаковый, но типы разные.</p>
+
+        <hr>
 
         <h2>Почему len() врёт для русского текста</h2>
 
@@ -635,7 +511,6 @@ func main() {
         <p>Функция <code>len()</code> считает байты, а не символы. Русская буква в UTF-8 занимает 2 байта:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -647,18 +522,12 @@ func main() {
     fmt.Println(len(eng)) // 2 - два байта
     fmt.Println(len(rus)) // 12 - двенадцать байтов (6 букв x 2)
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>2
-12</code></pre>
+            <div class="code-result">2<br>12</div>
         </div>
 
         <p>А иероглифы и эмодзи занимают ещё больше:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -667,22 +536,18 @@ func main() {
     fmt.Println(len("中"))  // 3 байта - китайский иероглиф
     fmt.Println(len("😊")) // 4 байта - эмодзи
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>3
-4</code></pre>
+            <div class="code-result">3<br>4</div>
         </div>
 
         <p>Один иероглиф - 3 байта, один эмодзи - 4 байта. Вот почему byte не подходит для современного текста.</p>
+
+        <hr>
 
         <h2>Получение количества символов</h2>
 
         <p>Как узнать настоящее количество символов, а не байтов? Для этого есть функция <code>utf8.RuneCountInString()</code>:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import (
@@ -696,22 +561,18 @@ func main() {
     fmt.Println(len(s))                    // 12 - байты
     fmt.Println(utf8.RuneCountInString(s)) // 6 - символы
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>12
-6</code></pre>
+            <div class="code-result">12<br>6</div>
         </div>
 
         <p>Теперь мы получили правильный ответ: в слове "Привет" 6 символов.</p>
+
+        <hr>
 
         <h2>Арифметика с рунами</h2>
 
         <p>Как и byte, rune - это число. С ним работает арифметика:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
@@ -722,41 +583,30 @@ func main() {
     fmt.Println(string(r + 1)) // Б
     fmt.Println(string(r + 2)) // В
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>А
-Б
-В</code></pre>
+            <div class="code-result">А<br>Б<br>В</div>
         </div>
 
         <p>Русские буквы тоже идут подряд в Unicode: А=1040, Б=1041, В=1042...</p>
 
         <p>Это работает для любого алфавита, где буквы расположены последовательно.</p>
 
+        <hr>
+
         <h2>Сравнение символов</h2>
 
         <p>Символы можно сравнивать - сравниваются их коды:</p>
 
         <div class="code-block">
-            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
             <pre><code class="language-go">package main
 
 import "fmt"
 
 func main() {
-    fmt.Println('А' &lt; 'Я') // true (1040 &lt; 1071)
-    fmt.Println('A' &lt; 'А') // true (65 &lt; 1040, английская &lt; русская)
-    fmt.Println('😊' &gt; 'A') // true (128522 &gt; 65)
+    fmt.Println('А' < 'Я') // true (1040 < 1071)
+    fmt.Println('A' < 'А') // true (65 < 1040, английская < русская)
+    fmt.Println('😊' > 'A') // true (128522 > 65)
 }</code></pre>
-        </div>
-
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>true
-true
-true</code></pre>
+            <div class="code-result">true<br>true<br>true</div>
         </div>
 
         <p>Английские буквы "меньше" русских, потому что их коды меньше. Эмодзи "больше" всех букв.</p>
@@ -765,16 +615,18 @@ true</code></pre>
 
         <p>А как разные символы занимают разное количество байтов в UTF-8?</p>
 
-        <div class="diagram-box">
-            <div class="diagram-row diagram-header">Символ    Код       Байты в UTF-8</div>
-            <div class="diagram-row diagram-divider">───────────────────────────────────</div>
-            <div class="diagram-row">'A'       65        1 байт</div>
-            <div class="diagram-row">'П'       1055      2 байта</div>
-            <div class="diagram-row">'中'      20013     3 байта</div>
-            <div class="diagram-row">'😊'      128522    4 байта</div>
+        <div class="diagram">
+Символ    Код       Байты в UTF-8
+───────────────────────────────────
+'A'       65        1 байт
+'П'       1055      2 байта
+'中'      20013     3 байта
+'😊'      128522    4 байта
         </div>
 
         <p>UTF-8 - умная кодировка: английские буквы занимают 1 байт (совместимость с ASCII), а сложные символы - больше.</p>
+
+        <hr>
 
         <h2>byte vs rune: когда что использовать</h2>
 
@@ -787,240 +639,259 @@ true</code></pre>
                 </tr>
             </thead>
             <tbody>
-                <tr><td>Только ASCII (английский, цифры)</td><td>byte</td><td>Экономит память</td></tr>
-                <tr><td>Любой текст (русский, эмодзи)</td><td>rune</td><td>Корректно работает</td></tr>
-                <tr><td>Чтение файла побайтово</td><td>byte</td><td>Низкоуровневая работа</td></tr>
-                <tr><td>Работа с символами текста</td><td>rune</td><td>Безопасно для Unicode</td></tr>
+                <tr>
+                    <td>Только ASCII (английский, цифры)</td>
+                    <td>byte</td>
+                    <td>Экономит память</td>
+                </tr>
+                <tr>
+                    <td>Любой текст (русский, эмодзи)</td>
+                    <td>rune</td>
+                    <td>Корректно работает</td>
+                </tr>
+                <tr>
+                    <td>Чтение файла побайтово</td>
+                    <td>byte</td>
+                    <td>Низкоуровневая работа</td>
+                </tr>
+                <tr>
+                    <td>Работа с символами текста</td>
+                    <td>rune</td>
+                    <td>Безопасно для Unicode</td>
+                </tr>
             </tbody>
         </table>
 
         <p>Если не уверен - используй rune. Лучше потратить чуть больше памяти, чем получить битые символы.</p>
 
-        <h2>Проверь себя</h2>
+        <hr>
+
+        <h2 class="section-title">Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">01</span><span class="card-title">Чем rune отличается от int32?</span></div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p>Ничем технически. rune - алиас к int32. Разница в намерении: rune говорит "это символ Unicode", int32 - "это число".</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 1: Чем rune отличается от int32?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Ничем технически. rune - алиас к int32. Разница в намерении: rune говорит "это символ Unicode", int32 - "это число".</p>
             </div>
         </div>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">02</span><span class="card-title">Почему len("Привет") возвращает 12, а не 6?</span></div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p>Потому что <code>len()</code> считает байты, а не символы. Каждая русская буква занимает 2 байта в UTF-8. 6 букв x 2 = 12 байтов.</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 2: Почему len("Привет") возвращает 12, а не 6?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Потому что <code>len()</code> считает байты, а не символы. Каждая русская буква занимает 2 байта в UTF-8. 6 букв x 2 = 12 байтов.</p>
             </div>
         </div>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">03</span><span class="card-title">Какой код у русской буквы 'А'?</span></div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p>Код 1040. Русские заглавные буквы в Unicode начинаются с 1040.</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 3: Какой код у русской буквы 'А'?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Код 1040. Русские заглавные буквы в Unicode начинаются с 1040.</p>
             </div>
         </div>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">04</span><span class="card-title">Почему английская 'A' и русская 'А' - это разные символы?</span></div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p>Потому что у них разные коды: английская 'A' = 65, русская 'А' = 1040. Визуально похожи, но для компьютера это разные символы.</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 4: Почему английская 'A' и русская 'А' - это разные символы?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Потому что у них разные коды: английская 'A' = 65, русская 'А' = 1040. Визуально похожи, но для компьютера это разные символы.</p>
             </div>
         </div>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет utf8.RuneCountInString("😊😊")?</span></div>
-            <div class="card-body">
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p>Число 2. В строке два символа (два эмодзи), <code>RuneCountInString</code> считает символы, не байты.</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 5: Что выведет utf8.RuneCountInString("😊😊")?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p>Число 2. В строке два символа (два эмодзи), <code>RuneCountInString</code> считает символы, не байты.</p>
             </div>
         </div>
 
-        <div class="card question-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет код?</span></div>
-            <div class="card-body">
-                <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
-                    <pre><code class="language-go">r := 'Б'
-fmt.Println(r)</code></pre>
-                </div>
-                <details>
-                    <summary>Показать ответ</summary>
-                    <div class="answer"><p><code>1041</code> - код буквы 'Б' (следующая после 'А' = 1040).</p></div>
-                </details>
+        <div class="question-card">
+            <div class="question-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="question-title">Вопрос 6: Что выведет код r := 'Б'; fmt.Println(r)?</span>
+                <span class="question-toggle">+</span>
+            </div>
+            <div class="question-answer">
+                <p><code>1041</code> - код буквы 'Б' (следующая после 'А' = 1040).</p>
             </div>
         </div>
 
         <h3>Задачи</h3>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">01</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 1: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">fmt.Println('Я' - 'А')</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>31</code> - в русском алфавите от А до Я 32 буквы, разница кодов = 31.</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>31</code> - в русском алфавите от А до Я 32 буквы, разница кодов = 31.</p>
             </div>
         </div>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">02</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 2: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">fmt.Println(string(1055))</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>П</code> - символ с кодом 1055.</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>П</code> - символ с кодом 1055.</p>
             </div>
         </div>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">03</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 3: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">fmt.Println(len("Go"))
 fmt.Println(len("Го"))</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>2</code> и <code>4</code> - английское "Go" = 2 байта, русское "Го" = 4 байта.</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>2</code> и <code>4</code> - английское "Go" = 2 байта, русское "Го" = 4 байта.</p>
             </div>
         </div>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">04</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 4: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
-                    <pre><code class="language-go">fmt.Println('A' &lt; 'Б')</code></pre>
+                    <pre><code class="language-go">fmt.Println('A' < 'Б')</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>true</code> - код 'A' (65) меньше кода 'Б' (1041).</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>true</code> - код 'A' (65) меньше кода 'Б' (1041).</p>
             </div>
         </div>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 5: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">fmt.Println(string('А' + 5))</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>Е</code> - пятая буква после 'А' (А=1040, Б=1041, В=1042, Г=1043, Д=1044, Е=1045).</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>Е</code> - пятая буква после 'А' (А=1040, Б=1041, В=1042, Г=1043, Д=1044, Е=1045).</p>
             </div>
         </div>
 
-        <div class="card task-card">
-            <div class="card-head"><span class="card-num">06</span><span class="card-title">Что выведет?</span></div>
-            <div class="card-body">
+        <div class="task-card">
+            <div class="task-header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="task-title">Задача 6: Что выведет?</span>
+                <span class="task-toggle">+</span>
+            </div>
+            <div class="task-content">
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">Go</span></div>
                     <pre><code class="language-go">fmt.Println(len("😊"))</code></pre>
                 </div>
-                <details>
-                    <summary>Показать решение</summary>
-                    <div class="answer"><p><code>4</code> - один эмодзи занимает 4 байта в UTF-8.</p></div>
-                </details>
+            </div>
+            <div class="task-solution">
+                <p><code>4</code> - один эмодзи занимает 4 байта в UTF-8.</p>
             </div>
         </div>
 
-        <h2>Резюме</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Что</th>
-                    <th>Как</th>
-                    <th>Пример</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Объявить rune</td><td><code>var r rune = 'П'</code></td><td><code>r := 'П'</code></td></tr>
-                <tr><td>Код символа</td><td>Одинарные кавычки</td><td><code>'П'</code> = 1055</td></tr>
-                <tr><td>Символ из кода</td><td><code>string(code)</code></td><td><code>string(1055)</code> = "П"</td></tr>
-                <tr><td>Количество байтов</td><td><code>len(s)</code></td><td><code>len("Привет")</code> = 12</td></tr>
-                <tr><td>Количество символов</td><td><code>utf8.RuneCountInString(s)</code></td><td>= 6</td></tr>
-            </tbody>
-        </table>
+        <hr>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
-            <ul class="summary-list">
+            <h2>Резюме</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Что</th>
+                        <th>Как</th>
+                        <th>Пример</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Объявить rune</td>
+                        <td><code>var r rune = 'П'</code></td>
+                        <td><code>r := 'П'</code></td>
+                    </tr>
+                    <tr>
+                        <td>Код символа</td>
+                        <td>Одинарные кавычки</td>
+                        <td><code>'П'</code> = 1055</td>
+                    </tr>
+                    <tr>
+                        <td>Символ из кода</td>
+                        <td><code>string(code)</code></td>
+                        <td><code>string(1055)</code> = "П"</td>
+                    </tr>
+                    <tr>
+                        <td>Количество байтов</td>
+                        <td><code>len(s)</code></td>
+                        <td><code>len("Привет")</code> = 12</td>
+                    </tr>
+                    <tr>
+                        <td>Количество символов</td>
+                        <td><code>utf8.RuneCountInString(s)</code></td>
+                        <td>= 6</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="margin-top: 1.5rem; color: var(--text-primary);">Ключевые моменты:</h3>
+            <ul>
                 <li>rune = int32, для символов Unicode</li>
                 <li>Символы в одинарных кавычках: 'А', 'Я', '中', '😊'</li>
-                <li><code>len()</code> считает байты, не символы</li>
+                <li>len() считает байты, не символы</li>
                 <li>Русская буква = 2 байта, эмодзи = 4 байта</li>
-                <li><code>utf8.RuneCountInString()</code> для подсчёта символов</li>
+                <li>utf8.RuneCountInString() для подсчёта символов</li>
                 <li>byte для ASCII, rune для всего остального</li>
             </ul>
         </div>
 
-        <p><strong>Что дальше?</strong> Мы знаем два типа символов: byte для ASCII, rune для Unicode. Но символы редко используются по одному - обычно нужен текст из нескольких символов. В следующем уроке изучим строки - последовательности символов.</p>
-
         <nav class="nav-footer">
-            <a href="04-byte.html" class="nav-link prev">
-                <span class="nav-arrow">&lt;-</span>
-                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Байты (byte)</div></div>
-            </a>
-            <a href="06-string.html" class="nav-link next">
-                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Строки (string)</div></div>
-                <span class="nav-arrow">-&gt;</span>
-            </a>
+            <a href="04-byte.html" class="nav-link">← Байты</a>
+            <a href="06-string.html" class="nav-link">Строки →</a>
         </nav>
-    </main>
+    </div>
 
-<script>
-    /* global hljs */
-    // noinspection JSUnresolvedReference
-    hljs.highlightAll();
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
 
-    function copyCode(btn) {
-        const code = btn.closest('.code-block').querySelector('code');
-        navigator.clipboard.writeText(code.textContent).then(() => {
-            btn.textContent = 'Copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+            }
         });
-    }
-
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-        tg.ready();
-        tg.expand();
-        tg.BackButton.show();
-        tg.BackButton.onClick(() => {
-            tg.showAlert('В полной версии здесь будет список уроков');
-        });
-    }
-</script>
-
+    </script>
 </body>
 </html>

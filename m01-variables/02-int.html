@@ -167,7 +167,6 @@
         .copy-btn:active {
             background: var(--bg-tertiary);
         }
-        /* Used by JS - copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -186,40 +185,6 @@
             background: transparent;
             padding: 0;
             color: inherit;
-        }
-
-        .alert {
-            margin: 24px 0;
-            padding: 16px 16px 16px 44px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            position: relative;
-        }
-        .alert-icon {
-            position: absolute;
-            left: 14px;
-            top: 16px;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .alert-important .alert-icon {
-            background: rgba(241, 161, 42, 0.15);
-            color: var(--accent-orange);
-        }
-        .alert-tip .alert-icon {
-            background: rgba(42, 241, 107, 0.15);
-            color: var(--accent-green);
-        }
-        .alert p {
-            margin: 0;
-            font-size: 14px;
         }
 
         table {
@@ -256,27 +221,6 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 12px;
-        }
-
-        .info-box {
-            margin: 20px 0;
-            padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-        .info-box .info-row {
-            padding: 6px 0;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
         }
 
         .card {
@@ -340,7 +284,6 @@
             font-size: 12px;
             transition: transform 0.2s;
         }
-        /* Used by HTML - details open state */
         details[open] summary::before {
             transform: rotate(90deg);
         }
@@ -395,20 +338,6 @@
             font-size: 14px;
         }
 
-        blockquote {
-            margin: 20px 0;
-            padding: 16px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin: 0;
-        }
-
         .nav-footer {
             display: flex;
             flex-direction: column;
@@ -431,11 +360,9 @@
         .nav-link:active {
             background: var(--bg-tertiary);
         }
-        /* Used by HTML - navigation link alignment (prev) */
         .nav-link.prev {
             text-align: left;
         }
-        /* Used by HTML - navigation link alignment (next) */
         .nav-link.next {
             justify-content: flex-end;
             text-align: right;
@@ -453,6 +380,20 @@
             font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
+        }
+
+        .diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -498,10 +439,10 @@ func main() {
                 <tr><th>Тип</th><th>Размер</th><th>Диапазон</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>int8</code></td><td>1 байт (8 бит)</td><td>от -128 до 127</td></tr>
-                <tr><td><code>int16</code></td><td>2 байта (16 бит)</td><td>от -32768 до 32767</td></tr>
-                <tr><td><code>int32</code></td><td>4 байта (32 бита)</td><td>примерно +/- 2 миллиарда</td></tr>
-                <tr><td><code>int64</code></td><td>8 байт (64 бита)</td><td>очень большие числа</td></tr>
+                <tr><td>int8</td><td>1 байт (8 бит)</td><td>от -128 до 127</td></tr>
+                <tr><td>int16</td><td>2 байта (16 бит)</td><td>от -32768 до 32767</td></tr>
+                <tr><td>int32</td><td>4 байта (32 бита)</td><td>примерно +/- 2 миллиарда</td></tr>
+                <tr><td>int64</td><td>8 байт (64 бита)</td><td>очень большие числа</td></tr>
             </tbody>
         </table>
 
@@ -530,11 +471,10 @@ func main() {
 
         <p>int8 занимает 8 бит. Один бит уходит на знак (плюс или минус), остаётся 7 бит для значения:</p>
 
-        <div class="info-box">
-            <div class="info-row">7 бит = 2^7 = 128 возможных значений</div>
-            <div class="info-row">Отрицательные: -128, -127, ..., -1 (128 значений)</div>
-            <div class="info-row">Неотрицательные: 0, 1, ..., 127 (128 значений, включая ноль)</div>
-        </div>
+        <div class="diagram">7 бит = 2^7 = 128 возможных значений
+
+Отрицательные: -128, -127, ..., -1  (128 значений)
+Неотрицательные: 0, 1, ..., 127     (128 значений, включая ноль)</div>
 
         <p>Ноль считается положительным числом, поэтому положительных чисел на одно меньше: от 0 до 127.</p>
 
@@ -568,10 +508,10 @@ func main() {
                 <tr><th>Тип</th><th>Размер</th><th>Диапазон</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>uint8</code></td><td>1 байт</td><td>от 0 до 255</td></tr>
-                <tr><td><code>uint16</code></td><td>2 байта</td><td>от 0 до 65535</td></tr>
-                <tr><td><code>uint32</code></td><td>4 байта</td><td>от 0 до ~4 миллиардов</td></tr>
-                <tr><td><code>uint64</code></td><td>8 байт</td><td>очень большие числа</td></tr>
+                <tr><td>uint8</td><td>1 байт</td><td>от 0 до 255</td></tr>
+                <tr><td>uint16</td><td>2 байта</td><td>от 0 до 65535</td></tr>
+                <tr><td>uint32</td><td>4 байта</td><td>от 0 до ~4 миллиардов</td></tr>
+                <tr><td>uint64</td><td>8 байт</td><td>очень большие числа</td></tr>
             </tbody>
         </table>
 
@@ -630,11 +570,11 @@ func main() {
                 <tr><th>Оператор</th><th>Действие</th><th>Пример</th></tr>
             </thead>
             <tbody>
-                <tr><td><code>+</code></td><td>сложение</td><td>5 + 3 = 8</td></tr>
-                <tr><td><code>-</code></td><td>вычитание</td><td>5 - 3 = 2</td></tr>
-                <tr><td><code>*</code></td><td>умножение</td><td>5 * 3 = 15</td></tr>
-                <tr><td><code>/</code></td><td>деление</td><td>5 / 3 = 1</td></tr>
-                <tr><td><code>%</code></td><td>остаток</td><td>5 % 3 = 2</td></tr>
+                <tr><td>+</td><td>сложение</td><td>5 + 3 = 8</td></tr>
+                <tr><td>-</td><td>вычитание</td><td>5 - 3 = 2</td></tr>
+                <tr><td>*</td><td>умножение</td><td>5 * 3 = 15</td></tr>
+                <tr><td>/</td><td>деление</td><td>5 / 3 = 1</td></tr>
+                <tr><td>%</td><td>остаток</td><td>5 % 3 = 2</td></tr>
             </tbody>
         </table>
 
@@ -818,7 +758,7 @@ func main() {
 
         <h2>Переполнение: что происходит на границе?</h2>
 
-        <p>Представь стакан воды. Если налить больше, чем он вмещает, вода перельётся. С числами происходит похожее:</p>
+        <p>Что будет, если прибавить 1 к максимальному значению int8?</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
@@ -838,11 +778,35 @@ func main() {
             <pre><code>-128</code></pre>
         </div>
 
-        <p>127 + 1 не даёт 128, потому что 128 не помещается в int8. Число "переливается" и становится -128. Это называется переполнение (overflow).</p>
+        <p>Почему -128? Разберём по шагам.</p>
 
-        <p>Go не выдаёт предупреждение о переполнении - это сделано для производительности. Следить за переполнением должен сам программист.</p>
+        <p>int8 - это 8 бит. Число 127 в битах выглядит так: <code>01111111</code>. Первый бит (0) означает "положительное".</p>
 
-        <p>На практике переполнение встречается редко. Если используешь обычный <code>int</code> для обычных задач - проблем не будет. Но если работаешь с <code>int8</code> или <code>int16</code> - помни о границах.</p>
+        <p>Прибавляем 1:</p>
+
+        <div class="diagram">  01111111  (127)
++        1
+----------
+  10000000  (-128)</div>
+
+        <p>Первый бит стал 1 - теперь это отрицательное число. В двоичном представлении <code>10000000</code> = -128.</p>
+
+        <p>Вот как устроены числа int8 - они образуют замкнутый круг:</p>
+
+        <div class="diagram">            0
+        -1     1
+      -2         2
+    .               .
+    .               .
+  -127           127
+        -128
+
+   После 127 идёт -128
+   После -128 идёт -127</div>
+
+        <p>Это называется переполнение (overflow). Go не предупреждает о нём - проверка каждой операции замедлила бы программу.</p>
+
+        <p>С обычным <code>int</code> проблем не будет (диапазон в миллиарды). Но если используешь <code>int8</code> для экономии памяти - помни о границах.</p>
 
         <h2>Проверь себя</h2>
 
@@ -1086,7 +1050,7 @@ func main() {
         <h2>Резюме</h2>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Целые числа</span></div>
             <ul class="summary-list">
                 <li><strong>int</strong> - основной тип для целых чисел, размер зависит от системы</li>
                 <li><strong>int8, int16, int32, int64</strong> - фиксированный размер (цифра = биты)</li>
@@ -1102,12 +1066,12 @@ func main() {
 
         <nav class="nav-footer">
             <a href="01-variables.html" class="nav-link prev">
-                <span class="nav-arrow">&lt;-</span>
-                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Переменные</div></div>
+                <span class="nav-arrow">&larr;</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Переменные в Go</div></div>
             </a>
             <a href="03-float.html" class="nav-link next">
                 <div><div class="nav-label">Следующий урок</div><div class="nav-title">Числа с плавающей точкой</div></div>
-                <span class="nav-arrow">-&gt;</span>
+                <span class="nav-arrow">&rarr;</span>
             </a>
         </nav>
     </main>

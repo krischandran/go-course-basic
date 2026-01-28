@@ -167,7 +167,6 @@
         .copy-btn:active {
             background: var(--bg-tertiary);
         }
-        /* Used by JS - copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -258,27 +257,6 @@
             font-size: 12px;
         }
 
-        .info-box {
-            margin: 20px 0;
-            padding: 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-        .info-box .info-row {
-            padding: 6px 0;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        .info-box .info-row:not(:last-child) {
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-box code {
-            color: var(--accent-green);
-            font-weight: 600;
-        }
-
         .card {
             margin: 16px 0;
             background: var(--bg-secondary);
@@ -340,7 +318,6 @@
             font-size: 12px;
             transition: transform 0.2s;
         }
-        /* Used by HTML - details open state */
         details[open] summary::before {
             transform: rotate(90deg);
         }
@@ -409,52 +386,6 @@
             margin: 0;
         }
 
-        .memory-diagram {
-            margin: 24px 0;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-        .memory-label {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .memory-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-bottom: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-        }
-        .memory-cell {
-            padding: 8px 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-secondary);
-        }
-        .memory-cell.highlight {
-            background: rgba(42, 241, 107, 0.15);
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-        .memory-pointer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 8px;
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-        .memory-pointer-arrow {
-            font-size: 16px;
-            color: var(--accent-green);
-        }
-
         .nav-footer {
             display: flex;
             flex-direction: column;
@@ -477,11 +408,9 @@
         .nav-link:active {
             background: var(--bg-tertiary);
         }
-        /* Used by HTML - navigation link alignment (prev) */
         .nav-link.prev {
             text-align: left;
         }
-        /* Used by HTML - navigation link alignment (next) */
         .nav-link.next {
             justify-content: flex-end;
             text-align: right;
@@ -500,6 +429,20 @@
             font-weight: 500;
             color: var(--text-primary);
         }
+
+        .memory-diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -510,7 +453,7 @@
         <h1>Переменные в Go</h1>
         <p class="lead">Переменная (от англ. variable - изменяемый) - это именованная область памяти для хранения данных. Go предлагает два способа создания переменных: классический <code>var</code> и короткий <code>:=</code>. При этом тип фиксируется при создании и не меняется - Go статически типизирован. Ещё одна особенность: Go сам инициализирует переменные нулевыми значениями, если ты не указал значение явно.</p>
 
-        <h2 id="creation">Создание переменных</h2>
+        <h2>Создание переменных</h2>
 
         <p>Представь переменную как ящик с наклейкой. На наклейке - имя, внутри - значение, а форма ящика определяет, что можно положить (тип).</p>
 
@@ -579,32 +522,16 @@ var temperature float32 = 36.6          // без float32 было бы float64<
 
         <table>
             <thead>
-                <tr>
-                    <th>Способ</th>
-                    <th>Где работает</th>
-                    <th>Когда использовать</th>
-                </tr>
+                <tr><th>Способ</th><th>Где работает</th><th>Когда использовать</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><code>x := 10</code></td>
-                    <td>Только в функциях</td>
-                    <td>Локальные переменные (90% случаев)</td>
-                </tr>
-                <tr>
-                    <td><code>var x = 10</code></td>
-                    <td>Везде</td>
-                    <td>На уровне пакета</td>
-                </tr>
-                <tr>
-                    <td><code>var x int = 10</code></td>
-                    <td>Везде</td>
-                    <td>Нужен конкретный тип</td>
-                </tr>
+                <tr><td><code>x := 10</code></td><td>Только в функциях</td><td>Локальные переменные (90% случаев)</td></tr>
+                <tr><td><code>var x = 10</code></td><td>Везде</td><td>На уровне пакета</td></tr>
+                <tr><td><code>var x int = 10</code></td><td>Везде</td><td>Нужен конкретный тип</td></tr>
             </tbody>
         </table>
 
-        <h2 id="change">Изменение значений</h2>
+        <h2>Изменение значений</h2>
 
         <p>Важное различие: <code>:=</code> создаёт новую переменную, <code>=</code> изменяет существующую.</p>
 
@@ -644,7 +571,7 @@ func main() {
 price, discount := 150, 10  // OK - discount новая, price переиспользуется</code></pre>
         </div>
 
-        <h2 id="multiple">Множественное объявление</h2>
+        <h2>Множественное объявление</h2>
 
         <p>Go позволяет работать с несколькими переменными одновременно:</p>
 
@@ -698,7 +625,7 @@ func main() {
 )</code></pre>
         </div>
 
-        <h2 id="naming">Правила именования</h2>
+        <h2>Правила именования</h2>
 
         <p>Несколько правил для имён переменных:</p>
 
@@ -722,7 +649,7 @@ n := 1500         // какое число?
 flag := false     // какой флаг?</code></pre>
         </div>
 
-        <h2 id="zero-values">Нулевые значения</h2>
+        <h2>Нулевые значения</h2>
 
         <p>Что лежит в переменной, если мы её создали, но ничего не положили?</p>
 
@@ -746,6 +673,7 @@ func main() {
         </div>
 
         <p>Go автоматически инициализирует переменные <strong>нулевым значением</strong> (zero value) типа:</p>
+
         <ul>
             <li>Числа: <code>0</code></li>
             <li>Строки: <code>""</code> (пустая строка)</li>
@@ -754,7 +682,7 @@ func main() {
 
         <p>Это не случайность, а осознанное решение. В Go нет "мусора" в памяти - переменная всегда имеет определённое значение.</p>
 
-        <h2 id="static-typing">Статическая типизация</h2>
+        <h2>Статическая типизация</h2>
 
         <p>Go - <strong>статически типизированный</strong> язык. Это значит:</p>
 
@@ -795,18 +723,14 @@ func main() {
 
         <p>Вот как это выглядит:</p>
 
-        <div class="memory-diagram">
-            <div class="memory-label">Память:</div>
-            <div class="memory-row">
-                <span class="memory-cell">...</span>
-                <span class="memory-cell highlight">100 (8b)</span>
-                <span class="memory-cell">...</span>
-            </div>
-            <div class="memory-pointer">
-                <span class="memory-pointer-arrow">^</span>
-                <span>имя "price"</span>
-            </div>
-        </div>
+        <div class="memory-diagram">Память:
+┌─────────────────────────────────────────┐
+│  ...  │ 100 │  ...  │                   │
+│       │(8b) │       │                   │
+└───────┴─────┴───────┴───────────────────┘
+          ↑
+          │
+       имя "price"</div>
 
         <p>Как видишь, переменная - это просто имя, указывающее на участок памяти.</p>
 
@@ -838,7 +762,7 @@ func main() {
 
         <p>Это называется <strong>передача по значению</strong> - фундаментальный принцип Go.</p>
 
-        <h2 id="practice">Проверь себя</h2>
+        <h2>Проверь себя</h2>
 
         <h3>Вопросы</h3>
 
@@ -904,7 +828,7 @@ fmt.Println(x)</code></pre>
                 </div>
                 <details>
                     <summary>Показать ответ</summary>
-                    <div class="answer"><p><strong>Вывод: <code>10</code></strong>. При <code>y := x</code> создаётся копия значения <code>x</code>. Изменение <code>y</code> не влияет на оригинал - это передача по значению.</p></div>
+                    <div class="answer"><p><strong>Вывод:</strong> <code>10</code>. При <code>y := x</code> создаётся копия значения <code>x</code>. Изменение <code>y</code> не влияет на оригинал - это передача по значению.</p></div>
                 </details>
             </div>
         </div>
@@ -1028,8 +952,7 @@ fmt.Println(c)</code></pre>
                 </div>
                 <details>
                     <summary>Показать решение</summary>
-                    <div class="answer">
-                        <p>Переменная <code>a</code> объявляется дважды через <code>var</code>. Нужно убрать <code>var</code> в третьей строке:</p>
+                    <div class="answer"><p>Переменная <code>a</code> объявляется дважды через <code>var</code>. Нужно убрать <code>var</code> в третьей строке:</p>
                         <div class="code-block">
                             <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">a = b - 8  // просто присваиваем, без var</code></pre>
@@ -1039,10 +962,10 @@ fmt.Println(c)</code></pre>
             </div>
         </div>
 
-        <h2 id="summary">Резюме</h2>
+        <h2>Резюме</h2>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые идеи</span></div>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Переменные в Go</span></div>
             <ul class="summary-list">
                 <li><strong>Переменная</strong> - именованная область памяти с типом и значением</li>
                 <li><strong>:=</strong> создаёт переменную (только в функциях), <strong>=</strong> изменяет существующую</li>
@@ -1056,12 +979,12 @@ fmt.Println(c)</code></pre>
 
         <nav class="nav-footer">
             <a href="../m00-intro/06-go-playground.html" class="nav-link prev">
-                <span class="nav-arrow">&lt;-</span>
+                <span class="nav-arrow">&larr;</span>
                 <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Go Playground</div></div>
             </a>
             <a href="02-int.html" class="nav-link next">
-                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Целые числа</div></div>
-                <span class="nav-arrow">-&gt;</span>
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Целые числа (int)</div></div>
+                <span class="nav-arrow">&rarr;</span>
             </a>
         </nav>
     </main>
@@ -1086,7 +1009,7 @@ fmt.Println(c)</code></pre>
         tg.expand();
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
-            history.back();
+            tg.showAlert('В полной версии здесь будет список уроков');
         });
     }
 </script>

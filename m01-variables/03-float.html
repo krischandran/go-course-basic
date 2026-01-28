@@ -167,7 +167,6 @@
         .copy-btn:active {
             background: var(--bg-tertiary);
         }
-        /* Used by JS - copy button state after click */
         .copy-btn.copied {
             border-color: var(--accent-green);
             background: rgba(42, 241, 107, 0.1);
@@ -222,20 +221,6 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 12px;
-        }
-
-        blockquote {
-            margin: 20px 0;
-            padding: 16px;
-            background: linear-gradient(90deg, rgba(42, 241, 107, 0.06) 0%, transparent 100%);
-            border-left: 2px solid var(--accent-green);
-            border-radius: 0 6px 6px 0;
-        }
-        blockquote p {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin: 0;
         }
 
         .card {
@@ -299,7 +284,6 @@
             font-size: 12px;
             transition: transform 0.2s;
         }
-        /* Used by HTML - details open state */
         details[open] summary::before {
             transform: rotate(90deg);
         }
@@ -376,11 +360,9 @@
         .nav-link:active {
             background: var(--bg-tertiary);
         }
-        /* Used by HTML - navigation link alignment (prev) */
         .nav-link.prev {
             text-align: left;
         }
-        /* Used by HTML - navigation link alignment (next) */
         .nav-link.next {
             justify-content: flex-end;
             text-align: right;
@@ -399,6 +381,20 @@
             font-weight: 500;
             color: var(--text-primary);
         }
+
+        .diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -407,34 +403,17 @@
         <div class="module-badge">Модуль 1 / Урок 3</div>
 
         <h1>Вещественные числа (float)</h1>
-        <p class="lead">Вещественные числа - это числа с дробной частью: 3.14, 0.5, -2.7. В Go для них есть тип float (от floating point - плавающая точка). Название связано с тем, как число хранится в памяти: точка может "плавать" между цифрами.</p>
-
-        <p>Go предлагает два типа: <code>float32</code> и <code>float64</code>. По умолчанию Go выбирает <code>float64</code> - он точнее. Главная особенность float - они хранят числа приблизительно, поэтому <code>0.1 + 0.2</code> не равно ровно <code>0.3</code>.</p>
+        <p class="lead">Вещественные числа - это числа с дробной частью: 3.14, 0.5, -2.7. В Go для них есть тип float (от floating point - плавающая точка). Go предлагает два типа: <code>float32</code> и <code>float64</code>. По умолчанию Go выбирает <code>float64</code> - он точнее. Главная особенность float - они хранят числа приблизительно, поэтому <code>0.1 + 0.2</code> не равно ровно <code>0.3</code>.</p>
 
         <h2>float32 vs float64</h2>
 
         <table>
             <thead>
-                <tr>
-                    <th>Тип</th>
-                    <th>Размер</th>
-                    <th>Точность</th>
-                    <th>Диапазон</th>
-                </tr>
+                <tr><th>Тип</th><th>Размер</th><th>Точность</th><th>Диапазон</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><code>float32</code></td>
-                    <td>4 байта</td>
-                    <td>~7 цифр</td>
-                    <td>до ~3.4 x 10<sup>38</sup></td>
-                </tr>
-                <tr>
-                    <td><code>float64</code></td>
-                    <td>8 байт</td>
-                    <td>~15 цифр</td>
-                    <td>до ~1.8 x 10<sup>308</sup></td>
-                </tr>
+                <tr><td>float32</td><td>4 байта</td><td>~7 цифр</td><td>до ~3.4 × 10³⁸</td></tr>
+                <tr><td>float64</td><td>8 байт</td><td>~15 цифр</td><td>до ~1.8 × 10³⁰⁸</td></tr>
             </tbody>
         </table>
 
@@ -511,7 +490,7 @@ func main() {
 }</code></pre>
         </div>
 
-        <blockquote><p><strong>Правило:</strong> если оба операнда int - результат int (дробная часть отбрасывается). Чтобы получить дробный результат, хотя бы одно число должно быть float.</p></blockquote>
+        <p>Правило: если оба операнда int - результат int (дробная часть отбрасывается). Чтобы получить дробный результат, хотя бы одно число должно быть float.</p>
 
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Go</span></div>
@@ -537,8 +516,6 @@ func main() {
 }</code></pre>
         </div>
 
-        <p>Результат:</p>
-
         <div class="code-block">
             <div class="code-header"><span class="code-lang">Output</span></div>
             <pre><code>0.30000000000000004
@@ -549,10 +526,7 @@ false</code></pre>
 
         <p>Компьютер хранит числа в двоичной системе. Число 0.5 представляется точно (это 1/2). А вот 0.1 в двоичной системе - бесконечная дробь:</p>
 
-        <div class="code-block">
-            <div class="code-header"><span class="code-lang">Output</span></div>
-            <pre><code>0.1 (десятичное) = 0.0001100110011... (двоичное, бесконечно)</code></pre>
-        </div>
+        <div class="diagram">0.1 (десятичное) = 0.0001100110011... (двоичное, бесконечно)</div>
 
         <p>Компьютер обрезает эту дробь, и появляется небольшая погрешность. При сложении погрешности накапливаются.</p>
 
@@ -701,8 +675,13 @@ func main() {
         </div>
 
         <div class="card question-card">
-            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код: var f float64; fmt.Println(f == 0)?</span></div>
+            <div class="card-head"><span class="card-num">05</span><span class="card-title">Что выведет код?</span></div>
             <div class="card-body">
+                <div class="code-block">
+                    <div class="code-header"><span class="code-lang">Go</span></div>
+                    <pre><code class="language-go">var f float64
+fmt.Println(f == 0)</code></pre>
+                </div>
                 <details>
                     <summary>Показать ответ</summary>
                     <div class="answer"><p><code>true</code> - нулевое значение для float64 это 0, и сравнение с нулем работает корректно.</p></div>
@@ -720,7 +699,7 @@ func main() {
                     <summary>Показать решение</summary>
                     <div class="answer">
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import "fmt"
@@ -745,7 +724,7 @@ func main() {
                     <summary>Показать решение</summary>
                     <div class="answer">
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import (
@@ -773,7 +752,7 @@ func main() {
                     <summary>Показать решение</summary>
                     <div class="answer">
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import (
@@ -801,7 +780,7 @@ func main() {
                     <summary>Показать решение</summary>
                     <div class="answer">
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import (
@@ -830,7 +809,7 @@ func main() {
                     <summary>Показать решение</summary>
                     <div class="answer">
                         <div class="code-block">
-                            <div class="code-header"><span class="code-lang">Go</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span class="code-lang">Go</span></div>
                             <pre><code class="language-go">package main
 
 import "fmt"
@@ -852,7 +831,7 @@ func main() {
         <h2>Резюме</h2>
 
         <div class="summary-box">
-            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Ключевые моменты</span></div>
+            <div class="summary-header"><span class="summary-badge">Key</span><span class="summary-title">Вещественные числа (float)</span></div>
             <ul class="summary-list">
                 <li><strong>float64</strong> - основной тип, выбирается по умолчанию</li>
                 <li><strong>float32</strong> - только для GPU, больших массивов, совместимости</li>
@@ -867,12 +846,12 @@ func main() {
 
         <nav class="nav-footer">
             <a href="02-int.html" class="nav-link prev">
-                <span class="nav-arrow">&lt;-</span>
-                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Целые числа (int)</div></div>
+                <span class="nav-arrow">&larr;</span>
+                <div><div class="nav-label">Предыдущий урок</div><div class="nav-title">Целые числа</div></div>
             </a>
             <a href="04-byte.html" class="nav-link next">
-                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Байт (byte)</div></div>
-                <span class="nav-arrow">-&gt;</span>
+                <div><div class="nav-label">Следующий урок</div><div class="nav-title">Тип byte</div></div>
+                <span class="nav-arrow">&rarr;</span>
             </a>
         </nav>
     </main>
